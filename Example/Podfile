@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '9.0'
+
+target 'dojo-ios-sdk_Example' do
+  pod 'dojo-ios-sdk', :path => '../'
+
+  target 'dojo-ios-sdk_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
