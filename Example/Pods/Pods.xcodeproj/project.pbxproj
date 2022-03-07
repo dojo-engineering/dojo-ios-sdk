@@ -57,7 +57,7 @@
 		04E7975227D617DD00CC7923 /* 3DSViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = 3DSViewController.swift; sourceTree = "<group>"; };
 		04E7975327D617DD00CC7923 /* DojoCardPaymentPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DojoCardPaymentPayload.swift; sourceTree = "<group>"; };
 		064BC1F2464114841B742707D5D80667 /* Pods-dojo-ios-sdk_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-dojo-ios-sdk_Tests-dummy.m"; sourceTree = "<group>"; };
-		123C3D8BFE849C21FA013635593C9EF5 /* dojo-ios-sdk */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "dojo-ios-sdk"; path = dojo_ios_sdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		123C3D8BFE849C21FA013635593C9EF5 /* dojo_ios_sdk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = dojo_ios_sdk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2464F32A70F2D2A213B45F47E839DE6D /* Pods-dojo-ios-sdk_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-dojo-ios-sdk_Example-dummy.m"; sourceTree = "<group>"; };
 		25B6A8AE8D24DC142DFD60BAFF7FFE2D /* Pods-dojo-ios-sdk_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-dojo-ios-sdk_Tests-Info.plist"; sourceTree = "<group>"; };
 		2FDFAE89D0C15596C995E4867CDB5D26 /* Pods-dojo-ios-sdk_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-dojo-ios-sdk_Example-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 		46EF0365F032FD9ECFBE9502DF469BC8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				123C3D8BFE849C21FA013635593C9EF5 /* dojo-ios-sdk */,
+				123C3D8BFE849C21FA013635593C9EF5 /* dojo_ios_sdk.framework */,
 				FA579A4793FDD4409F09CECAEA44071A /* Pods-dojo-ios-sdk_Example */,
 				B785E3223DEDB71C46AD727760808B0F /* Pods-dojo-ios-sdk_Tests */,
 			);
@@ -304,7 +304,7 @@
 			);
 			name = "dojo-ios-sdk";
 			productName = dojo_ios_sdk;
-			productReference = 123C3D8BFE849C21FA013635593C9EF5 /* dojo-ios-sdk */;
+			productReference = 123C3D8BFE849C21FA013635593C9EF5 /* dojo_ios_sdk.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		5F0019ADFDE3A88F5B92785C72C800B3 /* Pods-dojo-ios-sdk_Example */ = {
@@ -532,7 +532,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk.modulemap";
 				PRODUCT_MODULE_NAME = dojo_ios_sdk;
@@ -721,7 +721,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/dojo-ios-sdk/dojo-ios-sdk.modulemap";
 				PRODUCT_MODULE_NAME = dojo_ios_sdk;

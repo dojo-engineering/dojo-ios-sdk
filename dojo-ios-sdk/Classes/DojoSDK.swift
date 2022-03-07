@@ -56,6 +56,7 @@ public class DojoSDK: DojoSDKProtocol {
                     }
                 }
             }
+            threeDSController.isModalInPresentation = true
             fromViewController.present(threeDSController, animated: true, completion: nil)
         }
     }
@@ -66,7 +67,7 @@ public class DojoSDK: DojoSDKProtocol {
                 completion?(result)
             }
         }
+        applePayDemoController.isModalInPresentation = true
         fromViewController.present(applePayDemoController, animated: true, completion: nil)
-//        completion?(.success)
     }
 }
