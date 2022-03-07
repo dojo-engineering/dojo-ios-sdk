@@ -18,7 +18,9 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails)
         
         showLoadingIndicator()
-        DojoSDK.startCardPayment(token: "token", payload: cardPaymentPayload, fromViewController: self) { [weak self] result in
+        DojoSDK.executeCardPayment(token: "token",
+                                 payload: cardPaymentPayload,
+                                 fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
             self?.showAlert(result)
         }
@@ -30,7 +32,7 @@ class ViewController: UIViewController {
         let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.dojo.com")
         let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
         
-        DojoSDK.startApplePayPayment(token: "token", payload: applePayPayload, fromViewController: self) { [weak self] result in
+        DojoSDK.executeApplePayPayment(token: "token", payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
             self?.showAlert(result)
         }

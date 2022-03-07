@@ -8,14 +8,14 @@
 import UIKit
 
 public protocol DojoSDKProtocol {
-    static func startCardPayment(token: String,
-                                 payload: DojoCardPaymentPayload,
-                                 fromViewController: UIViewController,
-                                 completion: ((DojoSDKResult) -> Void)?)
-    static func startApplePayPayment(token: String,
-                                     payload: DojoApplePayPayload,
-                                     fromViewController: UIViewController,
-                                     completion: ((DojoSDKResult) -> Void)?)
+    static func executeCardPayment(token: String,
+                                   payload: DojoCardPaymentPayload,
+                                   fromViewController: UIViewController,
+                                   completion: ((DojoSDKResult) -> Void)?)
+    static func executeApplePayPayment(token: String,
+                                       payload: DojoApplePayPayload,
+                                       fromViewController: UIViewController,
+                                       completion: ((DojoSDKResult) -> Void)?)
 }
 
 public enum DojoSDKResult {
@@ -45,7 +45,7 @@ public enum DojoSDKError: LocalizedError {
 
 public class DojoSDK: DojoSDKProtocol {
     
-    public static func startCardPayment(token: String, payload: DojoCardPaymentPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
+    public static func executeCardPayment(token: String, payload: DojoCardPaymentPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let threeDSController = ThreeDSViewController() { is3DSSuccess in
                 fromViewController.dismiss(animated: true) {
@@ -56,18 +56,22 @@ public class DojoSDK: DojoSDKProtocol {
                     }
                 }
             }
-            threeDSController.isModalInPresentation = true
+            if #available(iOS 13.0, *) {
+                threeDSController.isModalInPresentation = true
+            }
             fromViewController.present(threeDSController, animated: true, completion: nil)
         }
     }
     
-    public static func startApplePayPayment(token: String, payload: DojoApplePayPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
+    public static func executeApplePayPayment(token: String, payload: DojoApplePayPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
         let applePayDemoController = ApplePayPlaceholderViewController { result in
             fromViewController.dismiss(animated: true) {
                 completion?(result)
             }
         }
-        applePayDemoController.isModalInPresentation = true
+        if #available(iOS 13.0, *) {
+            applePayDemoController.isModalInPresentation = true
+        }
         fromViewController.present(applePayDemoController, animated: true, completion: nil)
     }
 }
