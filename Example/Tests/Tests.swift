@@ -1,5 +1,5 @@
 import XCTest
-import dojo-ios-sdk
+import dojo_ios_sdk
 
 class Tests: XCTestCase {
     
