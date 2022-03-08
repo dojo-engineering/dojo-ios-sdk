@@ -7,7 +7,8 @@
 
 import Foundation
 
-public struct DojoShippingDetails {
+@objc
+public class DojoShippingDetails: NSObject {
     public init(name: String? = nil,
                   address: DojoAddressDetails? = nil) {
         self.name = name

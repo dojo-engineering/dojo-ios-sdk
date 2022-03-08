@@ -7,52 +7,33 @@
 
 import UIKit
 
+@objc
 public protocol DojoSDKProtocol {
     static func executeCardPayment(token: String,
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
-                                   completion: ((DojoSDKResult) -> Void)?)
+                                   completion: ((NSError?) -> Void)?)
     static func executeApplePayPayment(token: String,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
-                                       completion: ((DojoSDKResult) -> Void)?)
+                                       completion: ((NSError?) -> Void)?)
 }
 
-public enum DojoSDKResult {
-    case success
-    case error(DojoSDKError)
-}
 
-public enum DojoSDKError: LocalizedError {
-    case threeDSFailed
-    case applePayFailed
-    case canceled
-    case other(Error)
+@objc
+public class DojoSDK: NSObject, DojoSDKProtocol {
     
-    public var errorDescription: String? {
-            switch self {
-            case .threeDSFailed:
-                return NSLocalizedString("3DS view failed", comment: "")
-            case .applePayFailed:
-                return NSLocalizedString("ApplePay failed", comment: "")
-            case .canceled:
-                return NSLocalizedString("Canceled", comment: "")
-            default:
-                return nil
-            }
-        }
-}
-
-public class DojoSDK: DojoSDKProtocol {
-    
-    public static func executeCardPayment(token: String, payload: DojoCardPaymentPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
+    public static func executeCardPayment(token: String,
+                                          payload: DojoCardPaymentPayload,
+                                          fromViewController: UIViewController,
+                                          completion: ((NSError?) -> Void)?) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             let threeDSController = ThreeDSViewController() { is3DSSuccess in
                 fromViewController.dismiss(animated: true) {
                     if is3DSSuccess {
-                        completion?(.success)
+                        completion?(nil)
                     } else {
-                        completion?(.error(.threeDSFailed))
+                        completion?(NSError(domain: "3DS", code: 881, userInfo: nil))
                     }
                 }
             }
@@ -63,7 +44,10 @@ public class DojoSDK: DojoSDKProtocol {
         }
     }
     
-    public static func executeApplePayPayment(token: String, payload: DojoApplePayPayload, fromViewController: UIViewController, completion: ((DojoSDKResult) -> Void)?) {
+    public static func executeApplePayPayment(token: String,
+                                              payload: DojoApplePayPayload,
+                                              fromViewController: UIViewController,
+                                              completion: ((NSError?) -> Void)?) {
         let applePayDemoController = ApplePayPlaceholderViewController { result in
             fromViewController.dismiss(animated: true) {
                 completion?(result)

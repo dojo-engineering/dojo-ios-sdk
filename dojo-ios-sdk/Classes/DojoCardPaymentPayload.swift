@@ -7,11 +7,12 @@
 
 import Foundation
 
-public struct DojoCardPaymentPayload {
+@objc
+public class DojoCardPaymentPayload: NSObject {
     public init(cardDetails: DojoCardDetails,
                   email: String? = nil,
                   billingAddress: DojoAddressDetails? = nil,
-                  shippingDetails: DojoAddressDetails? = nil,
+                  shippingDetails: DojoShippingDetails? = nil,
                   metaData: [String : String]? = nil) {
         self.cardDetails = cardDetails
         self.email = email
@@ -23,7 +24,7 @@ public struct DojoCardPaymentPayload {
     let cardDetails: DojoCardDetails
     let email: String?
     let billingAddress: DojoAddressDetails?
-    let shippingDetails: DojoAddressDetails?
+    let shippingDetails: DojoShippingDetails?
     let metaData: [String: String]?
 }
 

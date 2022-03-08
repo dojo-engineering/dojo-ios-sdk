@@ -7,7 +7,8 @@
 
 import Foundation
 
-public struct DojoApplePayPayload {
+@objc
+public class DojoApplePayPayload: NSObject {
     public init(applePayConfig: DojoApplePayConfig,
                 email: String? = nil,
                 metaData: [String : String]? = nil) {

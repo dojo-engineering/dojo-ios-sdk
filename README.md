@@ -1,6 +1,5 @@
 # dojo-ios-sdk
 
-[![CI Status](https://img.shields.io/travis/Deniss Kaibagarovs/dojo-ios-sdk.svg?style=flat)](https://travis-ci.org/Deniss Kaibagarovs/dojo-ios-sdk)
 [![Version](https://img.shields.io/cocoapods/v/dojo-ios-sdk.svg?style=flat)](https://cocoapods.org/pods/dojo-ios-sdk)
 [![License](https://img.shields.io/cocoapods/l/dojo-ios-sdk.svg?style=flat)](https://cocoapods.org/pods/dojo-ios-sdk)
 [![Platform](https://img.shields.io/cocoapods/p/dojo-ios-sdk.svg?style=flat)](https://cocoapods.org/pods/dojo-ios-sdk)
@@ -22,7 +21,7 @@ pod 'dojo-ios-sdk'
 
 ## Author
 
-Deniss Kaibagarovs, deniss.kaibagarovs@gmail.com
+Deniss Kaibagarovs, deniss.kaibagarovs@paymentsense.com
 
 ## License
 

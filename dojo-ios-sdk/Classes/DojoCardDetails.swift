@@ -7,7 +7,8 @@
 
 import Foundation
 
-public struct DojoCardDetails {
+@objc
+public class DojoCardDetails: NSObject {
     public init(cardNumber: String,
                 cardName: String? = nil,
                 expiryDate: String? = nil,

@@ -1,0 +1,8 @@
+use_frameworks!
+
+platform :ios, '11.0'
+
+target 'dojo-ios-sdk-Example-Objc' do
+  use_frameworks!
+  pod 'dojo-ios-sdk', :path => '../'
+end

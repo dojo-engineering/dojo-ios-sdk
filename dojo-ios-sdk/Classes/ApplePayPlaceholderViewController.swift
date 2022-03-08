@@ -9,9 +9,9 @@ import UIKit
 
 class ApplePayPlaceholderViewController: UIViewController {
     
-    private var completion: ((DojoSDKResult) -> Void)?
+    private var completion: ((NSError?) -> Void)?
     
-    convenience init(completion: ((DojoSDKResult) -> Void)?) {
+    convenience init(completion: ((NSError?) -> Void)?) {
         self.init()
         self.completion = completion
     }
@@ -43,14 +43,14 @@ class ApplePayPlaceholderViewController: UIViewController {
     }
     
     @objc func onSuccessPress() {
-        completion?(.success)
+        completion?(nil)
     }
     
     @objc func onFailPress() {
-        completion?(.error(.applePayFailed))
+        completion?(NSError(domain: "ApplePay", code: 881, userInfo: nil))
     }
     
     @objc func onCancelPress() {
-        completion?(.error(.canceled))
+        completion?(NSError(domain: "ApplePay", code: 0, userInfo: nil))
     }
 }
