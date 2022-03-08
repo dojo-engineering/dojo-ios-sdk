@@ -9,7 +9,7 @@ import Foundation
 
 @objc
 public class DojoCardDetails: NSObject {
-    public init(cardNumber: String,
+    @objc public init(cardNumber: String,
                 cardName: String? = nil,
                 expiryDate: String? = nil,
                 cv2: String? = nil) {

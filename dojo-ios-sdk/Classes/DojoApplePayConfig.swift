@@ -9,15 +9,15 @@ import Foundation
 
 @objc
 public class DojoApplePayConfig: NSObject {
-    public init(merchantIdentifier: String,
-                collectBillingAddress: Bool? = nil,
-                collectShippingAddress: Bool? = nil) {
+    @objc public init(merchantIdentifier: String,
+                collectBillingAddress: Bool = false,
+                collectShippingAddress: Bool = false) {
         self.merchantIdentifier = merchantIdentifier
         self.collectBillingAddress = collectBillingAddress
         self.collectShippingAddress = collectShippingAddress
     }
     
     let merchantIdentifier: String
-    let collectBillingAddress: Bool?
-    let collectShippingAddress: Bool?
+    let collectBillingAddress: Bool
+    let collectShippingAddress: Bool
 }

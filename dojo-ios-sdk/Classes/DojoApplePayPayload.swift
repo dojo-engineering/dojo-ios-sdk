@@ -9,7 +9,7 @@ import Foundation
 
 @objc
 public class DojoApplePayPayload: NSObject {
-    public init(applePayConfig: DojoApplePayConfig,
+    @objc public init(applePayConfig: DojoApplePayConfig,
                 email: String? = nil,
                 metaData: [String : String]? = nil) {
         self.applePayConfig = applePayConfig

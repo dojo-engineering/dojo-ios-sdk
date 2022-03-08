@@ -9,7 +9,7 @@ import Foundation
 
 @objc
 public class DojoAddressDetails: NSObject {
-    public init(address1: String? = nil,
+    @objc public init(address1: String? = nil,
                   address2: String? = nil,
                   address3: String? = nil,
                   address4: String? = nil,

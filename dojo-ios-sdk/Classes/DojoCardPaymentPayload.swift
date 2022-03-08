@@ -9,7 +9,7 @@ import Foundation
 
 @objc
 public class DojoCardPaymentPayload: NSObject {
-    public init(cardDetails: DojoCardDetails,
+    @objc public init(cardDetails: DojoCardDetails,
                   email: String? = nil,
                   billingAddress: DojoAddressDetails? = nil,
                   shippingDetails: DojoShippingDetails? = nil,
