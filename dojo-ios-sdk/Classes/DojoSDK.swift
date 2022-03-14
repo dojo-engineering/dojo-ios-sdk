@@ -19,7 +19,6 @@ public protocol DojoSDKProtocol {
                                        completion: ((NSError?) -> Void)?)
 }
 
-
 @objc
 public class DojoSDK: NSObject, DojoSDKProtocol {
     
@@ -56,6 +55,8 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         if #available(iOS 13.0, *) {
             applePayDemoController.isModalInPresentation = true
         }
-        fromViewController.present(applePayDemoController, animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
+            fromViewController.present(applePayDemoController, animated: true, completion: nil)
+        }
     }
 }
