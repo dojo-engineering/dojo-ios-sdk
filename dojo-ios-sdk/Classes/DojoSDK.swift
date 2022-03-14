@@ -32,7 +32,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                     if is3DSSuccess {
                         completion?(nil)
                     } else {
-                        completion?(NSError(domain: "3DS", code: 881, userInfo: nil))
+                        completion?(ErrorBuilder.serverError(.threeDSError))
                     }
                 }
             }
