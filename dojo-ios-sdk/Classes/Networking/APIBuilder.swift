@@ -19,11 +19,14 @@ struct APIBuilder: APIBuilderProtocol {
     static let host = "https://www.google.co.uk/v1"
     
     static func buildURL(token: String, endpoint: APIEndpoint) throws -> URL {
+        // construct endpoint url
         var stringURL = host
         switch endpoint {
         case .cardPayment:
-            stringURL += "/cardPayment"
+            stringURL += "/payments/"
         }
+        // append token
+        stringURL += token
         guard let url = URL(string: stringURL) else {
             throw ErrorBuilder.internalError(.cantBuildURL)
         }

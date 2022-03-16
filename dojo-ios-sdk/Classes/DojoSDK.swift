@@ -27,7 +27,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           fromViewController: UIViewController,
                                           completion: ((NSError?) -> Void)?) {
         
-        NetworkService().performCardPayment(token: token, payload: payload) { response in
+        NetworkService(timeout: 25).performCardPayment(token: token, payload: payload) { response in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
                 switch response {
                 case .error(let error):

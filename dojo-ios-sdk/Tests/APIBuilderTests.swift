@@ -9,10 +9,14 @@ import XCTest
 @testable import dojo_ios_sdk
 
 class APIBuilderTests: XCTestCase {
-    func test() {
-        if let url = try? APIBuilder.buildURL(token: "token", endpoint: .cardPayment) {
-            XCTAssertEqual(url, URL(string: "https://google.co.uk")!)
+    
+    func testCardPayment() {
+        do {
+            let url = try APIBuilder.buildURL(token: "token", endpoint: .cardPayment)
+            XCTAssertEqual(url, URL(string: "https://www.google.co.uk/v1/payments/token")!)
+        } catch {
+            XCTFail(error.localizedDescription)
         }
-        XCTAssertTrue(true)
     }
+    
 }
