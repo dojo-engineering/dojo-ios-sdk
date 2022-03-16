@@ -8,7 +8,7 @@
 import Foundation
 
 @objc
-public class DojoAddressDetails: NSObject {
+public class DojoAddressDetails: NSObject, Codable {
     @objc public init(address1: String? = nil,
                   address2: String? = nil,
                   address3: String? = nil,

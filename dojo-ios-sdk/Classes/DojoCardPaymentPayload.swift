@@ -8,7 +8,7 @@
 import Foundation
 
 @objc
-public class DojoCardPaymentPayload: NSObject {
+public class DojoCardPaymentPayload: NSObject, Codable {
     @objc public init(cardDetails: DojoCardDetails,
                   email: String? = nil,
                   billingAddress: DojoAddressDetails? = nil,

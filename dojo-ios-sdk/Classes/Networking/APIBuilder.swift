@@ -12,13 +12,13 @@ enum APIEndpoint {
 }
 
 protocol APIBuilderProtocol {
-    static func buildURL(_ endpoint: APIEndpoint) throws -> URL
+    static func buildURL(token: String , endpoint: APIEndpoint) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
-    static let host = "https://www.google.co.uk"
+    static let host = "https://www.google.co.uk/v1"
     
-    static func buildURL(_ endpoint: APIEndpoint) throws -> URL {
+    static func buildURL(token: String, endpoint: APIEndpoint) throws -> URL {
         var stringURL = host
         switch endpoint {
         case .cardPayment:

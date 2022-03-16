@@ -26,20 +26,30 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
                                           completion: ((NSError?) -> Void)?) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let threeDSController = ThreeDSViewController() { is3DSSuccess in
-                fromViewController.dismiss(animated: true) {
-                    if is3DSSuccess {
-                        completion?(nil)
-                    } else {
-                        completion?(ErrorBuilder.serverError(.threeDSError))
+        
+        NetworkService().performCardPayment(token: token, payload: payload) { response in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
+                switch response {
+                case .error(let error):
+                    completion?(error)
+                case .ThreeDSRequired: // change to lower case
+                    let threeDSController = ThreeDSViewController() { is3DSSuccess in
+                        fromViewController.dismiss(animated: true) {
+                            if is3DSSuccess {
+                                completion?(nil)
+                            } else {
+                                completion?(ErrorBuilder.serverError(.threeDSError))
+                            }
+                        }
                     }
+                    if #available(iOS 13.0, *) {
+                        threeDSController.isModalInPresentation = true
+                    }
+                    fromViewController.present(threeDSController, animated: true, completion: nil)
+                case .complete:
+                    break
                 }
             }
-            if #available(iOS 13.0, *) {
-                threeDSController.isModalInPresentation = true
-            }
-            fromViewController.present(threeDSController, animated: true, completion: nil)
         }
     }
     
