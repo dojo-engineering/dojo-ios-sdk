@@ -15,6 +15,9 @@ enum CardPaymentNetworkResponse {
 
 protocol NetworkServiceProtocol {
     init(timeout: TimeInterval)
+    func collectDeviceData(token: String,
+                           payload: DojoCardPaymentPayload,
+                           completion: ((DeviceDataResponse?) -> Void)?)
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayload,
                             completion: ((CardPaymentNetworkResponse) -> Void)?)

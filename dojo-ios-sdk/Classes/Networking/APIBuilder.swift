@@ -9,6 +9,7 @@ import Foundation
 
 enum APIEndpoint {
     case cardPayment
+    case deviceData
 }
 
 protocol APIBuilderProtocol {
@@ -16,14 +17,16 @@ protocol APIBuilderProtocol {
 }
 
 struct APIBuilder: APIBuilderProtocol {
-    static let host = "https://www.google.co.uk/v1"
+    static let host = "https://web.e.test.connect.paymentsense.cloud/api/"
     
     static func buildURL(token: String, endpoint: APIEndpoint) throws -> URL {
         // construct endpoint url
         var stringURL = host
         switch endpoint {
         case .cardPayment:
-            stringURL += "/payments/"
+            stringURL += "payments/"
+        case .deviceData:
+            stringURL += "device-data/"
         }
         // append token
         stringURL += token

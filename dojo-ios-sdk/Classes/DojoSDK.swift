@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WebKit
 
 @objc
 public protocol DojoSDKProtocol {
@@ -26,31 +27,77 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
                                           completion: ((NSError?) -> Void)?) {
-        
-        NetworkService(timeout: 25).performCardPayment(token: token, payload: payload) { response in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
-                switch response {
-                case .error(let error):
-                    completion?(error)
-                case .ThreeDSRequired: // change to lower case
-                    let threeDSController = ThreeDSViewController() { is3DSSuccess in
-                        fromViewController.dismiss(animated: true) {
-                            if is3DSSuccess {
-                                completion?(nil)
-                            } else {
-                                completion?(ErrorBuilder.serverError(.threeDSError))
-                            }
+        let networkService = NetworkService(timeout: 25)
+        networkService.collectDeviceData(token: token, payload: payload) { result in
+            // TODO error if token is exired
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                
+                let controller = ThreeDSViewController(token: result?.token) { res in
+//                    completion?(nil)
+                    fromViewController.dismiss(animated: true, completion: {
+                        networkService.performCardPayment(token: token, payload: payload) { carPayment in
+                            var a = 0
                         }
-                    }
-                    if #available(iOS 13.0, *) {
-                        threeDSController.isModalInPresentation = true
-                    }
-                    fromViewController.present(threeDSController, animated: true, completion: nil)
-                case .complete:
-                    break
+                    })
+                    
                 }
+                fromViewController.present(controller, animated: true, completion: nil)
+//                controller.viewDidLoad()
+//                controller.viewDidAppear(true)
+//                controller.didMove(toParentViewController: fromViewController)
             }
         }
+        
+//        NetworkService(timeout: 25).performCardPayment(token: token, payload: payload) { response in
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
+//                switch response {
+//                case .error(let error):
+//                    completion?(error)
+//                case .ThreeDSRequired: // change to lower case
+//                    let threeDSController = ThreeDSViewController() { is3DSSuccess in
+//                        fromViewController.dismiss(animated: true) {
+//                            if is3DSSuccess {
+//                                completion?(nil)
+//                            } else {
+//                                completion?(ErrorBuilder.serverError(.threeDSError))
+//                            }
+//                        }
+//                    }
+//                    if #available(iOS 13.0, *) {
+//                        threeDSController.isModalInPresentation = true
+//                    }
+//                    fromViewController.present(threeDSController, animated: true, completion: nil)
+//                case .complete:
+//                    break
+//                }
+//            }
+//        }
+    }
+    
+    static func getDemoPage(token: String?) -> String {
+        """
+        <!DOCTYPE html>
+        <html>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+        <style>
+        body {
+          background-color: linen;
+        }
+
+        a {
+          margin-right: 40px;
+        }
+        </style>
+        <body>
+        <iframe name=”ddc-iframe” height="1" width="1" style="display: none;">
+        <form id="ddc-form" target=”ddc-iframe”  method="POST" action="https://centinelapistag.cardinalcommerce.com/V1/Cruise/Collect">
+            <input id="ddc-input" type="hidden" name="JWT" value="\(token)" />
+        </form>
+        </iframe>
+        </body>
+        </html>
+
+        """
     }
     
     public static func executeApplePayPayment(token: String,
@@ -67,6 +114,27 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         }
         DispatchQueue.main.asyncAfter(deadline: .now()) {
             fromViewController.present(applePayDemoController, animated: true, completion: nil)
+        }
+    }
+}
+
+
+class DojoSDKWKNavigation: NSObject, WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) { }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        var a = 0
+    }
+    
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        if let result = webView.url?.absoluteString.contains("success"),
+           result {
+            
+        }
+        
+        if let result = webView.url?.absoluteString.contains("fail"),
+           result {
+            
         }
     }
 }
