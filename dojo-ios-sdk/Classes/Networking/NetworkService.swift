@@ -47,7 +47,6 @@ class NetworkService: NetworkServiceProtocol {
             if let data = data {
                 let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data)
                 completion?(decodedResponse)
-                var a = 0
             }
             
             
@@ -89,9 +88,12 @@ class NetworkService: NetworkServiceProtocol {
                 completion?(.error(error as NSError))
             } else if let data = data {
                 // TODO handle response from the BE
+                // TODO handle no 3DS response
+                let decoder = JSONDecoder()
+                let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data)
                 let str = String(decoding: data, as: UTF8.self)
                 print(str)
-//                completion?(.ThreeDSRequired)
+                completion?(.ThreeDSRequired(ascUrl: decodedResponse?.stepUpUrl, jwt: decodedResponse?.jwt, md: decodedResponse?.md, paReq: decodedResponse?.paReq))
             } else {
                 completion?(.error(ErrorBuilder.internalError(.unknownError)))
             }
@@ -118,4 +120,11 @@ struct DeviceDataRequest: Encodable {
     let cardName: String?
     let cardNumber: String?
     let expiryDate: String?
+}
+
+struct ThreeDSResponse: Decodable {
+    let stepUpUrl: String?
+    let jwt: String?
+    let md: String?
+    let paReq: String?
 }

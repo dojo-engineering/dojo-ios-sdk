@@ -32,46 +32,58 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
             // TODO error if token is exired
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 
-                let controller = ThreeDSViewController(token: result?.token) { res in
-//                    completion?(nil)
+                let controller = DeviceDataCollectionViewController(token: result?.token) { res in
+                    //                    completion?(nil)
                     fromViewController.dismiss(animated: true, completion: {
                         networkService.performCardPayment(token: token, payload: payload) { carPayment in
+                            switch carPayment {
+                            case .ThreeDSRequired(let ascUrl, let jwt, let md, let paReq):
+                                DispatchQueue.main.asyncAfter(deadline: .now()) {
+                                    let threeDSController = ThreeDSViewController(acsUrl: ascUrl, md: md, jwt: jwt, paReq: paReq) { threeDS in
+                                        var a = 0
+                                    }
+                                    fromViewController.present(threeDSController, animated: true, completion: nil)
+                                }
+                                break
+                            default:
+                                break
+                            }
                             var a = 0
                         }
                     })
                     
                 }
                 fromViewController.present(controller, animated: true, completion: nil)
-//                controller.viewDidLoad()
-//                controller.viewDidAppear(true)
-//                controller.didMove(toParentViewController: fromViewController)
+                //                controller.viewDidLoad()
+                //                controller.viewDidAppear(true)
+                //                controller.didMove(toParentViewController: fromViewController)
             }
         }
         
-//        NetworkService(timeout: 25).performCardPayment(token: token, payload: payload) { response in
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
-//                switch response {
-//                case .error(let error):
-//                    completion?(error)
-//                case .ThreeDSRequired: // change to lower case
-//                    let threeDSController = ThreeDSViewController() { is3DSSuccess in
-//                        fromViewController.dismiss(animated: true) {
-//                            if is3DSSuccess {
-//                                completion?(nil)
-//                            } else {
-//                                completion?(ErrorBuilder.serverError(.threeDSError))
-//                            }
-//                        }
-//                    }
-//                    if #available(iOS 13.0, *) {
-//                        threeDSController.isModalInPresentation = true
-//                    }
-//                    fromViewController.present(threeDSController, animated: true, completion: nil)
-//                case .complete:
-//                    break
-//                }
-//            }
-//        }
+        //        NetworkService(timeout: 25).performCardPayment(token: token, payload: payload) { response in
+        //            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { // TODO
+        //                switch response {
+        //                case .error(let error):
+        //                    completion?(error)
+        //                case .ThreeDSRequired: // change to lower case
+        //                    let threeDSController = ThreeDSViewController() { is3DSSuccess in
+        //                        fromViewController.dismiss(animated: true) {
+        //                            if is3DSSuccess {
+        //                                completion?(nil)
+        //                            } else {
+        //                                completion?(ErrorBuilder.serverError(.threeDSError))
+        //                            }
+        //                        }
+        //                    }
+        //                    if #available(iOS 13.0, *) {
+        //                        threeDSController.isModalInPresentation = true
+        //                    }
+        //                    fromViewController.present(threeDSController, animated: true, completion: nil)
+        //                case .complete:
+        //                    break
+        //                }
+        //            }
+        //        }
     }
     
     static func getDemoPage(token: String?) -> String {
@@ -83,7 +95,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         body {
           background-color: linen;
         }
-
+        
         a {
           margin-right: 40px;
         }
@@ -96,7 +108,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         </iframe>
         </body>
         </html>
-
+        
         """
     }
     
