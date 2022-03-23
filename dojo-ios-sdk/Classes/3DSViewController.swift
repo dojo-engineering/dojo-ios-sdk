@@ -12,8 +12,18 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         timeoutTimer?.invalidate()
         timeoutTimer = nil
-        print("message: \(message.body)")
-        completion?(true)
+        print(message.body)
+        if let dict = message.body as? Dictionary<String, Any> {
+            if let mesData = dict["messageData"] as? Dictionary<String, Any> {
+                print("transaction result: \(mesData["statusCode"])")
+                completion?(true)
+            }
+        }
+        
+//        if let mes = message.body as? Dictionary<Any, Any> {
+//            print("message: \(mes)")
+//        }
+//        completion?(true)
     }
     
     
@@ -39,7 +49,7 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         super.viewDidLoad()
         
         let config = WKWebViewConfiguration()
-        let source = "window.addEventListener('message', (event) => { window.webkit.messageHandlers.iosListener.postMessage('click clack!');})"
+        let source = "window.addEventListener('message', (event) => { window.webkit.messageHandlers.iosListener.postMessage(event.data);})"
             let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
             config.userContentController.addUserScript(script)
             config.userContentController.add(self, name: "iosListener")
@@ -63,10 +73,8 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         <html>
         <body>
         <form id="threeDs20Form" target="_self" method="post" action="\(acsUrl!)">
-            <input type="hidden" name="PaReq" value="\(paReq!)">
             <input name="JWT" value="\(jwt!)"/>
             <input name="MD" value="\(md!)"/>
-            <input name="TermUrl" value="https://www.test.paysafe.com/cgi-bin/echo"/>
         </form>
         </div>
         </body>

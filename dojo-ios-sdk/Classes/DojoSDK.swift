@@ -40,7 +40,9 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                             case .ThreeDSRequired(let ascUrl, let jwt, let md, let paReq):
                                 DispatchQueue.main.asyncAfter(deadline: .now()) {
                                     let threeDSController = ThreeDSViewController(acsUrl: ascUrl, md: md, jwt: jwt, paReq: paReq) { threeDS in
-                                        var a = 0
+                                        fromViewController.dismiss(animated: true, completion: {
+                                            completion?(nil)
+                                        })
                                     }
                                     fromViewController.present(threeDSController, animated: true, completion: nil)
                                 }
