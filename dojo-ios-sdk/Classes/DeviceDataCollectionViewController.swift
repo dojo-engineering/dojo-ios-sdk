@@ -11,9 +11,13 @@ import WebKit
 class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        guard !didReceiveMessage else {
+            return
+        }
         timeoutTimer?.invalidate()
         timeoutTimer = nil
         print("message: \(message.body)")
+        didReceiveMessage = true
         completion?(true)
     }
     
@@ -23,6 +27,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
     private var token: String?
     private var timeoutTimer: Timer?
     private var timeoutTimerTime = 15.0
+    private var didReceiveMessage = false
     
     convenience init(token: String?, completion: ((Bool) -> Void)?) {
         self.init()
@@ -32,6 +37,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.alpha = 0
         
         timeoutTimer = Timer.scheduledTimer(withTimeInterval: timeoutTimerTime, repeats: false) { [weak self] timer in
             self?.completion?(true) //TODO make more robubst

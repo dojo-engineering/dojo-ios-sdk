@@ -34,7 +34,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                 
                 let controller = DeviceDataCollectionViewController(token: result?.token) { res in
                     //                    completion?(nil)
-                    fromViewController.dismiss(animated: true, completion: {
+//                    fromViewController.dismiss(animated: true, completion: {
                         networkService.performCardPayment(token: token, payload: payload) { carPayment in
                             switch carPayment {
                             case .ThreeDSRequired(let ascUrl, let jwt, let md, let paReq):
@@ -44,7 +44,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                             completion?(nil)
                                         })
                                     }
-                                    fromViewController.present(threeDSController, animated: true, completion: nil)
+                                    fromViewController.present(threeDSController, animated: false, completion: nil)
                                 }
                                 break
                             default:
@@ -52,10 +52,13 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                             }
                             var a = 0
                         }
-                    })
+//                    })
                     
                 }
-                fromViewController.present(controller, animated: true, completion: nil)
+                
+//                controller.didMove(toParentViewController: fromViewController)
+                controller.viewDidLoad()
+//                fromViewController.present(controller, animated: true, completion: nil)
                 //                controller.viewDidLoad()
                 //                controller.viewDidAppear(true)
                 //                controller.didMove(toParentViewController: fromViewController)
