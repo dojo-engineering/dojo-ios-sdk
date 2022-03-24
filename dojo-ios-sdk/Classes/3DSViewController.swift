@@ -10,32 +10,26 @@ import WebKit
 
 class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        timeoutTimer?.invalidate()
-        timeoutTimer = nil
-        print(message.body)
+//        print(message.body) TODO - proper logs
         if let dict = message.body as? Dictionary<String, Any> {
             if let mesData = dict["messageData"] as? Dictionary<String, Any> {
                 print("transaction result: \(mesData["statusCode"])")
+                timeoutTimer?.invalidate()
+                timeoutTimer = nil
                 completion?(true)
             }
         }
-        
-//        if let mes = message.body as? Dictionary<Any, Any> {
-//            print("message: \(mes)")
-//        }
-//        completion?(true)
     }
-    
     
     private var webView: WKWebView?
     private var completion: ((Bool) -> Void)?
-    private var stepUpUrl: String?
-    private var md: String?
-    private var jwt: String?
+    private var stepUpUrl: String = ""
+    private var md: String = ""
+    private var jwt: String = ""
     private var timeoutTimer: Timer?
     private var timeoutTimerTime = 15.0
     
-    convenience init(stepUpUrl: String?, md: String?, jwt: String?, completion: ((Bool) -> Void)?) {
+    convenience init(stepUpUrl: String, md: String, jwt: String, completion: ((Bool) -> Void)?) {
         self.init()
         self.stepUpUrl = stepUpUrl
         self.md = md
@@ -57,22 +51,19 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         webView.uiDelegate = self
         webView.configuration.preferences.javaScriptEnabled = true
         
-     
-        
-        webView.loadHTMLString(getDemoPage(), baseURL:nil)
+        webView.loadHTMLString(getHTMLContent(stepUpUrl: stepUpUrl, jwt: jwt, md: md), baseURL:nil)
         self.view.addSubview(webView)
-        
         self.webView = webView
     }
     
-    func getDemoPage() -> String { // TODO force unwrap
+    func getHTMLContent(stepUpUrl: String, jwt: String, md: String) -> String {
         """
         <!DOCTYPE html>
         <html>
         <body>
-        <form id="threeDs20Form" target="_self" method="post" action="\(stepUpUrl!)">
-            <input name="JWT" value="\(jwt!)"/>
-            <input name="MD" value="\(md!)"/>
+        <form id="threeDs20Form" target="_self" method="post" action="\(stepUpUrl)">
+            <input name="JWT" value="\(jwt)"/>
+            <input name="MD" value="\(md)"/>
         </form>
         </div>
         </body>
@@ -82,28 +73,9 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
 }
 
 extension ThreeDSViewController: WKNavigationDelegate, WKUIDelegate {
-    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-        var a = 0
-    }
-    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print(webView.url?.absoluteString)
         webView.evaluateJavaScript("document.getElementById('threeDs20Form').submit()", completionHandler: nil)
     }
-    
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        print(webView.url?.absoluteString)
-//        if let result = webView.url?.absoluteString.contains("success"),
-//           result {
-//            completion?(true)
-//        }
-//
-//        if let result = webView.url?.absoluteString.contains("fail"),
-//           result {
-//            completion?(false)
-//        }
-    }
-
 }
 
 

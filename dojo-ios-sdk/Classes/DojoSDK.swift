@@ -42,13 +42,12 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                 networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
                     switch cardPaymentResult {
                     case .ThreeDSRequired(let stepUpUrl, let jwt, let md):
-                        DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            let threeDSController = ThreeDSViewController(stepUpUrl: stepUpUrl, md: md, jwt: jwt) { threeDS in
-                                fromViewController.dismiss(animated: true, completion: {
-                                    completion?(nil)
-                                })
-                            }
-                            fromViewController.present(threeDSController, animated: false, completion: nil)
+                        handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { _ in
+                            completion?(nil)
+                        }
+                    case .complete: //TODO rename to something better
+                        DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
+                            completion?(nil)
                         }
                     default:
                         break

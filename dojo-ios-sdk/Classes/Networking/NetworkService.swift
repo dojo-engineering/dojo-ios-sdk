@@ -90,12 +90,15 @@ class NetworkService: NetworkServiceProtocol {
                 // TODO handle response from the BE
                 // TODO handle no 3DS response
                 let decoder = JSONDecoder()
-                let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data)
-                let str = String(decoding: data, as: UTF8.self)
-                print(str)
-                completion?(.ThreeDSRequired(stepUpUrl: decodedResponse?.stepUpUrl,
-                                             jwt: decodedResponse?.jwt,
-                                             md: decodedResponse?.md))
+                if let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data) {
+                       if decodedResponse.statusCode == 0 { //TODO, 3DS has a code 3
+                           completion?(.complete)
+                           return
+                       }
+                    completion?(.ThreeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
+                                                 jwt: decodedResponse.jwt,
+                                                 md: decodedResponse.md))
+                }
             } else {
                 completion?(.error(ErrorBuilder.internalError(.unknownError)))
             }
@@ -121,5 +124,5 @@ struct ThreeDSResponse: Decodable {
     let stepUpUrl: String?
     let jwt: String?
     let md: String?
-    let paReq: String?
+    let statusCode: Int
 }

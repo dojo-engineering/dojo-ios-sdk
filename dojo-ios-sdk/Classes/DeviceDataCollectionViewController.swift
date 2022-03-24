@@ -16,7 +16,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         }
         timeoutTimer?.invalidate()
         timeoutTimer = nil
-        print("message: \(message.body)")
+//        print("message: \(message.body)") TODO logging
         didReceiveMessage = true // TODO
         completion?(true)
     }
@@ -24,7 +24,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
     
     private var webView: WKWebView?
     private var completion: ((Bool) -> Void)?
-    private var token: String?
+    private var token: String = ""
     private var timeoutTimer: Timer?
     private var timeoutTimerTime = 15.0
     private var didReceiveMessage = false
@@ -43,8 +43,9 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         super.viewDidLoad()
         self.view.alpha = 0
         
+        //TODO the same for both webviews
         let config = WKWebViewConfiguration()
-        let source = "window.addEventListener('message', (event) => {if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') { return; } window.webkit.messageHandlers.iosListener.postMessage('click clack!');})"
+        let source = "window.addEventListener('message', (event) => {if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') { return; } window.webkit.messageHandlers.iosListener.postMessage('data collection complete');})"
             let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
             config.userContentController.addUserScript(script)
             config.userContentController.add(self, name: "iosListener")
@@ -54,15 +55,13 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         webView.uiDelegate = self
         webView.configuration.preferences.javaScriptEnabled = true
         
-     
-        
-        webView.loadHTMLString(getDemoPage(), baseURL:nil)
+        webView.loadHTMLString(getHTMLContent(token: token), baseURL:nil)
         self.view.addSubview(webView)
         
         self.webView = webView
     }
     
-    func getDemoPage() -> String { // TODO force unwrap
+    func getHTMLContent(token: String) -> String {
         """
         <!DOCTYPE html>
         <html>
@@ -90,27 +89,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
 }
 
 extension DeviceDataCollectionViewController: WKNavigationDelegate, WKUIDelegate {
-    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-        var a = 0
-    }
-    
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        var a = 0
         webView.evaluateJavaScript("document.getElementById('ddc-form').submit()", completionHandler: nil)
     }
-    
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        if let result = webView.url?.absoluteString.contains("success"),
-           result {
-            completion?(true)
-        }
-        
-        if let result = webView.url?.absoluteString.contains("fail"),
-           result {
-            completion?(false)
-        }
-    }
-
 }
-
-

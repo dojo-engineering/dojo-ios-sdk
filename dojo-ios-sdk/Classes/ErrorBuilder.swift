@@ -17,6 +17,7 @@ enum InternalErrorCode: Int {
     case cantBuildURL = 7771
     case cantEncodePayload = 7772
     case tokenNull = 7773
+    case threeDSParamsNull = 7774
     case cancel = 0
 }
 
@@ -43,5 +44,9 @@ struct ErrorBuilder: ErrorBuilderProtocol {
     
     static func serverError(_ code: ServerErrorCode) -> NSError {
         NSError(domain: ErrorBuilderDomain.serverError.rawValue, code: code.rawValue, userInfo: nil)
+    }
+    
+    static func serverError(_ code: Int) -> NSError {
+        NSError(domain: ErrorBuilderDomain.serverError.rawValue, code: code, userInfo: nil)
     }
 }
