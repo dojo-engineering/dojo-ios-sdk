@@ -9,13 +9,15 @@ import UIKit
 
 extension DojoSDK {
     static func handleDeviceDataCollection(token: String?,
+                                           formAction: String?,
                                            completion: ((NSError?) -> Void)?) {
-        guard let token = token else {
-            completion?(ErrorBuilder.internalError(.tokenNull))
+        guard let token = token, let formAction = formAction else {
+            completion?(ErrorBuilder.internalError(.tokenNull)) // TODO
             return
         }
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            let dataCollectionController = DeviceDataCollectionViewController(token: token) { res in
+            let dataCollectionController = DeviceDataCollectionViewController(token: token,
+                                                                              formAction: formAction) { res in
                 completion?(nil) // all good, we can continue // TODO document
             }
             dataCollectionController.viewDidLoad()

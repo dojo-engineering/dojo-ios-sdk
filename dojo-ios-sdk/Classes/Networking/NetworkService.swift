@@ -19,47 +19,34 @@ class NetworkService: NetworkServiceProtocol {
     
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayload,
-                           completion: ((DeviceDataResponse?) -> Void)?) {
+                           completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURL(token: token, endpoint: .deviceData) else {
-//            completion?(.error(ErrorBuilder.internalError(.cantBuildURL)))
+            completion?(.error(ErrorBuilder.internalError(.cantBuildURL)))
             return
         }
         
-        let encoder = JSONEncoder()
-        guard let bodyData = try? encoder.encode(DeviceDataRequest(cV2: payload.cardDetails.cv2, cardName: payload.cardDetails.cardName, cardNumber: payload.cardDetails.cardNumber, expiryDate: payload.cardDetails.expiryDate)) else {
-//            completion?(.error(ErrorBuilder.internalError(.cantEncodePayload)))
+        guard let bodyData = getCardRequestBody(payload: payload) else {
+            completion?(.error(ErrorBuilder.internalError(.cantEncodePayload)))
             return
         }
         
-        // configure URLRequest
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = bodyData
-        request.timeoutInterval = timeout
-        // configure task
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        
         let task = session.dataTask(with: request) { (data, response, error) in
-            print(String(decoding: data!, as: UTF8.self))
-            let decoder = JSONDecoder()
-            if let httpResponse = response as? HTTPURLResponse {
-                  print("Status Code: \(httpResponse.statusCode)")
+            //TODO check for status code
+            if let error = error {
+                completion?(.error(error as NSError))
+            } else {
+                let decoder = JSONDecoder()
+                if let data = data,
+                   let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data){
+                    completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
+                                                    token: decodedResponse.token))
+                } else {
+                    completion?(.error(ErrorBuilder.internalError(.unknownError))) // TODO
+                }
             }
-
-            if let data = data {
-                let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data)
-                completion?(decodedResponse)
-            }
-            
-            
-//            if let error = error {
-//                completion?(.error(error as NSError))
-//            } else if let data = data {
-//                // TODO handle response from the BE
-//                completion?(.ThreeDSRequired)
-//            } else {
-//                completion?(.error(ErrorBuilder.internalError(.unknownError)))
-//            }
         }
-        // perform request
         task.resume()
     }
     
@@ -70,32 +57,25 @@ class NetworkService: NetworkServiceProtocol {
             completion?(.error(ErrorBuilder.internalError(.cantBuildURL)))
             return
         }
-        // prepare request body
-        let encoder = JSONEncoder()
         
-        guard let bodyData = try? encoder.encode(DeviceDataRequest(cV2: payload.cardDetails.cv2, cardName: payload.cardDetails.cardName, cardNumber: payload.cardDetails.cardNumber, expiryDate: payload.cardDetails.expiryDate)) else {
+        guard let bodyData = getCardRequestBody(payload: payload) else {
             completion?(.error(ErrorBuilder.internalError(.cantEncodePayload)))
             return
         }
-        // configure URLRequest
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = bodyData
-        request.timeoutInterval = timeout
-        // configure task
+        
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        
         let task = session.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completion?(.error(error as NSError))
             } else if let data = data {
-                // TODO handle response from the BE
-                // TODO handle no 3DS response
                 let decoder = JSONDecoder()
                 if let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data) {
                        if decodedResponse.statusCode == 0 { //TODO, 3DS has a code 3
                            completion?(.complete)
                            return
                        }
-                    completion?(.ThreeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
+                    completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
                                                  jwt: decodedResponse.jwt,
                                                  md: decodedResponse.md))
                 }
@@ -108,16 +88,41 @@ class NetworkService: NetworkServiceProtocol {
     }
 }
 
+extension NetworkService {
+    func getDefaultPOSTRequest(url: URL, body: Data, timeout: TimeInterval) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = body
+        request.timeoutInterval = timeout
+        return request
+    }
+    
+    func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: payload)) else {
+            return nil
+        }
+        return bodyData
+    }
+}
+
 struct DeviceDataResponse: Decodable {
     let formAction: String?
     let token: String?
 }
 
-struct DeviceDataRequest: Encodable {
+struct CardPaymentDataRequest: Encodable {
     let cV2: String?
     let cardName: String?
     let cardNumber: String?
     let expiryDate: String?
+    
+    init(payload: DojoCardPaymentPayload) {
+        cV2 = payload.cardDetails.cv2
+        cardName = payload.cardDetails.cardName
+        cardNumber = payload.cardDetails.cardNumber
+        expiryDate = payload.cardDetails.expiryDate
+    }
 }
 
 struct ThreeDSResponse: Decodable {

@@ -25,13 +25,15 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
     private var webView: WKWebView?
     private var completion: ((Bool) -> Void)?
     private var token: String = ""
+    private var formAction: String = ""
     private var timeoutTimer: Timer?
     private var timeoutTimerTime = 15.0
     private var didReceiveMessage = false
     
-    convenience init(token: String, completion: ((Bool) -> Void)?) {
+    convenience init(token: String, formAction: String, completion: ((Bool) -> Void)?) {
         self.init()
         self.token = token
+        self.formAction = formAction
         self.completion = completion
         
         timeoutTimer = Timer.scheduledTimer(withTimeInterval: timeoutTimerTime, repeats: false) { [weak self] timer in
@@ -45,7 +47,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         
         //TODO the same for both webviews
         let config = WKWebViewConfiguration()
-        let source = "window.addEventListener('message', (event) => {if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') { return; } window.webkit.messageHandlers.iosListener.postMessage('data collection complete');})"
+        let source = "window.addEventListener('message', (event) => { window.webkit.messageHandlers.iosListener.postMessage('data collection complete');})"
             let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
             config.userContentController.addUserScript(script)
             config.userContentController.add(self, name: "iosListener")
@@ -55,13 +57,13 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         webView.uiDelegate = self
         webView.configuration.preferences.javaScriptEnabled = true
         
-        webView.loadHTMLString(getHTMLContent(token: token), baseURL:nil)
+        webView.loadHTMLString(getHTMLContent(token: token, formAction: formAction), baseURL:nil)
         self.view.addSubview(webView)
         
         self.webView = webView
     }
     
-    func getHTMLContent(token: String) -> String {
+    func getHTMLContent(token: String, formAction: String) -> String {
         """
         <!DOCTYPE html>
         <html>
@@ -78,7 +80,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         <body>
 
         <iframe name=”ddc-iframe” height="1" width="1"> </iframe>
-        <form id="ddc-form" target=”ddc-iframe”  method="POST" action="https://centinelapistag.cardinalcommerce.com/V1/Cruise/Collect">
+        <form id="ddc-form" target=”ddc-iframe”  method="POST" action="\(formAction)">
             <input id="ddc-input" name="JWT" value="\(token)" />
         </form>
         </body>

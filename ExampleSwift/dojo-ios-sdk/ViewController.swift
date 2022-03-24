@@ -14,11 +14,11 @@ class ViewController: UIViewController {
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
         print("startCardPayment")
         
-        let cardDetails = DojoCardDetails(cardNumber: "5200000000001096", cardName: "Card holder", expiryDate: "12 / 24", cv2: "020")
+        let cardDetails = DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card holder", expiryDate: "12 / 24", cv2: "020")
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails)
         
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: "UD5usPfEwQK33yyibsVIPSo5DYLGtFnZgIOEpw9yCMXXKKfRArd8loFpHx_DQ-wIKACrwhYeYCUiE4KRZ37QG7vDGl3S5_Wr8OTVD4e6L64czX-06MCj_lLNkAGLvWz5dpiJxSNG3q8sFvT7Eg==",
+        DojoSDK.executeCardPayment(token: "iodzB_BjIvM3eWwIM2wQTSSgLCBnn4SOqHwc-_esfn4un3k1Agu0xwclLJEN3ka74bdHydcpSQYteWTPI5AEUB9xm-ah5Uq4nfp2M2TgFe108nvGSaFAxr0jUUZYm7OU6Um48I9pK5lxaKNsGA==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()

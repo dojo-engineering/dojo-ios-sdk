@@ -28,31 +28,39 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         let networkService = NetworkService(timeout: 25)
         networkService.collectDeviceData(token: token, payload: payload) { result in
             // TODO error if token is exired for data collection
-            
-            // Collect details
-            handleDeviceDataCollection(token: result?.token) { res in
-                if let err = res { // error from token
-                    DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                        completion?(err)
-                    }
-                    return // don't need to continue
-                }
-                
-                // Perform card payment
-                networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
-                    switch cardPaymentResult {
-                    case .ThreeDSRequired(let stepUpUrl, let jwt, let md):
-                        handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { _ in
-                            completion?(nil)
-                        }
-                    case .complete: //TODO rename to something better
+            switch result {
+            case .deviceDataRequired(let formAction, let formToken):
+                // Collect details
+                handleDeviceDataCollection(token: formToken, formAction: formAction ) { res in
+                    if let err = res { // error from token
                         DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                            completion?(nil)
+                            completion?(err)
                         }
-                    default:
-                        break
+                        return // don't need to continue
+                    }
+                    
+                    // Perform card payment
+                    networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
+                        switch cardPaymentResult {
+                        case .threeDSRequired(let stepUpUrl, let jwt, let md):
+                            handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { _ in
+                                completion?(nil)
+                            }
+                        case .complete: //TODO rename to something better
+                            DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
+                                completion?(nil)
+                            }
+                        default:
+                            break
+                        }
                     }
                 }
+            case .error(let error):
+                DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
+                    completion?(error)
+                }
+            default:
+                break
             }
         }
     }
