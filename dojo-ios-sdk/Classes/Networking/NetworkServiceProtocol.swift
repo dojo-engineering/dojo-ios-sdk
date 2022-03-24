@@ -8,7 +8,7 @@
 import Foundation
 
 enum CardPaymentNetworkResponse {
-    case ThreeDSRequired(ascUrl: String?, jwt: String?, md: String?, paReq: String?)
+    case ThreeDSRequired(stepUpUrl: String?, jwt: String?, md: String?)
     case complete
     case error(NSError)
 }

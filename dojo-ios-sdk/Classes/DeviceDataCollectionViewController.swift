@@ -17,7 +17,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
         timeoutTimer?.invalidate()
         timeoutTimer = nil
         print("message: \(message.body)")
-        didReceiveMessage = true
+        didReceiveMessage = true // TODO
         completion?(true)
     }
     
@@ -29,19 +29,19 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
     private var timeoutTimerTime = 15.0
     private var didReceiveMessage = false
     
-    convenience init(token: String?, completion: ((Bool) -> Void)?) {
+    convenience init(token: String, completion: ((Bool) -> Void)?) {
         self.init()
         self.token = token
         self.completion = completion
+        
+        timeoutTimer = Timer.scheduledTimer(withTimeInterval: timeoutTimerTime, repeats: false) { [weak self] timer in
+            self?.completion?(true) //TODO make more robubst
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.alpha = 0
-        
-        timeoutTimer = Timer.scheduledTimer(withTimeInterval: timeoutTimerTime, repeats: false) { [weak self] timer in
-            self?.completion?(true) //TODO make more robubst
-        }
         
         let config = WKWebViewConfiguration()
         let source = "window.addEventListener('message', (event) => {if (event.origin !== 'https://centinelapistag.cardinalcommerce.com') { return; } window.webkit.messageHandlers.iosListener.postMessage('click clack!');})"
@@ -80,7 +80,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
 
         <iframe name=”ddc-iframe” height="1" width="1"> </iframe>
         <form id="ddc-form" target=”ddc-iframe”  method="POST" action="https://centinelapistag.cardinalcommerce.com/V1/Cruise/Collect">
-            <input id="ddc-input" name="JWT" value="\(token!)" />
+            <input id="ddc-input" name="JWT" value="\(token)" />
         </form>
         </body>
         </html>

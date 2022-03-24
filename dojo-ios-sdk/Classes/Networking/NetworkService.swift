@@ -93,7 +93,9 @@ class NetworkService: NetworkServiceProtocol {
                 let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data)
                 let str = String(decoding: data, as: UTF8.self)
                 print(str)
-                completion?(.ThreeDSRequired(ascUrl: decodedResponse?.stepUpUrl, jwt: decodedResponse?.jwt, md: decodedResponse?.md, paReq: decodedResponse?.paReq))
+                completion?(.ThreeDSRequired(stepUpUrl: decodedResponse?.stepUpUrl,
+                                             jwt: decodedResponse?.jwt,
+                                             md: decodedResponse?.md))
             } else {
                 completion?(.error(ErrorBuilder.internalError(.unknownError)))
             }
@@ -102,13 +104,6 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
 }
-
-//        request.setValue(
-//            "authToken",
-//            forHTTPHeaderField: "Authorization"
-//        )
-
-
 
 struct DeviceDataResponse: Decodable {
     let formAction: String?

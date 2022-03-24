@@ -29,19 +29,17 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     
     private var webView: WKWebView?
     private var completion: ((Bool) -> Void)?
-    private var acsUrl: String?
+    private var stepUpUrl: String?
     private var md: String?
     private var jwt: String?
-    private var paReq: String?
     private var timeoutTimer: Timer?
     private var timeoutTimerTime = 15.0
     
-    convenience init(acsUrl: String?, md: String?, jwt: String?, paReq: String?, completion: ((Bool) -> Void)?) {
+    convenience init(stepUpUrl: String?, md: String?, jwt: String?, completion: ((Bool) -> Void)?) {
         self.init()
-        self.acsUrl = acsUrl
+        self.stepUpUrl = stepUpUrl
         self.md = md
         self.jwt = jwt
-        self.paReq = paReq
         self.completion = completion
     }
     
@@ -72,7 +70,7 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         <!DOCTYPE html>
         <html>
         <body>
-        <form id="threeDs20Form" target="_self" method="post" action="\(acsUrl!)">
+        <form id="threeDs20Form" target="_self" method="post" action="\(stepUpUrl!)">
             <input name="JWT" value="\(jwt!)"/>
             <input name="MD" value="\(md!)"/>
         </form>

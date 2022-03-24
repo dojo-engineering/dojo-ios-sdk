@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails)
         
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: "oJu-rPOAfrB7fNRNW9rXFyPaWMej-ybJqQYAZ_35WToyKMG9Ip8DpT6FrS6AFlyntB2brrOgg6_LvlW-LxLDbsUSrmOWdoKuwK5NC-KNODcEIITa5HDX9NQor7tt6tvcDNJFLmiKR2YSTTg-Jg==",
+        DojoSDK.executeCardPayment(token: "MYiTQjwRb_IlgXJyxq4QaBZGt90pENuGWjlsEqxF9u_IaFXJAK-9karZ9vzc4creQHoB_azZCKSuMFIXxc2IF0aABWNtHnB2JTSRMVwPGkGbAzqeobwyLvlrDDQGjkRpLs0Zu5jyEEu8w5JHfw==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
@@ -44,6 +44,8 @@ class ViewController: UIViewController {
             switch error.code {
             case 0:
                 title = "Cancel"
+            case 7773:
+                title = "Error: token is not valid"
             default:
                 title = "Other Error"
             }

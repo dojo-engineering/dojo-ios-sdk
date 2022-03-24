@@ -16,6 +16,7 @@ enum InternalErrorCode: Int {
     case unknownError = 7770
     case cantBuildURL = 7771
     case cantEncodePayload = 7772
+    case tokenNull = 7773
     case cancel = 0
 }
 
