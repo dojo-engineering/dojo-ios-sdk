@@ -37,12 +37,20 @@ extension DojoSDK {
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now()) {
+            var navigationController: UINavigationController?
             let threeDSController = ThreeDSViewController(stepUpUrl: stepUpUrl, md: md, jwt: jwt) { resultCode in
-                fromViewController.dismiss(animated: true, completion: {
+                navigationController?.dismiss(animated: true, completion: {
                     completion?(resultCode)
                 })
             }
-            fromViewController.present(threeDSController, animated: false, completion: nil)
+            
+            navigationController = UINavigationController(rootViewController: threeDSController)
+            navigationController?.modalPresentationStyle = .fullScreen
+            if let navigationController = navigationController {
+                fromViewController.present(navigationController, animated: false, completion: nil)
+            } else {
+                completion?(SDKResponseCode.sdkInternalError.rawValue)
+            }
         }
     }
 }

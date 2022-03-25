@@ -81,7 +81,7 @@ class DeviceDataCollectionViewController: UIViewController, WKScriptMessageHandl
 
         <iframe name=”ddc-iframe” height="1" width="1"> </iframe>
         <form id="ddc-form" target=”ddc-iframe”  method="POST" action="\(formAction)">
-            <input id="ddc-input" name="JWT" value="\(token)" />
+            <input id="ddc-input" name="JWT" type="hidden" value="\(token)" />
         </form>
         </body>
         </html>

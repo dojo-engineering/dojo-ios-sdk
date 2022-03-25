@@ -10,7 +10,6 @@ import WebKit
 
 class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        print(message.body)
         if let dict = message.body as? Dictionary<String, Any> {
             if let messageData = dict["messageData"] as? Dictionary<String, Any> {
                 if let statusCode = messageData["statusCode"] as? Int {
@@ -53,16 +52,27 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         webView.loadHTMLString(getHTMLContent(stepUpUrl: stepUpUrl, jwt: jwt, md: md), baseURL:nil)
         self.view.addSubview(webView)
         self.webView = webView
+
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel,
+                                                           target: self,
+                                                           action: #selector(cancelTapped))
+    }
+    
+    @objc func cancelTapped() {
+        completion?(SDKResponseCode.declined.rawValue)
     }
     
     func getHTMLContent(stepUpUrl: String, jwt: String, md: String) -> String {
         """
         <!DOCTYPE html>
         <html>
+        <head>
+            <meta name="viewport" content="width=device-width, shrink-to-fit=YES">
+        </head>
         <body>
         <form id="threeDs20Form" target="_self" method="post" action="\(stepUpUrl)">
-            <input name="JWT" value="\(jwt)"/>
-            <input name="MD" value="\(md)"/>
+            <input name="JWT" type="hidden" value="\(jwt)"/>
+            <input name="MD" type="hidden" value="\(md)"/>
         </form>
         </div>
         </body>
