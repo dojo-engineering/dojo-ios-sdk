@@ -47,10 +47,10 @@ class ApplePayPlaceholderViewController: UIViewController {
     }
     
     @objc func onFailPress() {
-        completion?(ErrorBuilder.serverError(.applePayError))
+//        completion?(ErrorBuilder.serverError(.applePayError))
     }
     
     @objc func onCancelPress() {
-        completion?(ErrorBuilder.internalError(.cancel))
+//        completion?(ErrorBuilder.internalError(.cancel))
     }
 }

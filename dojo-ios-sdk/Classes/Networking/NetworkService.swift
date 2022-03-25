@@ -20,13 +20,13 @@ class NetworkService: NetworkServiceProtocol {
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayload,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(token: token, endpoint: .deviceData) else {
-            completion?(.error(ErrorBuilder.internalError(.cantBuildURL)))
+        guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .deviceData) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         guard let bodyData = getCardRequestBody(payload: payload) else {
-            completion?(.error(ErrorBuilder.internalError(.cantEncodePayload)))
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
@@ -34,8 +34,8 @@ class NetworkService: NetworkServiceProtocol {
         
         let task = session.dataTask(with: request) { (data, response, error) in
             //TODO check for status code
-            if let error = error {
-                completion?(.error(error as NSError))
+            if let _ = error {
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
@@ -43,7 +43,7 @@ class NetworkService: NetworkServiceProtocol {
                     completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
                                                     token: decodedResponse.token))
                 } else {
-                    completion?(.error(ErrorBuilder.internalError(.unknownError))) // TODO
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
                 }
             }
         }
@@ -53,26 +53,26 @@ class NetworkService: NetworkServiceProtocol {
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayload,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(token: token, endpoint: .cardPayment) else {
-            completion?(.error(ErrorBuilder.internalError(.cantBuildURL)))
+        guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .cardPayment) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         guard let bodyData = getCardRequestBody(payload: payload) else {
-            completion?(.error(ErrorBuilder.internalError(.cantEncodePayload)))
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
         
         let task = session.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                completion?(.error(error as NSError))
+            if let _ = error {
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             } else if let data = data {
                 let decoder = JSONDecoder()
                 if let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data) {
-                       if decodedResponse.statusCode == 0 { //TODO, 3DS has a code 3
-                           completion?(.complete)
+                    if decodedResponse.statusCode != SDKResponseCode.authorizing.rawValue { //TODO, 3DS has a code 3
+                        completion?(.result(decodedResponse.statusCode))
                            return
                        }
                     completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
@@ -80,7 +80,7 @@ class NetworkService: NetworkServiceProtocol {
                                                  md: decodedResponse.md))
                 }
             } else {
-                completion?(.error(ErrorBuilder.internalError(.unknownError)))
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             }
         }
         // perform request
@@ -117,11 +117,22 @@ struct CardPaymentDataRequest: Encodable {
     let cardNumber: String?
     let expiryDate: String?
     
+    let userEmailAddress: String?
+    let userPhoneNumber: String?
+    let billingAddress: DojoAddressDetails?
+    let shippingDetails: DojoShippingDetails?
+    let metaData: [String : String]?
+    
     init(payload: DojoCardPaymentPayload) {
-        cV2 = payload.cardDetails.cv2
-        cardName = payload.cardDetails.cardName
-        cardNumber = payload.cardDetails.cardNumber
-        expiryDate = payload.cardDetails.expiryDate
+        self.cV2 = payload.cardDetails.cv2
+        self.cardName = payload.cardDetails.cardName
+        self.cardNumber = payload.cardDetails.cardNumber
+        self.expiryDate = payload.cardDetails.expiryDate
+        self.userEmailAddress = payload.userEmailAddress
+        self.userPhoneNumber = payload.userPhoneNumber
+        self.billingAddress = payload.billingAddress
+        self.shippingDetails = payload.shippingDetails
+        self.metaData = payload.metaData
     }
 }
 

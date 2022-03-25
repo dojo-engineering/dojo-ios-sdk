@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails)
         
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: "iodzB_BjIvM3eWwIM2wQTSSgLCBnn4SOqHwc-_esfn4un3k1Agu0xwclLJEN3ka74bdHydcpSQYteWTPI5AEUB9xm-ah5Uq4nfp2M2TgFe108nvGSaFAxr0jUUZYm7OU6Um48I9pK5lxaKNsGA==",
+        DojoSDK.executeCardPayment(token: "LBa8MVxhhljQrvxX8MMDEVtAFQzZ1p9bi1B1mmymh2BNU7vybga7m051tjslGaC8fQemAwgxn_uYU-8gXo8qov_r9AQJZBiw7aT_2ZHrAT2dmLM5gTUOjXt3IfdawnCCI7hemX7MwXL4n7EsQA==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
@@ -38,19 +38,13 @@ class ViewController: UIViewController {
         }
     }
     
-    private func showAlert(_ error: NSError?) {
+    private func showAlert(_ resultCode: Int) {
         var title = ""
-        if let error = error {
-            switch error.code {
-            case 0:
-                title = "Cancel"
-            case 7773:
-                title = "Error: token is not valid"
-            default:
-                title = "Other Error"
-            }
-        } else {
+        switch resultCode {
+        case 0:
             title = "Success"
+        default:
+            title = "Other Error"
         }
         let alert = UIAlertController(title: title, message: nil, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))

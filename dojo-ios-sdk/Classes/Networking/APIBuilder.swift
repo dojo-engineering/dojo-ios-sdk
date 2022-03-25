@@ -13,15 +13,16 @@ enum APIEndpoint {
 }
 
 protocol APIBuilderProtocol {
-    static func buildURL(token: String , endpoint: APIEndpoint) throws -> URL
+    static func buildURL(_ isSandbox: Bool, token: String , endpoint: APIEndpoint) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
+    static let hostSandbox = "https://web.e.test.connect.paymentsense.cloud/api/"
     static let host = "https://web.e.test.connect.paymentsense.cloud/api/"
     
-    static func buildURL(token: String, endpoint: APIEndpoint) throws -> URL {
+    static func buildURL(_ isSandbox: Bool, token: String, endpoint: APIEndpoint) throws -> URL {
         // construct endpoint url
-        var stringURL = host
+        var stringURL = isSandbox ? hostSandbox : host
         switch endpoint {
         case .cardPayment:
             stringURL += "payments/"
@@ -31,7 +32,7 @@ struct APIBuilder: APIBuilderProtocol {
         // append token
         stringURL += token
         guard let url = URL(string: stringURL) else {
-            throw ErrorBuilder.internalError(.cantBuildURL)
+            throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)
         }
         return url
     }

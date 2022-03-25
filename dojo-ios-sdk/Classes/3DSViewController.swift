@@ -10,26 +10,25 @@ import WebKit
 
 class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-//        print(message.body) TODO - proper logs
+        print(message.body)
         if let dict = message.body as? Dictionary<String, Any> {
-            if let mesData = dict["messageData"] as? Dictionary<String, Any> {
-                print("transaction result: \(mesData["statusCode"])")
-                timeoutTimer?.invalidate()
-                timeoutTimer = nil
-                completion?(true)
+            if let messageData = dict["messageData"] as? Dictionary<String, Any> {
+                if let statusCode = messageData["statusCode"] as? Int {
+                    completion?(statusCode)
+                } else {
+                    completion?(SDKResponseCode.sdkInternalError.rawValue)
+                }
             }
         }
     }
     
     private var webView: WKWebView?
-    private var completion: ((Bool) -> Void)?
+    private var completion: ((Int) -> Void)?
     private var stepUpUrl: String = ""
     private var md: String = ""
     private var jwt: String = ""
-    private var timeoutTimer: Timer?
-    private var timeoutTimerTime = 15.0
     
-    convenience init(stepUpUrl: String, md: String, jwt: String, completion: ((Bool) -> Void)?) {
+    convenience init(stepUpUrl: String, md: String, jwt: String, completion: ((Int) -> Void)?) {
         self.init()
         self.stepUpUrl = stepUpUrl
         self.md = md
@@ -77,5 +76,3 @@ extension ThreeDSViewController: WKNavigationDelegate, WKUIDelegate {
         webView.evaluateJavaScript("document.getElementById('threeDs20Form').submit()", completionHandler: nil)
     }
 }
-
-

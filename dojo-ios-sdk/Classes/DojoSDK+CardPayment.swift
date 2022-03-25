@@ -10,9 +10,9 @@ import UIKit
 extension DojoSDK {
     static func handleDeviceDataCollection(token: String?,
                                            formAction: String?,
-                                           completion: ((NSError?) -> Void)?) {
+                                           completion: ((Int?) -> Void)?) {
         guard let token = token, let formAction = formAction else {
-            completion?(ErrorBuilder.internalError(.tokenNull)) // TODO
+            completion?(SDKResponseCode.sdkInternalError.rawValue)
             return
         }
         DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -28,18 +28,18 @@ extension DojoSDK {
                               jwt: String?,
                               md: String?,
                               fromViewController: UIViewController,
-                              completion: ((NSError?) -> Void)?) {
+                              completion: ((Int) -> Void)?) {
         guard let stepUpUrl = stepUpUrl,
             let jwt = jwt,
             let md = md else {
-            completion?(ErrorBuilder.internalError(.threeDSParamsNull))
+            completion?(SDKResponseCode.sdkInternalError.rawValue)
             return
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now()) {
-            let threeDSController = ThreeDSViewController(stepUpUrl: stepUpUrl, md: md, jwt: jwt) { threeDS in
+            let threeDSController = ThreeDSViewController(stepUpUrl: stepUpUrl, md: md, jwt: jwt) { resultCode in
                 fromViewController.dismiss(animated: true, completion: {
-                    completion?(nil)
+                    completion?(resultCode)
                 })
             }
             fromViewController.present(threeDSController, animated: false, completion: nil)

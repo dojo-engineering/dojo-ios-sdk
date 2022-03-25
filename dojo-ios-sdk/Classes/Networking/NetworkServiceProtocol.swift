@@ -10,8 +10,7 @@ import Foundation
 enum CardPaymentNetworkResponse {
     case threeDSRequired(stepUpUrl: String?, jwt: String?, md: String?)
     case deviceDataRequired(formAction: String?, token: String?)
-    case complete
-    case error(NSError)
+    case result(Int)
 }
 
 protocol NetworkServiceProtocol {
