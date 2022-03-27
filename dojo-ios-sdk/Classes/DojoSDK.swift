@@ -27,40 +27,32 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           completion: ((Int) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
         networkService.collectDeviceData(token: token, payload: payload) { result in
-            // TODO error if token is exired for data collection
             switch result {
             case .deviceDataRequired(let formAction, let formToken):
                 // Collect details
                 handleDeviceDataCollection(token: formToken, formAction: formAction ) { res in
                     if let err = res { // error from token
-                        DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                            completion?(err)
-                        }
+                        sendCompletionOnMainThread(result: err, completion: completion)
                         return // don't need to continue
                     }
-                    
                     // Perform card payment
                     networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
                         switch cardPaymentResult {
                         case .threeDSRequired(let stepUpUrl, let jwt, let md):
-                            handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController, completion: completion)
-                        case .result(let resultCode):
-                            DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                                completion?(resultCode)
+                            handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { threeDSResult in
+                                sendCompletionOnMainThread(result: threeDSResult, completion: completion)
                             }
+                        case .result(let resultCode):
+                            sendCompletionOnMainThread(result: resultCode, completion: completion)
                         default:
-                            break
+                            sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
                         }
                     }
                 }
             case .result(let resultCode):
-                DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                    completion?(resultCode)
-                }
+                sendCompletionOnMainThread(result: resultCode, completion: completion)
             default:
-                DispatchQueue.main.asyncAfter(deadline: .now()) { // TODO
-                    completion?(SDKResponseCode.sdkInternalError.rawValue)
-                }
+                sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
             }
         }
     }
@@ -69,16 +61,15 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                               payload: DojoApplePayPayload,
                                               fromViewController: UIViewController,
                                               completion: ((Int) -> Void)?) {
-//        let applePayDemoController = ApplePayPlaceholderViewController { result in
-//            fromViewController.dismiss(animated: true) {
-//                completion?(result)
-//            }
-//        }
-//        if #available(iOS 13.0, *) {
-//            applePayDemoController.isModalInPresentation = true
-//        }
-//        DispatchQueue.main.asyncAfter(deadline: .now()) {
-//            fromViewController.present(applePayDemoController, animated: true, completion: nil)
-//        }
+        // NOT IMPLEMENTED
+        completion?(SDKResponseCode.sdkInternalError.rawValue)
+    }
+}
+
+private extension DojoSDK {
+    static func sendCompletionOnMainThread(result: Int, completion: ((Int) -> Void)?) {
+        DispatchQueue.main.async {
+            completion?(result)
+        }
     }
 }
