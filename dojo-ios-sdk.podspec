@@ -21,22 +21,27 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/Deniss Kaibagarovs/dojo-ios-sdk'
+  s.homepage         = 'https://github.com/dojo-engineering/dojo-ios-sdk'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Deniss Kaibagarovs' => 'deniss.kaibagarovs@gmail.com' }
-  s.source           = { :git => 'https://github.com/Deniss Kaibagarovs/dojo-ios-sdk.git', :tag => s.version.to_s }
+  s.author           = { 'Deniss Kaibagarovs' => 'deniss.kaibagarovs@paymentsense.com' }
+  s.source           = { :git => 'https://github.com/dojo-engineering/dojo-ios-sdk.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '11.0'
 
   s.source_files = 'dojo-ios-sdk/Classes/**/*'
+  s.public_header_files = 'dojo-ios-sdk/Classes/**/*.h'
+  
+  s.test_spec 'dojo-ios-sdk-tests' do |test_spec|
+      test_spec.source_files = 'dojo-ios-sdk/Tests/**/*'
+  end
   
   # s.resource_bundles = {
   #   'dojo-ios-sdk' => ['dojo-ios-sdk/Assets/*.png']
   # }
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
+   
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end

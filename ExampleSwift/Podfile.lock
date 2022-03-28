@@ -1,0 +1,18 @@
+PODS:
+  - dojo-ios-sdk (0.1.0)
+  - dojo-ios-sdk/dojo-ios-sdk-tests (0.1.0)
+
+DEPENDENCIES:
+  - dojo-ios-sdk (from `../`)
+  - dojo-ios-sdk/dojo-ios-sdk-tests (from `../`)
+
+EXTERNAL SOURCES:
+  dojo-ios-sdk:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  dojo-ios-sdk: c0461993f36f9921a9ed8434143d02db6882d563
+
+PODFILE CHECKSUM: 70e851f8c1bc0ca419f0b651776b0eb03de02b84
+
+COCOAPODS: 1.11.2
