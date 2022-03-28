@@ -14,11 +14,11 @@ class ViewController: UIViewController {
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
         print("startCardPayment")
         
-        let cardDetails = DojoCardDetails(cardNumber: "232323232323", cardName: "Jane Smith", expiryDate: "12/23", cv2: "252")
-        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails)
+        let cardDetails = DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card holder", expiryDate: "12 / 24", cv2: "020")
+        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: cardDetails, isSandbox: true)
         
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: "token",
+        DojoSDK.executeCardPayment(token: "eO83ONQzrD18HsxjqwzzQC7auF3qhP8tdsZjxwGxoFMwSXiLAxZb6FIWxUE6hdI_vHgmtD_zvcalSzePHF_D7yvO5Tfs6hnHTAV2kOhcaHxtbeujYAhwxo3uSWI8Pg03ZeoJb5FNWqi6j8KeVA==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
@@ -38,17 +38,13 @@ class ViewController: UIViewController {
         }
     }
     
-    private func showAlert(_ error: NSError?) {
+    private func showAlert(_ resultCode: Int) {
         var title = ""
-        if let error = error {
-            switch error.code {
-            case 0:
-                title = "Cancel"
-            default:
-                title = "Other Error"
-            }
-        } else {
+        switch resultCode {
+        case 0:
             title = "Success"
+        default:
+            title = "Other Error"
         }
         let alert = UIAlertController(title: title, message: nil, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))

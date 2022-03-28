@@ -12,51 +12,64 @@ public protocol DojoSDKProtocol {
     static func executeCardPayment(token: String,
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
-                                   completion: ((NSError?) -> Void)?)
+                                   completion: ((Int) -> Void)?)
     static func executeApplePayPayment(token: String,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
-                                       completion: ((NSError?) -> Void)?)
+                                       completion: ((Int) -> Void)?)
 }
 
 @objc
 public class DojoSDK: NSObject, DojoSDKProtocol {
-    
     public static func executeCardPayment(token: String,
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
-                                          completion: ((NSError?) -> Void)?) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let threeDSController = ThreeDSViewController() { is3DSSuccess in
-                fromViewController.dismiss(animated: true) {
-                    if is3DSSuccess {
-                        completion?(nil)
-                    } else {
-                        completion?(NSError(domain: "3DS", code: 881, userInfo: nil))
+                                          completion: ((Int) -> Void)?) {
+        let networkService = NetworkService(timeout: 25)
+        networkService.collectDeviceData(token: token, payload: payload) { result in
+            switch result {
+            case .deviceDataRequired(let formAction, let formToken):
+                // Collect details
+                handleDeviceDataCollection(token: formToken, formAction: formAction ) { res in
+                    if let err = res { // error from token
+                        sendCompletionOnMainThread(result: err, completion: completion)
+                        return // don't need to continue
+                    }
+                    // Perform card payment
+                    networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
+                        switch cardPaymentResult {
+                        case .threeDSRequired(let stepUpUrl, let jwt, let md):
+                            handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { threeDSResult in
+                                sendCompletionOnMainThread(result: threeDSResult, completion: completion)
+                            }
+                        case .result(let resultCode):
+                            sendCompletionOnMainThread(result: resultCode, completion: completion)
+                        default:
+                            sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
+                        }
                     }
                 }
+            case .result(let resultCode):
+                sendCompletionOnMainThread(result: resultCode, completion: completion)
+            default:
+                sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
             }
-            if #available(iOS 13.0, *) {
-                threeDSController.isModalInPresentation = true
-            }
-            fromViewController.present(threeDSController, animated: true, completion: nil)
         }
     }
     
     public static func executeApplePayPayment(token: String,
                                               payload: DojoApplePayPayload,
                                               fromViewController: UIViewController,
-                                              completion: ((NSError?) -> Void)?) {
-        let applePayDemoController = ApplePayPlaceholderViewController { result in
-            fromViewController.dismiss(animated: true) {
-                completion?(result)
-            }
-        }
-        if #available(iOS 13.0, *) {
-            applePayDemoController.isModalInPresentation = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
-            fromViewController.present(applePayDemoController, animated: true, completion: nil)
+                                              completion: ((Int) -> Void)?) {
+        // NOT IMPLEMENTED
+        completion?(SDKResponseCode.sdkInternalError.rawValue)
+    }
+}
+
+private extension DojoSDK {
+    static func sendCompletionOnMainThread(result: Int, completion: ((Int) -> Void)?) {
+        DispatchQueue.main.async {
+            completion?(result)
         }
     }
 }

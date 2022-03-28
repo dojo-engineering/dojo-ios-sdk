@@ -33,6 +33,10 @@ TODO: Add long description of the pod here.
   s.source_files = 'dojo-ios-sdk/Classes/**/*'
   s.public_header_files = 'dojo-ios-sdk/Classes/**/*.h'
   
+  s.test_spec 'dojo-ios-sdk-tests' do |test_spec|
+      test_spec.source_files = 'dojo-ios-sdk/Tests/**/*'
+  end
+  
   # s.resource_bundles = {
   #   'dojo-ios-sdk' => ['dojo-ios-sdk/Assets/*.png']
   # }

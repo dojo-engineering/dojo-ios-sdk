@@ -8,7 +8,7 @@
 import Foundation
 
 @objc
-public class DojoCardDetails: NSObject {
+public class DojoCardDetails: NSObject, Codable {
     @objc public init(cardNumber: String,
                 cardName: String? = nil,
                 expiryDate: String? = nil,
