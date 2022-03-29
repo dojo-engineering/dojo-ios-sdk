@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,35 +20,96 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Twl-ID-0U1">
-                                <rect key="frame" x="97.5" y="329" width="180" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Start ApplePay Payment"/>
-                                <connections>
-                                    <action selector="onApplePayPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="CcO-ls-Dg9"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vE4-qq-HA1">
-                                <rect key="frame" x="112" y="278" width="151" height="31"/>
+                                <rect key="frame" x="103.5" y="606" width="168" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="WDH-zH-OUj"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Start Card Payment"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Execute card payment"/>
                                 <connections>
                                     <action selector="onStartCardPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hk3-dO-OEc"/>
                                 </connections>
                             </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="p8b-Nw-nTi">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="491"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="eLi-cz-BGX"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="qdg-gF-Fka"/>
+                                </connections>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Autofill card details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xDa-cu-VoX">
+                                <rect key="frame" x="8" y="507" width="145.5" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2he-WW-Z6b">
+                                <rect key="frame" x="8" y="535" width="359" height="31"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1r-Na-L8h">
+                                        <rect key="frame" x="0.0" y="0.0" width="90" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="3DS 2.0"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QAw-NC-Bgl"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9mI-LD-90t">
+                                        <rect key="frame" x="90" y="0.0" width="89.5" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="3DS 1.0"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zzN-HG-FRj"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o2s-He-auN">
+                                        <rect key="frame" x="179.5" y="0.0" width="90" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="none 3DS"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QRI-ci-2iu"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KfN-R1-5am">
+                                        <rect key="frame" x="269.5" y="0.0" width="89.5" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="decline"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Va7-gT-5kR"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="09z-R2-c9E"/>
-                            <constraint firstItem="Twl-ID-0U1" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="20" id="MKh-An-ZWV"/>
-                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" constant="-40" id="UTu-Hk-uD3"/>
-                            <constraint firstItem="Twl-ID-0U1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="lq4-Yw-NRG"/>
+                            <constraint firstItem="2he-WW-Z6b" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="4Lu-Yz-iAr"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="16" id="6Ri-mi-6aX"/>
+                            <constraint firstItem="2he-WW-Z6b" firstAttribute="top" secondItem="xDa-cu-VoX" secondAttribute="bottom" constant="7.5" id="QWO-Hv-pbf"/>
+                            <constraint firstItem="p8b-Nw-nTi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="XaI-tS-EmU"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="30" id="ZfR-5D-1q0"/>
+                            <constraint firstItem="p8b-Nw-nTi" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="e9z-KG-mX8"/>
+                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="kwg-TR-Pa3"/>
+                            <constraint firstAttribute="trailing" secondItem="2he-WW-Z6b" secondAttribute="trailing" constant="8" id="niK-uK-Wgz"/>
+                            <constraint firstItem="vE4-qq-HA1" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="115" id="pmT-pk-LSI"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="vND-r8-p1x"/>
+                            <constraint firstAttribute="trailing" secondItem="p8b-Nw-nTi" secondAttribute="trailing" id="wO2-eO-JYG"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="mainTableView" destination="p8b-Nw-nTi" id="XgI-pv-YZd"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="130" y="112"/>
+            <point key="canvasLocation" x="128.80000000000001" y="111.99400299850076"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
