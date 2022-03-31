@@ -21,32 +21,33 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vE4-qq-HA1">
-                                <rect key="frame" x="103.5" y="606" width="168" height="31"/>
+                                <rect key="frame" x="98" y="616" width="179" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="31" id="WDH-zH-OUj"/>
                                 </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Execute card payment"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Execute card payment"/>
                                 <connections>
                                     <action selector="onStartCardPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hk3-dO-OEc"/>
                                 </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="p8b-Nw-nTi">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="491"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="476"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
                                     <outlet property="dataSource" destination="vXZ-lx-hvc" id="eLi-cz-BGX"/>
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="qdg-gF-Fka"/>
                                 </connections>
                             </tableView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Autofill card details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xDa-cu-VoX">
-                                <rect key="frame" x="8" y="507" width="145.5" height="20.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sandbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xDa-cu-VoX">
+                                <rect key="frame" x="12" y="488" width="56.5" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2he-WW-Z6b">
-                                <rect key="frame" x="8" y="535" width="359" height="31"/>
+                                <rect key="frame" x="8" y="547" width="359" height="31"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1r-Na-L8h">
                                         <rect key="frame" x="0.0" y="0.0" width="90" height="31"/>
@@ -82,24 +83,38 @@
                                     </button>
                                 </subviews>
                             </stackView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PC7-Ic-uo4">
+                                <rect key="frame" x="83" y="481" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Autofill card details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRh-AV-HMr">
+                                <rect key="frame" x="12" y="524" width="124" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="2he-WW-Z6b" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="4Lu-Yz-iAr"/>
-                            <constraint firstItem="xDa-cu-VoX" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="16" id="6Ri-mi-6aX"/>
-                            <constraint firstItem="2he-WW-Z6b" firstAttribute="top" secondItem="xDa-cu-VoX" secondAttribute="bottom" constant="7.5" id="QWO-Hv-pbf"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="12" id="6Ri-mi-6aX"/>
+                            <constraint firstItem="PC7-Ic-uo4" firstAttribute="centerY" secondItem="xDa-cu-VoX" secondAttribute="centerY" id="OU6-bU-Q9x"/>
                             <constraint firstItem="p8b-Nw-nTi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="XaI-tS-EmU"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="30" id="ZfR-5D-1q0"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="20" id="ZfR-5D-1q0"/>
                             <constraint firstItem="p8b-Nw-nTi" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="e9z-KG-mX8"/>
+                            <constraint firstItem="PC7-Ic-uo4" firstAttribute="leading" secondItem="xDa-cu-VoX" secondAttribute="trailing" constant="14.5" id="eVV-ym-T4Q"/>
+                            <constraint firstItem="xRh-AV-HMr" firstAttribute="top" secondItem="PC7-Ic-uo4" secondAttribute="bottom" constant="12" id="hRs-Yl-GlS"/>
                             <constraint firstItem="vE4-qq-HA1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="kwg-TR-Pa3"/>
                             <constraint firstAttribute="trailing" secondItem="2he-WW-Z6b" secondAttribute="trailing" constant="8" id="niK-uK-Wgz"/>
-                            <constraint firstItem="vE4-qq-HA1" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="115" id="pmT-pk-LSI"/>
-                            <constraint firstItem="xDa-cu-VoX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="vND-r8-p1x"/>
+                            <constraint firstItem="vE4-qq-HA1" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="140" id="pmT-pk-LSI"/>
+                            <constraint firstItem="xRh-AV-HMr" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="u4h-Jn-hjK"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="vND-r8-p1x"/>
+                            <constraint firstItem="2he-WW-Z6b" firstAttribute="top" secondItem="xRh-AV-HMr" secondAttribute="bottom" constant="6" id="w4G-s8-QtZ"/>
                             <constraint firstAttribute="trailing" secondItem="p8b-Nw-nTi" secondAttribute="trailing" id="wO2-eO-JYG"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="mainTableView" destination="p8b-Nw-nTi" id="XgI-pv-YZd"/>
+                        <outlet property="switchIsSandbox" destination="PC7-Ic-uo4" id="tXK-t6-hBI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

@@ -12,6 +12,7 @@ import dojo_ios_sdk
 class ViewController: UIViewController {
     
     @IBOutlet weak var mainTableView: UITableView!
+    @IBOutlet weak var switchIsSandbox: UISwitch!
     private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv]
     
     override func viewDidLoad() {
@@ -20,7 +21,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
-        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(), isSandbox: true)
+        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(), isSandbox: switchIsSandbox.isOn)
         showLoadingIndicator()
         DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
