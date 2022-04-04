@@ -13,7 +13,7 @@ class NetworkService: NetworkServiceProtocol {
     let timeout: TimeInterval
     
     required init(timeout: TimeInterval) {
-        self.session = URLSession.shared
+        self.session = NetworkService.getSesstion()
         self.timeout = timeout
     }
     
@@ -91,10 +91,18 @@ class NetworkService: NetworkServiceProtocol {
 extension NetworkService {
     func getDefaultPOSTRequest(url: URL, body: Data, timeout: TimeInterval) -> URLRequest {
         var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.httpMethod = "POST"
         request.httpBody = body
         request.timeoutInterval = timeout
         return request
+    }
+    
+    static func getSesstion() -> URLSession {
+        let configuration = URLSessionConfiguration.default
+        configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        configuration.urlCache = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
+        return URLSession(configuration: configuration)
     }
     
     func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
