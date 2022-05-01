@@ -48,8 +48,9 @@ class ViewController: UIViewController {
         
         let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.dojo.com")
         let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
+        let paymentIntent = DojoPaymentIntent(clientSessionSecret: "token", totalAmount: DojoPaymentIntentAmount(value: 1, currencyCode: "GBP"))
         
-        DojoSDK.executeApplePayPayment(token: "token", payload: applePayPayload, fromViewController: self) { [weak self] result in
+        DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
             self?.showAlert(result)
         }

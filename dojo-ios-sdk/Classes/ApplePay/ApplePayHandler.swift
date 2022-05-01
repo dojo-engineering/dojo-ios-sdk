@@ -9,7 +9,7 @@ import Foundation
 import PassKit
 
 protocol ApplePayHandlerProtocol {
-    func handleApplePay(token: String,
+    func handleApplePay(paymentIntent: DojoPaymentIntent,
                         payload: DojoApplePayPayload,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?)
@@ -25,25 +25,25 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     
     // TODO organise
     var paymentStatus: PKPaymentAuthorizationStatus = .failure
-    var token: String?
+    var paymentIntent: DojoPaymentIntent?
     var payload: DojoApplePayPayload?
     var completion: ((Int) -> Void)?
     
     // needs to be shared so apple pay can receive delegate notifications
     static let shared = ApplePayHandler()
     
-    func handleApplePay(token: String,
+    func handleApplePay(paymentIntent: DojoPaymentIntent,
                         payload: DojoApplePayPayload,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?) {
         
-        self.token = token
+        self.paymentIntent = paymentIntent
         self.completion = completion
         self.payload = payload
         var paymentSummaryItems = [PKPaymentSummaryItem]()
         
         //TODO check if ApplePay is avaialbe
-        let amount = PKPaymentSummaryItem(label: "Amount", amount: NSDecimalNumber(string: "0.01"), type: .final)
+        let amount = PKPaymentSummaryItem(label: "Amount", amount: NSDecimalNumber(mantissa: paymentIntent.totalAmount.value, exponent: -2, isNegative: false), type: .final)
 
         paymentSummaryItems = [amount];
         
@@ -100,7 +100,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         // TODO
         
         //TODO send a correct payload
-        guard let token = token, let payload = payload else {
+        guard let token = paymentIntent?.clientSessionSecret, let payload = payload else {
             // return that can't perform payment because token or payload is nil
             return
         }

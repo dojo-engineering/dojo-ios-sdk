@@ -13,7 +13,7 @@ public protocol DojoSDKProtocol {
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
-    static func executeApplePayPayment(token: String,
+    static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
@@ -57,11 +57,11 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         }
     }
     
-    public static func executeApplePayPayment(token: String,
+    public static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                               payload: DojoApplePayPayload,
                                               fromViewController: UIViewController,
                                               completion: ((Int) -> Void)?) {
-        ApplePayHandler.shared.handleApplePay(token: token,
+        ApplePayHandler.shared.handleApplePay(paymentIntent: paymentIntent,
                                               payload: payload,
                                               fromViewController: fromViewController,
                                               completion: { result in
