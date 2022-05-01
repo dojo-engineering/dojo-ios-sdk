@@ -57,14 +57,18 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
         // Create our payment request
         let paymentRequest = PKPaymentRequest()
         paymentRequest.paymentSummaryItems = paymentSummaryItems
-        paymentRequest.merchantIdentifier = "merchant.uk.co.paymentsense.sdk.demo.app"
+        paymentRequest.merchantIdentifier = payload.applePayConfig.merchantIdentifier
         paymentRequest.merchantCapabilities = .capability3DS
         paymentRequest.countryCode = "BG"
-        paymentRequest.currencyCode = "GBP"
-        paymentRequest.requiredShippingContactFields = [.emailAddress]
-        paymentRequest.requiredBillingContactFields = [.postalAddress]
-        paymentRequest.supportedNetworks = supportedNetworks
+        paymentRequest.currencyCode = paymentIntent.totalAmount.currencyCode
+        if payload.applePayConfig.collectBillingAddress {
+            paymentRequest.requiredBillingContactFields = [.postalAddress]
+        }
         
+        if payload.applePayConfig.collectShippingAddress {
+            paymentRequest.requiredShippingContactFields = [.postalAddress]
+        }
+        paymentRequest.supportedNetworks = supportedNetworks
         
 
         // Display our payment request
@@ -102,6 +106,8 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         //TODO send a correct payload
         guard let token = paymentIntent?.clientSessionSecret, let payload = payload else {
             // return that can't perform payment because token or payload is nil
+            self.paymentStatus = .failure
+            completion(self.paymentStatus)
             return
         }
         
@@ -109,10 +115,14 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         
         do {
             paymentData = try JSONDecoder().decode(ApplePayDataTokenPaymentData.self, from: payment.token.paymentData)
-        } catch { print(error) }
+        } catch {
+            print(error)
+        }
         
         guard let paymentData = paymentData else {
             // return that can't perform payment because token or payload is nil
+            self.paymentStatus = .failure
+            completion(self.paymentStatus)
             return
         }
         
@@ -120,7 +130,9 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
                                                                                paymentMethod: ApplePayDataTokenPaymentMethod(displayName: payment.token.paymentMethod.displayName ?? "",
                                                                                                                              network: payment.token.paymentMethod.network?.rawValue ?? "",
                                                                                                                              type: convertPaymentMethodType(payment.token.paymentMethod.type)),
-                                                                               transactionIdentifier: payment.token.transactionIdentifier))
+                                                                               transactionIdentifier: payment.token.transactionIdentifier),
+        billingContact: nil,
+        shippingContact: nil)
 
         networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
             self.paymentStatus = .failure

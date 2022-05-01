@@ -46,7 +46,7 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
-        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.dojo.com")
+        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app")
         let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
         let paymentIntent = DojoPaymentIntent(clientSessionSecret: "token", totalAmount: DojoPaymentIntentAmount(value: 1, currencyCode: "GBP"))
         
