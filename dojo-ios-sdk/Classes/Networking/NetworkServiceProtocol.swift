@@ -21,4 +21,7 @@ protocol NetworkServiceProtocol {
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayload,
                             completion: ((CardPaymentNetworkResponse) -> Void)?)
+    func performApplePayPayment(token: String,
+                                payloads: (DojoApplePayPayload, ApplePayDataRequest), //TODO
+                                completion: ((CardPaymentNetworkResponse) -> Void)?)
 }

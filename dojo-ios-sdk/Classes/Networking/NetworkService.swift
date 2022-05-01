@@ -8,7 +8,6 @@
 import Foundation
 
 class NetworkService: NetworkServiceProtocol {
-    
     let session: URLSession
     let timeout: TimeInterval
     
@@ -86,6 +85,39 @@ class NetworkService: NetworkServiceProtocol {
         // perform request
         task.resume()
     }
+    
+    func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
+        guard let url = try? APIBuilder.buildURL(false, // for ApplePay there is no sandbox env, you need to use Apple's test cards
+                                                 token: token,
+                                                 endpoint: .applePay) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        guard let bodyData = getApplePayRequestBody(payload: payloads.1) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            //TODO check for status code
+            if let _ = error {
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            } else {
+                let decoder = JSONDecoder()
+                if let data = data,
+                   let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data){
+                    completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
+                                                    token: decodedResponse.token))
+                } else {
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                }
+            }
+        }
+        task.resume()
+    }
 }
 
 extension NetworkService {
@@ -108,6 +140,14 @@ extension NetworkService {
     func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
         let encoder = JSONEncoder()
         guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: payload)) else {
+            return nil
+        }
+        return bodyData
+    }
+    
+    func getApplePayRequestBody(payload: ApplePayDataRequest) -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(payload) else {
             return nil
         }
         return bodyData

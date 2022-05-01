@@ -8,16 +8,24 @@
 
 import UIKit
 import dojo_ios_sdk
+import PassKit
 
 class ViewController: UIViewController {
     
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var switchIsSandbox: UISwitch!
+    @IBOutlet weak var buttonApplePay: PKPaymentButton!
     private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         InputTableViewCell.register(tableView: mainTableView)
+        setupApplePayButton()
+    }
+    
+    func setupApplePayButton() {
+        buttonApplePay.setTitle("", for: .normal)
+        buttonApplePay.addTarget(self, action: #selector(onApplePayPaymentPress), for: .touchUpInside)
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {

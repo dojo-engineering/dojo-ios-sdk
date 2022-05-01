@@ -61,8 +61,12 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                               payload: DojoApplePayPayload,
                                               fromViewController: UIViewController,
                                               completion: ((Int) -> Void)?) {
-        // NOT IMPLEMENTED
-        completion?(SDKResponseCode.sdkInternalError.rawValue)
+        ApplePayHandler.shared.handleApplePay(token: token,
+                                              payload: payload,
+                                              fromViewController: fromViewController,
+                                              completion: { result in
+            completion?(result)
+        })
     }
 }
 

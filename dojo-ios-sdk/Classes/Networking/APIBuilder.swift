@@ -10,6 +10,7 @@ import Foundation
 enum APIEndpoint {
     case cardPayment
     case deviceData
+    case applePay
 }
 
 protocol APIBuilderProtocol {
@@ -28,9 +29,13 @@ struct APIBuilder: APIBuilderProtocol {
             stringURL += "payments/"
         case .deviceData:
             stringURL += "device-data/"
+        case .applePay:
+            stringURL += "payments/\(token)/apple-pay"
         }
-        // append token
-        stringURL += token
+        // append token, for apple pay it differs
+        if endpoint != .applePay {
+            stringURL += token
+        }
         guard let url = URL(string: stringURL) else {
             throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)
         }
