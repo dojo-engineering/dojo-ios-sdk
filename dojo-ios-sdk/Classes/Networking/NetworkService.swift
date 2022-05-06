@@ -65,7 +65,7 @@ class NetworkService: NetworkServiceProtocol {
         let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
         
         let task = session.dataTask(with: request) { (data, response, error) in
-            if let _ = error {
+            if let _ = error { // error
                 completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             } else if let data = data {
                 let decoder = JSONDecoder()
@@ -77,8 +77,10 @@ class NetworkService: NetworkServiceProtocol {
                     completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
                                                  jwt: decodedResponse.jwt,
                                                  md: decodedResponse.md))
+                } else { // can't decode
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
                 }
-            } else {
+            } else { // no error and data is nil
                 completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             }
         }

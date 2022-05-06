@@ -57,6 +57,9 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
         if payload.applePayConfig.collectShippingAddress {
             paymentRequest.requiredShippingContactFields = [.postalAddress]
         }
+        if payload.applePayConfig.collectEmail {
+            paymentRequest.requiredShippingContactFields.insert(.emailAddress)
+        }
 
         // Display payment request
         let paymentController: PKPaymentAuthorizationController = PKPaymentAuthorizationController(paymentRequest: paymentRequest)
@@ -148,14 +151,30 @@ extension ApplePayHandler {
     
     func convertApplePayPaymentObjectToServerFormat(_ payment: PKPayment) throws -> ApplePayDataRequest {
         let paymentData = try JSONDecoder().decode(ApplePayDataTokenPaymentData.self, from: payment.token.paymentData)
-        
         return ApplePayDataRequest(token: ApplePayDataToken(paymentData:paymentData,
                                                             paymentMethod: ApplePayDataTokenPaymentMethod(displayName: payment.token.paymentMethod.displayName ?? "",
                                                                                                           network: payment.token.paymentMethod.network?.rawValue ?? "",
                                                                                                           type: convertPaymentMethodType(payment.token.paymentMethod.type)),
                                                             transactionIdentifier: payment.token.transactionIdentifier),
-                                   billingContact: nil,
-                                   shippingContact: nil)
+                                   billingContact: convertAppleContactToServerContact(payment.billingContact),
+                                   shippingContact: convertAppleContactToServerContact(payment.shippingContact))
         
+    }
+    
+    func convertAppleContactToServerContact(_ contact: PKContact?) -> ApplePayAddressContact {
+        ApplePayAddressContact(phoneNumber: contact?.phoneNumber?.stringValue,
+                               emailAddress: contact?.emailAddress,
+                               givenName: contact?.name?.givenName,
+                               familyName: contact?.name?.familyName,
+                               phoneticGivenName: contact?.name?.phoneticRepresentation?.givenName,
+                               phoneticFamilyName: contact?.name?.phoneticRepresentation?.familyName,
+                               addressLines: [contact?.postalAddress?.street ?? ""],
+                               subLocality: contact?.postalAddress?.subLocality,
+                               locality: nil,
+                               postalCode: contact?.postalAddress?.postalCode,
+                               subAdministrativeArea: contact?.postalAddress?.subAdministrativeArea,
+                               administrativeArea: nil,
+                               country: contact?.postalAddress?.country,
+                               countryCode: contact?.postalAddress?.isoCountryCode)
     }
 }

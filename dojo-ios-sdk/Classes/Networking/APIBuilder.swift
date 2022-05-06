@@ -18,19 +18,20 @@ protocol APIBuilderProtocol {
 }
 
 struct APIBuilder: APIBuilderProtocol {
-    static let hostSandbox = "https://web.e.test.connect.paymentsense.cloud/api/"
-    static let host = "https://web.e.connect.paymentsense.cloud/api/"
+    static let hostSandbox = "https://web.e.test.connect.paymentsense.cloud/"
+//    static let host = "https://web.e.connect.paymentsense.cloud/"
+    static let host = "https://web-dot-connect-e-build.appspot.com/"
     
     static func buildURL(_ isSandbox: Bool, token: String, endpoint: APIEndpoint) throws -> URL {
         // construct endpoint url
         var stringURL = isSandbox ? hostSandbox : host
         switch endpoint {
         case .cardPayment:
-            stringURL += "payments/"
+            stringURL += "api/payments/"
         case .deviceData:
-            stringURL += "device-data/"
+            stringURL += "api/device-data/"
         case .applePay:
-            stringURL += "payments/\(token)/apple-pay"
+            stringURL += "cors/api/payments/\(token)/apple-pay"
         }
         // append token, for apple pay it differs
         if endpoint != .applePay {

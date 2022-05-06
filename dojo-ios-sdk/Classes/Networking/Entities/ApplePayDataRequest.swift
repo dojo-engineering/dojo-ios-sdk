@@ -39,13 +39,18 @@ struct ApplePayDataTokenPaymentDataHeaders: Codable {
 }
 
 struct ApplePayAddressContact: Codable {
+    let phoneNumber: String?
+    let emailAddress: String?
     let givenName: String?
     let familyName: String?
-    let emailAddress: String?
-    let addressLines: String?
-    let administrativeArea: String?
+    let phoneticGivenName: String?
+    let phoneticFamilyName: String?
+    let addressLines: [String]?
+    let subLocality: String?
     let locality: String?
     let postalCode: String?
+    let subAdministrativeArea: String?
+    let administrativeArea: String?
     let country: String?
     let countryCode: String?
 }
