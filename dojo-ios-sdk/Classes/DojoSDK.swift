@@ -17,7 +17,7 @@ public protocol DojoSDKProtocol {
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
-    static func isApplePayAvailable() -> Bool
+    static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool
 }
 
 @objc
@@ -70,7 +70,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         })
     }
     
-    public static func isApplePayAvailable() -> Bool {
+    public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
         ApplePayHandler.shared.canMakeApplePayPayment()
     }
 }

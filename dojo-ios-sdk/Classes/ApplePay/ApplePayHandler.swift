@@ -77,7 +77,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     
     func canMakeApplePayPayment() -> Bool {
         // TODO receive from the payment intent
-        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard,.amex])
+        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: getSupportedApplePayNetworks())
     }
 }
 
@@ -123,7 +123,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
 extension ApplePayHandler {
     
     func getCountryCode() -> String {
-        "BG"
+        "GB"
     }
     
     func getMerchantCapability() -> PKMerchantCapability {
