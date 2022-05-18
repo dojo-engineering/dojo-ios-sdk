@@ -18,9 +18,10 @@ protocol APIBuilderProtocol {
 }
 
 struct APIBuilder: APIBuilderProtocol {
+    
+    static let host = "https://web.e.connect.paymentsense.cloud/"
     static let hostSandbox = "https://web.e.test.connect.paymentsense.cloud/"
-//    static let host = "https://web.e.connect.paymentsense.cloud/"
-    static let host = "https://web-dot-connect-e-build.appspot.com/"
+    static let hostDev = "https://web-dot-connect-e-build.appspot.com/"
     
     static func buildURL(_ isSandbox: Bool, token: String, endpoint: APIEndpoint) throws -> URL {
         // construct endpoint url

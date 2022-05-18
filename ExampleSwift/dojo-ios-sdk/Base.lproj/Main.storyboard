@@ -98,6 +98,7 @@
                                 <buttonConfiguration key="configuration" style="plain" title="Apple Pay"/>
                             </button>
                         </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="2he-WW-Z6b" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="4Lu-Yz-iAr"/>
                             <constraint firstItem="xDa-cu-VoX" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="12" id="6Ri-mi-6aX"/>

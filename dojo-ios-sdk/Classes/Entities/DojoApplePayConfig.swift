@@ -23,4 +23,5 @@ public class DojoApplePayConfig: NSObject {
     let collectBillingAddress: Bool
     let collectShippingAddress: Bool
     let collectEmail: Bool
+    
 }

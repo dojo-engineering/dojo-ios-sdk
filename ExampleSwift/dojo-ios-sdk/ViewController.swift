@@ -46,9 +46,16 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
+        guard DojoSDK.isApplePayAvailable() else {
+            let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
+        
         let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app")
-        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
-        let paymentIntent = DojoPaymentIntent(clientSessionSecret: "token", totalAmount: DojoPaymentIntentAmount(value: 1, currencyCode: "GBP"))
+        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig, isSandbox: switchIsSandbox.isOn)
+        let paymentIntent = DojoPaymentIntent(clientSessionSecret: "token", totalAmount: DojoPaymentIntentAmount(value: 10, currencyCode: "GBP"))
         
         DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")

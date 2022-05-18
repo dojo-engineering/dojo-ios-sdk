@@ -89,7 +89,7 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(false, // for ApplePay there is no sandbox env, you need to use Apple's test cards
+        guard let url = try? APIBuilder.buildURL(payloads.0.isSandbox,
                                                  token: token,
                                                  endpoint: .applePay) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
@@ -110,9 +110,8 @@ class NetworkService: NetworkServiceProtocol {
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
-                   let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data){
-                    completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
-                                                    token: decodedResponse.token))
+                   let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data){
+                    completion?(.result(decodedResponse.statusCode))
                 } else {
                     completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
                 }

@@ -13,6 +13,7 @@ protocol ApplePayHandlerProtocol {
                         payload: DojoApplePayPayload,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?)
+    func canMakeApplePayPayment() -> Bool
 }
 
 class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
@@ -73,6 +74,11 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
              }
          })
       }
+    
+    func canMakeApplePayPayment() -> Bool {
+        // TODO receive from the payment intent
+        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: [.visa, .masterCard,.amex])
+    }
 }
 
 extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {

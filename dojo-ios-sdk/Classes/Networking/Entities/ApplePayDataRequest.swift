@@ -38,7 +38,7 @@ struct ApplePayDataTokenPaymentDataHeaders: Codable {
     let transactionId: String
 }
 
-struct ApplePayAddressContact: Codable {
+struct ApplePayAddressContact: Codable, Equatable {
     let phoneNumber: String?
     let emailAddress: String?
     let givenName: String?
