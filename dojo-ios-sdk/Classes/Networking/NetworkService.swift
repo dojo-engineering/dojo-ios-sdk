@@ -128,6 +128,7 @@ extension NetworkService {
         request.httpMethod = "POST"
         request.httpBody = body
         request.timeoutInterval = timeout
+//        request.setValue("true", forHTTPHeaderField: "IS_SANDBOX") uncomment for ApplePay prod testing
         return request
     }
     

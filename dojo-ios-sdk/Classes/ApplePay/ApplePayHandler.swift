@@ -131,7 +131,11 @@ extension ApplePayHandler {
     }
     
     func getSupportedApplePayNetworks() -> [PKPaymentNetwork] {
-        [.amex, .masterCard, .visa]
+        var schemas: [PKPaymentNetwork] = [.amex, .masterCard, .visa]
+        if #available(iOS 12.0, *) {
+            schemas.append(.maestro)
+        }
+        return schemas
     }
     
     func getApplePayAmount(_ amount: UInt64) -> PKPaymentSummaryItem {
