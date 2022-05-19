@@ -12,8 +12,35 @@ class APIBuilderTests: XCTestCase {
     
     func testCardPayment() {
         do {
-            let url = try APIBuilder.buildURL(token: "token", endpoint: .cardPayment)
-            XCTAssertEqual(url, URL(string: "https://www.google.co.uk/v1/payments/token")!)
+            let url = try APIBuilder.buildURL(false, token: "token", endpoint: .cardPayment)
+            XCTAssertEqual(url, URL(string: "https://web.e.connect.paymentsense.cloud/api/payments/token")!)
+            
+            let sandboxUrl = try APIBuilder.buildURL(true, token: "token", endpoint: .cardPayment)
+            XCTAssertEqual(sandboxUrl, URL(string: "https://web.e.test.connect.paymentsense.cloud/api/payments/token")!)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testDataCollection() {
+        do {
+            let url = try APIBuilder.buildURL(false, token: "token", endpoint: .deviceData)
+            XCTAssertEqual(url, URL(string: "https://web.e.connect.paymentsense.cloud/api/device-data/token")!)
+            
+            let sandboxUrl = try APIBuilder.buildURL(true, token: "token", endpoint: .deviceData)
+            XCTAssertEqual(sandboxUrl, URL(string: "https://web.e.test.connect.paymentsense.cloud/api/device-data/token")!)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testApplePayPayment() {
+        do {
+            let url = try APIBuilder.buildURL(false, token: "token", endpoint: .applePay)
+            XCTAssertEqual(url, URL(string: "https://web.e.connect.paymentsense.cloud/cors/api/payments/token/apple-pay")!)
+            
+            let sandboxUrl = try APIBuilder.buildURL(true, token: "token", endpoint: .applePay)
+            XCTAssertEqual(sandboxUrl, URL(string: "https://web.e.test.connect.paymentsense.cloud/cors/api/payments/token/apple-pay")!)
         } catch {
             XCTFail(error.localizedDescription)
         }

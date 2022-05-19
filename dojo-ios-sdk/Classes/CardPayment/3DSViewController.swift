@@ -66,9 +66,6 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
         """
         <!DOCTYPE html>
         <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-        </head>
         <body>
         <form id="threeDs20Form" target="_self" method="post" action="\(stepUpUrl)">
             <input name="JWT" type="hidden" value="\(jwt)"/>
@@ -84,7 +81,7 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
 extension ThreeDSViewController: WKNavigationDelegate, WKUIDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         webView.evaluateJavaScript("document.getElementById('threeDs20Form').submit()", completionHandler: nil)
-        let scritpToZoomContent = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
+        let scritpToZoomContent = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width, user-scalable=no'); document.getElementsByTagName('head')[0].appendChild(meta);"
         webView.evaluateJavaScript(scritpToZoomContent, completionHandler: nil)
     }
 }

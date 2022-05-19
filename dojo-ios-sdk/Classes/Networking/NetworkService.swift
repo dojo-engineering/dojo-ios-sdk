@@ -8,12 +8,11 @@
 import Foundation
 
 class NetworkService: NetworkServiceProtocol {
-    
     let session: URLSession
     let timeout: TimeInterval
     
     required init(timeout: TimeInterval) {
-        self.session = URLSession.shared
+        self.session = NetworkService.getSesstion()
         self.timeout = timeout
     }
     
@@ -66,7 +65,7 @@ class NetworkService: NetworkServiceProtocol {
         let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
         
         let task = session.dataTask(with: request) { (data, response, error) in
-            if let _ = error {
+            if let _ = error { // error
                 completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             } else if let data = data {
                 let decoder = JSONDecoder()
@@ -78,12 +77,46 @@ class NetworkService: NetworkServiceProtocol {
                     completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
                                                  jwt: decodedResponse.jwt,
                                                  md: decodedResponse.md))
+                } else { // can't decode
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
                 }
-            } else {
+            } else { // no error and data is nil
                 completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             }
         }
         // perform request
+        task.resume()
+    }
+    
+    func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
+        guard let url = try? APIBuilder.buildURL(payloads.0.isSandbox,
+                                                 token: token,
+                                                 endpoint: .applePay) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        guard let bodyData = getApplePayRequestBody(payload: payloads.1) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            //TODO check for status code
+            if let _ = error {
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            } else {
+                let decoder = JSONDecoder()
+                if let data = data,
+                   let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data){
+                    completion?(.result(decodedResponse.statusCode))
+                } else {
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                }
+            }
+        }
         task.resume()
     }
 }
@@ -91,15 +124,32 @@ class NetworkService: NetworkServiceProtocol {
 extension NetworkService {
     func getDefaultPOSTRequest(url: URL, body: Data, timeout: TimeInterval) -> URLRequest {
         var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.httpMethod = "POST"
         request.httpBody = body
         request.timeoutInterval = timeout
+//        request.setValue("true", forHTTPHeaderField: "IS_SANDBOX") uncomment for ApplePay prod testing
         return request
+    }
+    
+    static func getSesstion() -> URLSession {
+        let configuration = URLSessionConfiguration.default
+        configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        configuration.urlCache = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
+        return URLSession(configuration: configuration)
     }
     
     func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
         let encoder = JSONEncoder()
         guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: payload)) else {
+            return nil
+        }
+        return bodyData
+    }
+    
+    func getApplePayRequestBody(payload: ApplePayDataRequest) -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(payload) else {
             return nil
         }
         return bodyData

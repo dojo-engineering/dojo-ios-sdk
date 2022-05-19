@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,35 +20,119 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Twl-ID-0U1">
-                                <rect key="frame" x="97.5" y="329" width="180" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Start ApplePay Payment"/>
-                                <connections>
-                                    <action selector="onApplePayPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="CcO-ls-Dg9"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vE4-qq-HA1">
-                                <rect key="frame" x="112" y="278" width="151" height="31"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Start Card Payment"/>
+                                <rect key="frame" x="98" y="616" width="179" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="WDH-zH-OUj"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Execute card payment"/>
                                 <connections>
                                     <action selector="onStartCardPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hk3-dO-OEc"/>
                                 </connections>
                             </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="p8b-Nw-nTi">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="476"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="eLi-cz-BGX"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="qdg-gF-Fka"/>
+                                </connections>
+                            </tableView>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2he-WW-Z6b">
+                                <rect key="frame" x="8" y="547" width="359" height="31"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1r-Na-L8h">
+                                        <rect key="frame" x="0.0" y="0.0" width="90" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="3DS 2.0"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QAw-NC-Bgl"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9mI-LD-90t">
+                                        <rect key="frame" x="90" y="0.0" width="89.5" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="3DS 1.0"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zzN-HG-FRj"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o2s-He-auN">
+                                        <rect key="frame" x="179.5" y="0.0" width="90" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="none 3DS"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QRI-ci-2iu"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KfN-R1-5am">
+                                        <rect key="frame" x="269.5" y="0.0" width="89.5" height="31"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="decline"/>
+                                        <connections>
+                                            <action selector="onAutofillPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Va7-gT-5kR"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PC7-Ic-uo4">
+                                <rect key="frame" x="7" y="481" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sandbox" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xDa-cu-VoX">
+                                <rect key="frame" x="71" y="488" width="56.5" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Autofill card details" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xRh-AV-HMr">
+                                <rect key="frame" x="7" y="524" width="124" height="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i6e-Zf-DfI" customClass="PKPaymentButton">
+                                <rect key="frame" x="270.5" y="488" width="88.5" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Apple Pay"/>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="09z-R2-c9E"/>
-                            <constraint firstItem="Twl-ID-0U1" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="20" id="MKh-An-ZWV"/>
-                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" constant="-40" id="UTu-Hk-uD3"/>
-                            <constraint firstItem="Twl-ID-0U1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="lq4-Yw-NRG"/>
+                            <constraint firstItem="2he-WW-Z6b" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="4Lu-Yz-iAr"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="12" id="6Ri-mi-6aX"/>
+                            <constraint firstItem="i6e-Zf-DfI" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="12" id="Gma-s6-8Xn"/>
+                            <constraint firstItem="xDa-cu-VoX" firstAttribute="leading" secondItem="PC7-Ic-uo4" secondAttribute="trailing" constant="15" id="Hcm-tm-PSi"/>
+                            <constraint firstItem="i6e-Zf-DfI" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="LdY-Lz-1Aj"/>
+                            <constraint firstItem="PC7-Ic-uo4" firstAttribute="centerY" secondItem="xDa-cu-VoX" secondAttribute="centerY" id="OU6-bU-Q9x"/>
+                            <constraint firstItem="p8b-Nw-nTi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="XaI-tS-EmU"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="20" id="ZfR-5D-1q0"/>
+                            <constraint firstItem="p8b-Nw-nTi" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="e9z-KG-mX8"/>
+                            <constraint firstItem="xRh-AV-HMr" firstAttribute="top" secondItem="PC7-Ic-uo4" secondAttribute="bottom" constant="12" id="hRs-Yl-GlS"/>
+                            <constraint firstItem="vE4-qq-HA1" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="kwg-TR-Pa3"/>
+                            <constraint firstAttribute="trailing" secondItem="2he-WW-Z6b" secondAttribute="trailing" constant="8" id="niK-uK-Wgz"/>
+                            <constraint firstItem="vE4-qq-HA1" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="140" id="pmT-pk-LSI"/>
+                            <constraint firstItem="xRh-AV-HMr" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="7" id="u4h-Jn-hjK"/>
+                            <constraint firstItem="2he-WW-Z6b" firstAttribute="top" secondItem="xRh-AV-HMr" secondAttribute="bottom" constant="6" id="w4G-s8-QtZ"/>
+                            <constraint firstAttribute="trailing" secondItem="p8b-Nw-nTi" secondAttribute="trailing" id="wO2-eO-JYG"/>
+                            <constraint firstItem="PC7-Ic-uo4" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="7" id="zkm-gi-zNk"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="buttonApplePay" destination="i6e-Zf-DfI" id="D5J-eW-7WS"/>
+                        <outlet property="mainTableView" destination="p8b-Nw-nTi" id="XgI-pv-YZd"/>
+                        <outlet property="switchIsSandbox" destination="PC7-Ic-uo4" id="tXK-t6-hBI"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="130" y="112"/>
+            <point key="canvasLocation" x="128.80000000000001" y="111.99400299850076"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
