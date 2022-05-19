@@ -13,10 +13,11 @@ public protocol DojoSDKProtocol {
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
-    static func executeApplePayPayment(token: String,
+    static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
+    static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool
 }
 
 @objc
@@ -57,12 +58,20 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
         }
     }
     
-    public static func executeApplePayPayment(token: String,
+    public static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                               payload: DojoApplePayPayload,
                                               fromViewController: UIViewController,
                                               completion: ((Int) -> Void)?) {
-        // NOT IMPLEMENTED
-        completion?(SDKResponseCode.sdkInternalError.rawValue)
+        ApplePayHandler.shared.handleApplePay(paymentIntent: paymentIntent,
+                                              payload: payload,
+                                              fromViewController: fromViewController,
+                                              completion: { result in
+            completion?(result)
+        })
+    }
+    
+    public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
+        ApplePayHandler.shared.canMakeApplePayPayment()
     }
 }
 

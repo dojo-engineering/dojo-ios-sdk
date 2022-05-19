@@ -8,16 +8,24 @@
 
 import UIKit
 import dojo_ios_sdk
+import PassKit
 
 class ViewController: UIViewController {
     
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var switchIsSandbox: UISwitch!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv]
+    @IBOutlet weak var buttonApplePay: PKPaymentButton!
+    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         InputTableViewCell.register(tableView: mainTableView)
+        setupApplePayButton()
+    }
+    
+    func setupApplePayButton() {
+        buttonApplePay.setTitle("", for: .normal)
+        buttonApplePay.addTarget(self, action: #selector(onApplePayPaymentPress), for: .touchUpInside)
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
@@ -38,10 +46,24 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
-        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.dojo.com")
-        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
+        let token = getToken()
+//        let token = ""
+        let paymentIntent = DojoPaymentIntent(connecteToken: token,
+                                              totalAmount: DojoPaymentIntentAmount(value: 10, currencyCode: "GBP"))
+        guard DojoSDK.isApplePayAvailable(paymentIntent: paymentIntent) else {
+            let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            return
+        }
         
-        DojoSDK.executeApplePayPayment(token: "token", payload: applePayPayload, fromViewController: self) { [weak self] result in
+        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",
+                                                collectBillingAddress: getBillingAddressSelectionForApplePay(),
+                                                collectShippingAddress: getShippingAddressSelectionForApplePay(),
+                                                collectEmail: getEmailAddressSelectionForApplePay())
+        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig, isSandbox: switchIsSandbox.isOn)
+        
+        DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
             self?.showAlert(result)
         }
@@ -94,6 +116,18 @@ extension ViewController: UITableViewDataSource {
     
     func getToken() -> String {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .token}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getShippingAddressSelectionForApplePay() -> Bool {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectShippingForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
+    }
+    
+    func getBillingAddressSelectionForApplePay() -> Bool {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectBillingForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
+    }
+    
+    func getEmailAddressSelectionForApplePay() -> Bool {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectEmailForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
     }
     
     func autofill(_ type: AutofillType) {
