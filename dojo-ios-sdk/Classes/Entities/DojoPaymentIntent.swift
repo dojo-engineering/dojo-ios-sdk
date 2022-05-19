@@ -11,13 +11,13 @@ import Foundation
 // https://docs.dojo.tech/api#operation/PaymentIntents_Get
 @objc
 public class DojoPaymentIntent: NSObject, Codable {
-    @objc public init(clientSessionSecret: String,
+    @objc public init(connecteToken: String,
                       totalAmount: DojoPaymentIntentAmount) {
-        self.clientSessionSecret = clientSessionSecret
+        self.connecteToken = connecteToken
         self.totalAmount = totalAmount
     }
     
-    let clientSessionSecret: String
+    let connecteToken: String
     let totalAmount: DojoPaymentIntentAmount
 }
 

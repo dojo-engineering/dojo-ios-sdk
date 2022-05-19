@@ -97,7 +97,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
 
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
         //TODO perform payment on the server
-        guard let token = paymentIntent?.clientSessionSecret, let payload = payload,
+        guard let token = paymentIntent?.connecteToken, let payload = payload,
               let applePayDataRequest = try? convertApplePayPaymentObjectToServerFormat(payment) else {
             // return that can't perform payment because token or payload is nil
             self.paymentStatus = .failure
