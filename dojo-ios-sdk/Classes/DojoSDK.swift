@@ -26,7 +26,7 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
                                           completion: ((Int) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService(timeout: 25, session: NetworkService.getSession())
         networkService.collectDeviceData(token: token, payload: payload) { result in
             switch result {
             case .deviceDataRequired(let formAction, let formToken):

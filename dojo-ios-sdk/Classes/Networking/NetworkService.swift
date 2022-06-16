@@ -11,8 +11,8 @@ class NetworkService: NetworkServiceProtocol {
     let session: URLSession
     let timeout: TimeInterval
     
-    required init(timeout: TimeInterval) {
-        self.session = NetworkService.getSesstion()
+    required init(timeout: TimeInterval, session: URLSession) {
+        self.session = session
         self.timeout = timeout
     }
     
@@ -128,15 +128,21 @@ extension NetworkService {
         request.httpMethod = "POST"
         request.httpBody = body
         request.timeoutInterval = timeout
-//        request.setValue("true", forHTTPHeaderField: "IS_SANDBOX") uncomment for ApplePay prod testing
+        request.setValue("true", forHTTPHeaderField: "IS_SANDBOX") 
         return request
     }
     
-    static func getSesstion() -> URLSession {
+    static func getSession() -> URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         configuration.urlCache = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
         return URLSession(configuration: configuration)
+    }
+    
+    static func getMockSession() -> URLSession {
+        let configuration = URLSessionConfiguration.default
+        configuration.protocolClasses = [MockURLProtocol.self]
+        return URLSession.init(configuration: configuration)
     }
     
     func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
@@ -155,3 +161,4 @@ extension NetworkService {
         return bodyData
     }
 }
+

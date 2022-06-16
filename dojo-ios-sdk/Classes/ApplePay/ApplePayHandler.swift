@@ -26,10 +26,10 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     
     // needs to be shared so apple pay can receive delegate notifications
     // TODO check that instance is destroyed
-    static let shared = ApplePayHandler()
+    static let shared = ApplePayHandler(networkService: NetworkService(timeout: 25, session: NetworkService.getSession()))
     
-    override init() {
-        self.networkService = NetworkService(timeout: 25)
+    init(networkService: NetworkServiceProtocol) {
+        self.networkService = networkService
     }
     
     func handleApplePay(paymentIntent: DojoPaymentIntent,
