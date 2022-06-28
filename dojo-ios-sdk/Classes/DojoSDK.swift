@@ -26,6 +26,9 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
                                           completion: ((Int) -> Void)?) {
+        
+        CardinaMobilePOC().setupCardinalSession()
+        
         let networkService = NetworkService(timeout: 25)
         networkService.collectDeviceData(token: token, payload: payload) { result in
             switch result {

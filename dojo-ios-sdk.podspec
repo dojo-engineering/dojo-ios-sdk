@@ -36,12 +36,12 @@ TODO: Add long description of the pod here.
   s.test_spec 'dojo-ios-sdk-tests' do |test_spec|
       test_spec.source_files = 'dojo-ios-sdk/Tests/**/*'
   end
+  # s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/**/*'
   
   # s.resource_bundles = {
   #   'dojo-ios-sdk' => ['dojo-ios-sdk/Assets/*.png']
   # }
 
    
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+  s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/CardinalMobile.framework'
 end
