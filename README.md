@@ -95,21 +95,19 @@ This example includes only required fields, you can find additional fields that 
 ## Result codes
 
 ```
-enum SDKResponseCode: Int {
-    case successful = 0
-    case authorizing = 3
-    case referred = 4
-    case declined = 5
-    case duplicateTransaction = 20
-    case failed = 30
-    case waitingPreExecute = 99
-    case invalidRequest = 400
-    case issueWithAccessToken = 401
-    case noAccessTokenSupplied = 404
-    case internalServerError = 500
+successful = 0
+authorizing = 3
+referred = 4
+declined = 5
+duplicateTransaction = 20
+failed = 30
+waitingPreExecute = 99
+invalidRequest = 400
+issueWithAccessToken = 401
+noAccessTokenSupplied = 404
+internalServerError = 500
             
-    case sdkInternalError = 7770
-}
+sdkInternalError = 7770
 ```
 ## Author
 
