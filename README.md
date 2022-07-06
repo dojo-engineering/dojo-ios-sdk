@@ -14,7 +14,7 @@ dojo-ios-sdk is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '0.1.0'
+pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '0.2.0'
 ```
 ## How to use
 SDK functionality can be accessed via DojoSdk object.
@@ -25,7 +25,7 @@ SDK functionality can be accessed via DojoSdk object.
 ```
 import dojo_ios_sdk
 
-let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card Holder Name", expiryDate: "12/24", cv2: "020"), isSandbox: false)
+let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card Holder Name", expiryDate: "12 / 24", cv2: "020"), isSandbox: false)
 let token = "Token from Payment Intent (connecteToken)"
 DojoSDK.executeCardPayment(token: token,
                             payload: cardPaymentPayload,
@@ -59,7 +59,7 @@ DojoCardPaymentPayload* cardPaymentPayload = [[DojoCardPaymentPayload alloc]
                                                 initWithCardDetails: [[DojoCardDetails alloc]
                                                                     initWithCardNumber:@"4456530000001096"
                                                                     cardName:@"Card Holder Name"
-                                                                    expiryDate:@"12/24"
+                                                                    expiryDate:@"12 / 24"
                                                                     cv2:@"020"]
                                                 userEmailAddress: NULL
                                                 userPhoneNumber: NULL
