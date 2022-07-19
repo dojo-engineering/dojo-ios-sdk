@@ -10,9 +10,9 @@ import Foundation
 @objc
 public class DojoCardDetails: NSObject, Codable {
     @objc public init(cardNumber: String,
-                cardName: String? = nil,
-                expiryDate: String? = nil,
-                cv2: String? = nil) {
+                      cardName: String? = nil,
+                      expiryDate: String? = nil,
+                      cv2: String? = nil) {
         self.cardNumber = cardNumber
         self.cardName = cardName
         self.expiryDate = expiryDate
