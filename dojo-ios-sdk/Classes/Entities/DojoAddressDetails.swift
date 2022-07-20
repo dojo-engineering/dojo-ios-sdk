@@ -8,6 +8,7 @@
 import Foundation
 
 @objc
+/// Address
 public class DojoAddressDetails: NSObject, Codable {
     @objc public init(address1: String? = nil,
                   address2: String? = nil,
@@ -27,7 +28,9 @@ public class DojoAddressDetails: NSObject, Codable {
         self.countryCode = countryCode
     }
     
+    /// Address line 1
     let address1: String?
+    /// Address line 2
     let address2: String?
     let address3: String?
     let address4: String?
