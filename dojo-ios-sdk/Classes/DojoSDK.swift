@@ -22,6 +22,12 @@ public protocol DojoSDKProtocol {
 
 @objc
 public class DojoSDK: NSObject, DojoSDKProtocol {
+    /// Test demo documentation
+    /// - Parameters:
+    ///   - token: connect-e token
+    ///   - payload: payload with card data
+    ///   - fromViewController: controller to present 3DS from
+    ///   - completion: result
     public static func executeCardPayment(token: String,
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
