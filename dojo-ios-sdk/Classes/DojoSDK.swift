@@ -13,6 +13,10 @@ public protocol DojoSDKProtocol {
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
+    static func executeSavedCardPayment(token: String,
+                                        payload: DojoSavedCardPaymentPayload,
+                                        fromViewController: UIViewController,
+                                        completion: ((Int) -> Void)?)
     static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
@@ -55,6 +59,25 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                             sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
                         }
                     }
+                }
+            case .result(let resultCode):
+                sendCompletionOnMainThread(result: resultCode, completion: completion)
+            default:
+                sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
+            }
+        }
+    }
+    
+    public static func executeSavedCardPayment(token: String,
+                                               payload: DojoSavedCardPaymentPayload,
+                                               fromViewController: UIViewController,
+                                               completion: ((Int) -> Void)?) {
+        let networkService = NetworkService(timeout: 25)
+        networkService.performSavedCardPayment(token: token, payload: payload) { cardPaymentResult in
+            switch cardPaymentResult {
+            case .threeDSRequired(let stepUpUrl, let jwt, let md):
+                handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { threeDSResult in
+                    sendCompletionOnMainThread(result: threeDSResult, completion: completion)
                 }
             case .result(let resultCode):
                 sendCompletionOnMainThread(result: resultCode, completion: completion)

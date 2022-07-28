@@ -8,6 +8,7 @@
 import Foundation
 
 class NetworkService: NetworkServiceProtocol {
+    
     let session: URLSession
     let timeout: TimeInterval
     
@@ -58,6 +59,45 @@ class NetworkService: NetworkServiceProtocol {
         }
         
         guard let bodyData = getCardRequestBody(payload: payload) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            if let _ = error { // error
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            } else if let data = data {
+                let decoder = JSONDecoder()
+                if let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data) {
+                    if decodedResponse.statusCode != SDKResponseCode.authorizing.rawValue { //TODO, 3DS has a code 3
+                        completion?(.result(decodedResponse.statusCode))
+                           return
+                       }
+                    completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
+                                                 jwt: decodedResponse.jwt,
+                                                 md: decodedResponse.md))
+                } else { // can't decode
+                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                }
+            } else { // no error and data is nil
+                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            }
+        }
+        // perform request
+        task.resume()
+    }
+    
+    func performSavedCardPayment(token: String,
+                                 payload: DojoSavedCardPaymentPayload,
+                                 completion: ((CardPaymentNetworkResponse) -> Void)?) {
+        guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .savedCardPayment) else {
+            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        guard let bodyData = getPayUsingSavedCardRequestBody(payload: payload) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -142,6 +182,14 @@ extension NetworkService {
     func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
         let encoder = JSONEncoder()
         guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: payload)) else {
+            return nil
+        }
+        return bodyData
+    }
+    
+    func getPayUsingSavedCardRequestBody(payload: DojoSavedCardPaymentPayload) -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(payload) else {
             return nil
         }
         return bodyData
