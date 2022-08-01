@@ -31,11 +31,13 @@ class ViewController: UIViewController {
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(), isSandbox: switchIsSandbox.isOn)
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: getToken(),
-                                 payload: cardPaymentPayload,
-                                 fromViewController: self) { [weak self] result in
-            self?.hideLoadingIndicator()
-            self?.showAlert(result)
+        requestPaymentToken { token in
+            DojoSDK.executeCardPayment(token: token,
+                                     payload: cardPaymentPayload,
+                                     fromViewController: self) { [weak self] result in
+                self?.hideLoadingIndicator()
+                self?.showAlert(result)
+            }
         }
     }
     
@@ -225,6 +227,25 @@ enum AutofillType: Int {
         case .decline:
             return "341"
         }
+    }
+}
+
+extension UIViewController {
+    
+    func requestPaymentToken(completion: ((String) -> Void)?) {
+        let url = URL(string: "http://localhost:3000/token")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                let token = String(decoding: data, as: UTF8.self)
+                completion?(token)
+            } else if let error = error {
+                print("HTTP Request Failed \(error)")
+            }
+        }
+        
+        task.resume()
     }
 }
 
