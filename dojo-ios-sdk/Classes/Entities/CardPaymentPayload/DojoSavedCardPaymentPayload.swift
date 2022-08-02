@@ -7,7 +7,8 @@
 import Foundation
 
 @objc
-public class DojoSavedCardPaymentPayload: NSObject, Codable {
+public class DojoSavedCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
+    
     @objc public init(cvv: String,
                       paymentMethodId: String,
                       isSandbox: Bool = false) {
@@ -16,7 +17,15 @@ public class DojoSavedCardPaymentPayload: NSObject, Codable {
         self.isSandbox = isSandbox
     }
     
-    let cV2: String //TODO a proper variable for networking request
+    let cV2: String
     let paymentMethodId: String
-    let isSandbox: Bool
+    var isSandbox: Bool
+    
+    func getRequestBody() -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: self)) else {
+            return nil
+        }
+        return bodyData
+    }
 }

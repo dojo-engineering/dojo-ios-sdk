@@ -9,6 +9,7 @@ import Foundation
 
 struct CardPaymentDataRequest: Encodable {
     let cV2: String?
+    let paymentMethodId: String?
     let cardName: String?
     let cardNumber: String?
     let expiryDate: String?
@@ -29,5 +30,21 @@ struct CardPaymentDataRequest: Encodable {
         self.billingAddress = payload.billingAddress
         self.shippingDetails = payload.shippingDetails
         self.metaData = payload.metaData
+        
+        self.paymentMethodId = nil
+    }
+    
+    init(payload: DojoSavedCardPaymentPayload) {
+        self.cV2 = payload.cV2
+        self.paymentMethodId = payload.paymentMethodId
+        
+        self.cardName = nil
+        self.cardNumber = nil
+        self.expiryDate = nil
+        self.userEmailAddress = nil
+        self.userPhoneNumber = nil
+        self.billingAddress = nil
+        self.shippingDetails = nil
+        self.metaData = nil
     }
 }
