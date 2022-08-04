@@ -94,6 +94,10 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
             }
         }
     }
+    
+    func presentationWindow(for controller: PKPaymentAuthorizationController) -> UIWindow? {
+        return nil
+    }
 
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
         //TODO perform payment on the server
