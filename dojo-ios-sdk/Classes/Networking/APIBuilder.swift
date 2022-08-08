@@ -9,6 +9,7 @@ import Foundation
 
 enum APIEndpoint {
     case cardPayment
+    case savedCardPayment
     case deviceData
     case applePay
 }
@@ -29,6 +30,8 @@ struct APIBuilder: APIBuilderProtocol {
         switch endpoint {
         case .cardPayment:
             stringURL += "api/payments/"
+        case .savedCardPayment:
+            stringURL += "api/payments/recurring/"
         case .deviceData:
             stringURL += "api/device-data/"
         case .applePay:

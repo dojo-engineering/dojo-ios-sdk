@@ -8,7 +8,7 @@
 import Foundation
 
 @objc
-public class DojoCardPaymentPayload: NSObject, Codable {
+public class DojoCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
     @objc public init(cardDetails: DojoCardDetails,
                       userEmailAddress: String? = nil,
                       userPhoneNumber: String? = nil,
@@ -31,7 +31,16 @@ public class DojoCardPaymentPayload: NSObject, Codable {
     let billingAddress: DojoAddressDetails?
     let shippingDetails: DojoShippingDetails?
     let metaData: [String: String]?
-    let isSandbox: Bool
+    var isSandbox: Bool
 }
 
+extension DojoCardPaymentPayload {
+    func getRequestBody() -> Data? {
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: self)) else {
+            return nil
+        }
+        return bodyData
+    }
+}
 

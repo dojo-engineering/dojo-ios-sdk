@@ -14,6 +14,7 @@ enum InputTableViewCellType {
     case cardNumber
     case cvv
     case expiry
+    case savedCardToken
     
     case token
     case collectBillingForApplePay
@@ -86,6 +87,10 @@ class InputTableViewCell: UITableViewCell {
         case .collectEmailForApplePay:
             labelTitle.text = "Collect Email for ApplePay"
             selectionSwitch.isHidden = false
+        case .savedCardToken:
+            labelTitle.text = "Saved Card Token"
+            textFieldInput.keyboardType = .default
+            textFieldInput.isHidden = false
         }
     }
     

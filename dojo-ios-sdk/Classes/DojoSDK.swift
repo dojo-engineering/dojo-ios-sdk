@@ -13,6 +13,10 @@ public protocol DojoSDKProtocol {
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
+    static func executeSavedCardPayment(token: String,
+                                        payload: DojoSavedCardPaymentPayload,
+                                        fromViewController: UIViewController,
+                                        completion: ((Int) -> Void)?)
     static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
@@ -32,6 +36,51 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
                                           payload: DojoCardPaymentPayload,
                                           fromViewController: UIViewController,
                                           completion: ((Int) -> Void)?) {
+        internalExecuteCardPayment(token: token,
+                                   payload: payload,
+                                   fromViewController: fromViewController,
+                                   completion: completion)
+    }
+    
+    public static func executeSavedCardPayment(token: String,
+                                               payload: DojoSavedCardPaymentPayload,
+                                               fromViewController: UIViewController,
+                                               completion: ((Int) -> Void)?) {
+        // Payment with a saved card has the same flow as the regular (full) card payment
+        internalExecuteCardPayment(token: token,
+                                   payload: payload,
+                                   fromViewController: fromViewController,
+                                   completion: completion)
+    }
+    
+    public static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
+                                              payload: DojoApplePayPayload,
+                                              fromViewController: UIViewController,
+                                              completion: ((Int) -> Void)?) {
+        ApplePayHandler.shared.handleApplePay(paymentIntent: paymentIntent,
+                                              payload: payload,
+                                              fromViewController: fromViewController,
+                                              completion: { result in
+            completion?(result)
+        })
+    }
+    
+    public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
+        ApplePayHandler.shared.canMakeApplePayPayment()
+    }
+}
+
+private extension DojoSDK {
+    static func sendCompletionOnMainThread(result: Int, completion: ((Int) -> Void)?) {
+        DispatchQueue.main.async {
+            completion?(result)
+        }
+    }
+    
+    private static func internalExecuteCardPayment(token: String,
+                                                   payload: DojoCardPaymentPayloadProtocol,
+                                                   fromViewController: UIViewController,
+                                                   completion: ((Int) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
         networkService.collectDeviceData(token: token, payload: payload) { result in
             switch result {
@@ -61,30 +110,6 @@ public class DojoSDK: NSObject, DojoSDKProtocol {
             default:
                 sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
             }
-        }
-    }
-    
-    public static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
-                                              payload: DojoApplePayPayload,
-                                              fromViewController: UIViewController,
-                                              completion: ((Int) -> Void)?) {
-        ApplePayHandler.shared.handleApplePay(paymentIntent: paymentIntent,
-                                              payload: payload,
-                                              fromViewController: fromViewController,
-                                              completion: { result in
-            completion?(result)
-        })
-    }
-    
-    public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
-        ApplePayHandler.shared.canMakeApplePayPayment()
-    }
-}
-
-private extension DojoSDK {
-    static func sendCompletionOnMainThread(result: Int, completion: ((Int) -> Void)?) {
-        DispatchQueue.main.async {
-            completion?(result)
         }
     }
 }
