@@ -6,9 +6,17 @@
 //
 
 import Foundation
-
-@objc
-public class DojoCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
+/// Object that holds CardPayment configuration and data
+@objc public class DojoCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
+    /// Creates an instance of DojoCardPaymentPayload
+    /// - Parameters:
+    ///   - cardDetails: Card details of a card that is used for chek out
+    ///   - userEmailAddress: The customer's email address.
+    ///   - userPhoneNumber: The customer's phone number.
+    ///   - billingAddress: The address where to send the invoice.
+    ///   - shippingDetails: The address where to send the order.
+    ///   - metaData: A set of key-value pairs that you can use for storing additional information.
+    ///   - isSandbox: Flag that determines environment (Sandbox or Production).
     @objc public init(cardDetails: DojoCardDetails,
                       userEmailAddress: String? = nil,
                       userPhoneNumber: String? = nil,
@@ -25,13 +33,20 @@ public class DojoCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
         self.isSandbox = isSandbox
     }
     
-    let cardDetails: DojoCardDetails
-    let userEmailAddress: String?
-    let userPhoneNumber: String?
-    let billingAddress: DojoAddressDetails?
-    let shippingDetails: DojoShippingDetails?
-    let metaData: [String: String]?
-    var isSandbox: Bool
+    /// Card details of a card that is used for chek out
+    public let cardDetails: DojoCardDetails
+    /// The customer's email address.
+    public let userEmailAddress: String?
+    /// The customer's phone number.
+    public let userPhoneNumber: String?
+    /// The address where to send the invoice.
+    public let billingAddress: DojoAddressDetails?
+    /// The address where to send the order.
+    public let shippingDetails: DojoShippingDetails?
+    /// A set of key-value pairs that you can use for storing additional information.
+    public let metaData: [String: String]?
+    /// Flag that determines environment (Sandbox or Production).
+    public var isSandbox: Bool
 }
 
 extension DojoCardPaymentPayload {

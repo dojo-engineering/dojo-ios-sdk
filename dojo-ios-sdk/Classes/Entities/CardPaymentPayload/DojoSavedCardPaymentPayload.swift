@@ -5,10 +5,17 @@
 //  Created by Deniss Kaibagarovs on 28/07/2022.
 //
 import Foundation
-
-@objc
-public class DojoSavedCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
-    
+/// Object that holds DojoSavedCardPaymentPayload configuration
+@objc public class DojoSavedCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtocol {
+    /// Creates an instance of DojoSavedCardPaymentPayload
+    /// - Parameters:
+    ///   - cvv: CVV, CVC or CVC2 of a card.
+    ///   - paymentMethodId: Id of the saved card.
+    ///   - userEmailAddress: The customer's email address.
+    ///   - userPhoneNumber: The customer's phone number.
+    ///   - shippingDetails: The address where to send the order.
+    ///   - metaData: A set of key-value pairs that you can use for storing additional information.
+    ///   - isSandbox: Flag that determines environment (Sandbox or Production).
     @objc public init(cvv: String,
                       paymentMethodId: String,
                       userEmailAddress: String? = nil,
@@ -25,13 +32,20 @@ public class DojoSavedCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtoc
         self.isSandbox = isSandbox
     }
     
-    let cV2: String
-    let paymentMethodId: String
-    let userEmailAddress: String?
-    let userPhoneNumber: String?
-    let shippingDetails: DojoShippingDetails?
-    let metaData: [String: String]?
-    var isSandbox: Bool
+    /// CVV, CVC or CVC2 of a card.
+    public let cV2: String
+    /// Id of the saved card.
+    public let paymentMethodId: String
+    /// The customer's email address.
+    public let userEmailAddress: String?
+    /// The customer's phone number.
+    public let userPhoneNumber: String?
+    /// The address where to send the order.
+    public let shippingDetails: DojoShippingDetails?
+    /// A set of key-value pairs that you can use for storing additional information.
+    public let metaData: [String: String]?
+    /// Flag that determines environment (Sandbox or Production).
+    public var isSandbox: Bool
     
     func getRequestBody() -> Data? {
         let encoder = JSONEncoder()
