@@ -11,14 +11,26 @@ public class DojoSavedCardPaymentPayload: NSObject, DojoCardPaymentPayloadProtoc
     
     @objc public init(cvv: String,
                       paymentMethodId: String,
+                      userEmailAddress: String? = nil,
+                      userPhoneNumber: String? = nil,
+                      shippingDetails: DojoShippingDetails? = nil,
+                      metaData: [String : String]? = nil,
                       isSandbox: Bool = false) {
         self.cV2 = cvv
         self.paymentMethodId = paymentMethodId
+        self.userPhoneNumber = userPhoneNumber
+        self.userEmailAddress = userEmailAddress
+        self.shippingDetails = shippingDetails
+        self.metaData = metaData
         self.isSandbox = isSandbox
     }
     
     let cV2: String
     let paymentMethodId: String
+    let userEmailAddress: String?
+    let userPhoneNumber: String?
+    let shippingDetails: DojoShippingDetails?
+    let metaData: [String: String]?
     var isSandbox: Bool
     
     func getRequestBody() -> Data? {

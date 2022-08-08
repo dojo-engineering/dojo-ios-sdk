@@ -37,14 +37,14 @@ struct CardPaymentDataRequest: Encodable {
     init(payload: DojoSavedCardPaymentPayload) {
         self.cV2 = payload.cV2
         self.paymentMethodId = payload.paymentMethodId
+        self.userEmailAddress = payload.userEmailAddress
+        self.userPhoneNumber = payload.userPhoneNumber
+        self.shippingDetails = payload.shippingDetails
+        self.metaData = payload.metaData
         
         self.cardName = nil
         self.cardNumber = nil
         self.expiryDate = nil
-        self.userEmailAddress = nil
-        self.userPhoneNumber = nil
         self.billingAddress = nil
-        self.shippingDetails = nil
-        self.metaData = nil
     }
 }
