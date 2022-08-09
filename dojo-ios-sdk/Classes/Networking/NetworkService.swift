@@ -8,6 +8,7 @@
 import Foundation
 
 class NetworkService: NetworkServiceProtocol {
+    
     let session: URLSession
     let timeout: TimeInterval
     
@@ -17,14 +18,14 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func collectDeviceData(token: String,
-                           payload: DojoCardPaymentPayload,
+                           payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .deviceData) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
-        guard let bodyData = getCardRequestBody(payload: payload) else {
+        guard let bodyData = payload.getRequestBody() else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -50,14 +51,14 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func performCardPayment(token: String,
-                            payload: DojoCardPaymentPayload,
+                            payload: DojoCardPaymentPayloadProtocol,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .cardPayment) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
-        guard let bodyData = getCardRequestBody(payload: payload) else {
+        guard let bodyData = payload.getRequestBody() else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -137,14 +138,6 @@ extension NetworkService {
         configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         configuration.urlCache = URLCache(memoryCapacity: 0, diskCapacity: 0, diskPath: nil)
         return URLSession(configuration: configuration)
-    }
-    
-    func getCardRequestBody(payload: DojoCardPaymentPayload) -> Data? {
-        let encoder = JSONEncoder()
-        guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: payload)) else {
-            return nil
-        }
-        return bodyData
     }
     
     func getApplePayRequestBody(payload: ApplePayDataRequest) -> Data? {

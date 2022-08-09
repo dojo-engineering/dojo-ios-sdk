@@ -22,6 +22,18 @@ class APIBuilderTests: XCTestCase {
         }
     }
     
+    func testSavedCardPayment() {
+        do {
+            let url = try APIBuilder.buildURL(false, token: "token", endpoint: .savedCardPayment)
+            XCTAssertEqual(url, URL(string: "https://web.e.connect.paymentsense.cloud/api/payments/recurring/token")!)
+            
+            let sandboxUrl = try APIBuilder.buildURL(true, token: "token", endpoint: .savedCardPayment)
+            XCTAssertEqual(sandboxUrl, URL(string: "https://web.e.test.connect.paymentsense.cloud/api/payments/recurring/token")!)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func testDataCollection() {
         do {
             let url = try APIBuilder.buildURL(false, token: "token", endpoint: .deviceData)

@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var switchIsSandbox: UISwitch!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
+    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +34,18 @@ class ViewController: UIViewController {
         DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
+            self?.hideLoadingIndicator()
+            self?.showAlert(result)
+        }
+    }
+    
+    @IBAction func onSavedCardPaymentPress(_ sender: Any) {
+        let token = getToken()
+        let savedCardToken = getSavedCardToken()
+        let cvv = getCVV()
+        let payload = DojoSavedCardPaymentPayload(cvv: cvv, paymentMethodId: savedCardToken, isSandbox: switchIsSandbox.isOn)
+        showLoadingIndicator()
+        DojoSDK.executeSavedCardPayment(token: token, payload: payload, fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
             self?.showAlert(result)
         }
@@ -116,6 +128,14 @@ extension ViewController: UITableViewDataSource {
     
     func getToken() -> String {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .token}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getSavedCardToken() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .savedCardToken}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getCVV() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .cvv}) as? InputTableViewCell)?.getValue() ?? ""
     }
     
     func getShippingAddressSelectionForApplePay() -> Bool {
