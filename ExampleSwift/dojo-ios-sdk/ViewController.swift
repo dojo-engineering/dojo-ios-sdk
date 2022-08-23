@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var switchIsSandbox: UISwitch!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
+    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +81,19 @@ class ViewController: UIViewController {
         }
     }
     
-    private func showAlert(_ resultCode: Int) {
+    func fetchPaymentIntent(intentId: String) {
+        showLoadingIndicator()
+        DojoSDK.fetchPaymentIntent(intentId: intentId) { paymentIntent, error in
+            self.hideLoadingIndicator()
+            if let paymentIntent = paymentIntent {
+                self.showAlert(0, body: paymentIntent) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
+    private func showAlert(_ resultCode: Int, body: String? = nil) {
         var title = ""
         switch resultCode {
         case 0:
@@ -89,7 +101,8 @@ class ViewController: UIViewController {
         default:
             title = "Other Error"
         }
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let message = body
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -175,10 +188,21 @@ extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: InputTableViewCell.identifier, for: indexPath) as? InputTableViewCell {
-            cell.setup(tableViewItems[indexPath.row])
+            cell.setup(tableViewItems[indexPath.row], delegate: self)
             return cell
         } else {
             return UITableViewCell.init(style: .default, reuseIdentifier: "") // Shouldn't happen
+        }
+    }
+}
+
+extension ViewController: InputTableViewCellDelegate {
+    func onActionButtonPress(cell: InputTableViewCell) {
+        switch cell.inputType {
+        case .fetchPaymentIntent:
+            fetchPaymentIntent(intentId: cell.getValue())
+        default:
+            break
         }
     }
 }

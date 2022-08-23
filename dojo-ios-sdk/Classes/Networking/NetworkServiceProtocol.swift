@@ -24,4 +24,6 @@ protocol NetworkServiceProtocol {
     func performApplePayPayment(token: String,
                                 payloads: (DojoApplePayPayload, ApplePayDataRequest), //TODO
                                 completion: ((CardPaymentNetworkResponse) -> Void)?)
+    func fetchPaymentIntent(intentId: String,
+                            completion: ((String?, Error?) -> Void)?)
 }

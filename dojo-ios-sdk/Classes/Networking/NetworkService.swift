@@ -20,7 +20,7 @@ class NetworkService: NetworkServiceProtocol {
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .deviceData) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(payload.isSandbox, token: token, endpoint: .deviceData) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -53,7 +53,7 @@ class NetworkService: NetworkServiceProtocol {
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(payload.isSandbox, token: token, endpoint: .cardPayment) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(payload.isSandbox, token: token, endpoint: .cardPayment) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -90,9 +90,9 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURL(payloads.0.isSandbox,
-                                                 token: token,
-                                                 endpoint: .applePay) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(payloads.0.isSandbox,
+                                                            token: token,
+                                                            endpoint: .applePay) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -120,16 +120,50 @@ class NetworkService: NetworkServiceProtocol {
         }
         task.resume()
     }
+    
+    func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(paymentId: intentId,
+                                                        endpoint: .paymentIntent) else {
+            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        let request = getDefaultGETRequest(url: url, timeout: timeout)
+        let task = session.dataTask(with: request) { data, response, error in
+            if let error = error { // Error from request
+                completion?(nil, error)
+            } else if let data = data, // Data is available
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 { // Request has a success code
+                let responseString = String(decoding: data, as: UTF8.self)
+                completion?(responseString, nil)
+            } else { // No error and no data
+                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            }
+        }
+        task.resume()
+    }
 }
 
 extension NetworkService {
+    
+    enum HTTPMethod {
+        static let POST = "POST"
+        static let GET = "GET"
+    }
+    
     func getDefaultPOSTRequest(url: URL, body: Data, timeout: TimeInterval) -> URLRequest {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.POST
         request.httpBody = body
         request.timeoutInterval = timeout
-//        request.setValue("true", forHTTPHeaderField: "IS_SANDBOX") uncomment for ApplePay prod testing
+        return request
+    }
+    
+    func getDefaultGETRequest(url: URL, timeout: TimeInterval) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET
+        request.timeoutInterval = timeout
         return request
     }
     
