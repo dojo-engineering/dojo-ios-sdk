@@ -20,6 +20,11 @@ enum InputTableViewCellType {
     case collectBillingForApplePay
     case collectShippingForApplePay
     case collectEmailForApplePay
+    case fetchPaymentIntent
+}
+
+protocol InputTableViewCellDelegate {
+    func onActionButtonPress(cell: InputTableViewCell)
 }
 
 class InputTableViewCell: UITableViewCell {
@@ -27,11 +32,14 @@ class InputTableViewCell: UITableViewCell {
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var textFieldInput: UITextField!
     @IBOutlet weak var selectionSwitch: UISwitch!
+    @IBOutlet weak var buttonAction: UIButton!
     
+    @IBOutlet weak var constraintLabelTrailing: NSLayoutConstraint!
     public static let identifier: String = "InputTableViewCell"
     public static let nib: String = "InputTableViewCell"
     
     public var inputType: InputTableViewCellType! = .token
+    public var delegate: InputTableViewCellDelegate?
     
     public static func register(tableView: UITableView) {
         tableView.register(UINib(nibName: InputTableViewCell.nib,
@@ -51,12 +59,16 @@ class InputTableViewCell: UITableViewCell {
         selectionSwitch.isOn
     }
     
-    func setup(_ type: InputTableViewCellType) {
+    func setup(_ type: InputTableViewCellType, delegate: InputTableViewCellDelegate?) {
         self.inputType = type
+        self.delegate = delegate
         textFieldInput.delegate = self
         selectionSwitch.isHidden = true
         selectionSwitch.isOn = false
         textFieldInput.isHidden = true
+        buttonAction.isHidden = true
+        constraintLabelTrailing.constant = 7
+        textFieldInput.placeholder = ""
         switch type {
         case .cardholderName:
             labelTitle.text = "Cardholder name"
@@ -91,7 +103,19 @@ class InputTableViewCell: UITableViewCell {
             labelTitle.text = "Saved Card Token"
             textFieldInput.keyboardType = .default
             textFieldInput.isHidden = false
+        case .fetchPaymentIntent:
+            labelTitle.text = "Fetch Payment Intent"
+            constraintLabelTrailing.constant = 80
+            buttonAction.isHidden = false
+            textFieldInput.isHidden = false
+            textFieldInput.placeholder = "Payment Intent ID"
+            buttonAction.setTitle("Fetch", for: .normal)
+            break
         }
+    }
+    
+    @IBAction func onActionButtonPress(_ sender: Any) {
+        delegate?.onActionButtonPress(cell: self)
     }
     
     override func awakeFromNib() {

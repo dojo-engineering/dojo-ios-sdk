@@ -21,6 +21,7 @@ protocol DojoSDKProtocol {
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
     static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool
+    static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
 }
 
 /// DojoSDK interface
@@ -81,6 +82,10 @@ protocol DojoSDKProtocol {
     /// - Returns: Availability of ApplePay for a particular device
     public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
         ApplePayHandler.shared.canMakeApplePayPayment()
+    }
+    
+    public static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+        handlePaymentIntentFetching(intentId: intentId, completion: completion)
     }
 }
 
