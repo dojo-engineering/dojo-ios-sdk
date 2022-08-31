@@ -31,12 +31,22 @@
                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g3l-X5-NXz">
                         <rect key="frame" x="7" y="33" width="51" height="31"/>
                     </switch>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qrs-0T-y1g">
+                        <rect key="frame" x="243" y="33" width="67" height="31"/>
+                        <state key="normal" title="Button"/>
+                        <buttonConfiguration key="configuration" style="plain" title="Button"/>
+                        <connections>
+                            <action selector="onActionButtonPress:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="ib9-VT-vmL"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="g3l-X5-NXz" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="7" id="2og-xf-QvL"/>
                     <constraint firstItem="phW-sF-7Pg" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="7" id="Bw1-0e-4jM"/>
                     <constraint firstItem="xVc-1b-iNN" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="7" id="Ehm-Yz-WdM"/>
+                    <constraint firstItem="Qrs-0T-y1g" firstAttribute="centerY" secondItem="phW-sF-7Pg" secondAttribute="centerY" id="P4d-Jc-Vpo"/>
                     <constraint firstAttribute="trailing" secondItem="phW-sF-7Pg" secondAttribute="trailing" constant="7" id="dEU-9H-FPN"/>
+                    <constraint firstAttribute="trailing" secondItem="Qrs-0T-y1g" secondAttribute="trailing" constant="10" id="iEE-98-Egu"/>
                     <constraint firstAttribute="bottom" secondItem="phW-sF-7Pg" secondAttribute="bottom" constant="4" id="iZh-sU-lL7"/>
                     <constraint firstItem="xVc-1b-iNN" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="7" id="jdI-oL-xyo"/>
                     <constraint firstItem="phW-sF-7Pg" firstAttribute="top" secondItem="xVc-1b-iNN" secondAttribute="bottom" constant="4" id="p3D-sV-WgS"/>
@@ -45,6 +55,8 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
+                <outlet property="buttonAction" destination="Qrs-0T-y1g" id="Cai-Vm-bCc"/>
+                <outlet property="constraintLabelTrailing" destination="dEU-9H-FPN" id="1VU-nC-uo0"/>
                 <outlet property="labelTitle" destination="xVc-1b-iNN" id="aVy-Ol-KhR"/>
                 <outlet property="selectionSwitch" destination="g3l-X5-NXz" id="CX9-WZ-QVR"/>
                 <outlet property="textFieldInput" destination="phW-sF-7Pg" id="TE2-2x-0SE"/>
