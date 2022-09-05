@@ -162,6 +162,7 @@ extension NetworkService {
     
     func getDefaultGETRequest(url: URL, timeout: TimeInterval) -> URLRequest {
         var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.httpMethod = HTTPMethod.GET
         request.timeoutInterval = timeout
         return request
