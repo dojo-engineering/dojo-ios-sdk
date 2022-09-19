@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var switchIsSandbox: UISwitch!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
+    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +60,7 @@ class ViewController: UIViewController {
         
         let token = getToken()
 //        let token = ""
-        let paymentIntent = DojoPaymentIntent(connecteToken: token,
+        let paymentIntent = DojoPaymentIntent(clientSessionSecret: token,
                                               totalAmount: DojoPaymentIntentAmount(value: 10, currencyCode: "GBP"))
         guard DojoSDK.isApplePayAvailable(paymentIntent: paymentIntent) else {
             let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
@@ -84,6 +84,19 @@ class ViewController: UIViewController {
     func fetchPaymentIntent(intentId: String) {
         showLoadingIndicator()
         DojoSDK.fetchPaymentIntent(intentId: intentId) { paymentIntent, error in
+            self.hideLoadingIndicator()
+            if let paymentIntent = paymentIntent {
+                self.showAlert(0, body: paymentIntent) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
+    
+    func refreshPaymentIntent(intentId: String) {
+        showLoadingIndicator()
+        DojoSDK.refreshPaymentIntent(intentId: intentId) { paymentIntent, error in
             self.hideLoadingIndicator()
             if let paymentIntent = paymentIntent {
                 self.showAlert(0, body: paymentIntent) // success
@@ -201,6 +214,8 @@ extension ViewController: InputTableViewCellDelegate {
         switch cell.inputType {
         case .fetchPaymentIntent:
             fetchPaymentIntent(intentId: cell.getValue())
+        case .refreshPaymentIntent:
+            refreshPaymentIntent(intentId: cell.getValue())
         default:
             break
         }

@@ -26,4 +26,6 @@ protocol NetworkServiceProtocol {
                                 completion: ((CardPaymentNetworkResponse) -> Void)?)
     func fetchPaymentIntent(intentId: String,
                             completion: ((String?, Error?) -> Void)?)
+    func refreshPaymentIntent(intentId: String,
+                              completion: ((String?, Error?) -> Void)?)
 }
