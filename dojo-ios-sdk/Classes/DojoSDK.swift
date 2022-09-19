@@ -22,6 +22,7 @@ protocol DojoSDKProtocol {
                                        completion: ((Int) -> Void)?)
     static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool
     static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
+    static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
 }
 
 /// DojoSDK interface
@@ -86,6 +87,10 @@ protocol DojoSDKProtocol {
     
     public static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
         handlePaymentIntentFetching(intentId: intentId, completion: completion)
+    }
+    
+    public static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+        handlePaymentIntentRefresh(intentId: intentId, completion: completion)
     }
 }
 

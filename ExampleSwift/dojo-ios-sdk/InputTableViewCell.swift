@@ -21,6 +21,7 @@ enum InputTableViewCellType {
     case collectShippingForApplePay
     case collectEmailForApplePay
     case fetchPaymentIntent
+    case refreshPaymentIntent
 }
 
 protocol InputTableViewCellDelegate {
@@ -110,7 +111,13 @@ class InputTableViewCell: UITableViewCell {
             textFieldInput.isHidden = false
             textFieldInput.placeholder = "Payment Intent ID"
             buttonAction.setTitle("Fetch", for: .normal)
-            break
+        case .refreshPaymentIntent:
+            labelTitle.text = "Refresh Payment Intent"
+            constraintLabelTrailing.constant = 90
+            buttonAction.isHidden = false
+            textFieldInput.isHidden = false
+            textFieldInput.placeholder = "Payment Intent ID"
+            buttonAction.setTitle("Refresh", for: .normal)
         }
     }
     

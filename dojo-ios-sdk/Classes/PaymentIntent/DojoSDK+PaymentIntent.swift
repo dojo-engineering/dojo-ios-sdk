@@ -16,4 +16,13 @@ extension DojoSDK {
             }
         }
     }
+    
+    static func handlePaymentIntentRefresh(intentId: String, completion: ((String?, Error?) -> Void)?) {
+        let networkService = NetworkService(timeout: 25)
+        networkService.refreshPaymentIntent(intentId: intentId) { paymentIntent, error in
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                completion?(paymentIntent, error)
+            }
+        }
+    }
 }

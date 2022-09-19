@@ -16,6 +16,7 @@ enum APIEndpointConnectE {
 
 enum APIEndpointDojo {
     case paymentIntent
+    case paymentIntentRefresh
 }
 
 protocol APIBuilderProtocol {
@@ -57,6 +58,8 @@ struct APIBuilder: APIBuilderProtocol {
         switch endpoint {
         case .paymentIntent:
             stringURL += "api/payment/\(paymentId)"
+        case .paymentIntentRefresh:
+            stringURL += "api/payment/\(paymentId)/refresh-client-session-secret"
         }
         
         return try buildURL(stringURL)
