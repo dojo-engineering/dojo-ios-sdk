@@ -12,14 +12,23 @@ import Foundation
     /// - Parameters:
     ///   - clientSessionSecret:Payment secret obtained from a paymentIIntent object.
     ///   - totalAmount: Total payment amount obtained from a paymentIIntent object.
-    @objc public init(clientSessionSecret: String,
+    @objc public init(id: String,
+                      clientSessionSecret: String,
                       totalAmount: DojoPaymentIntentAmount) {
         self.clientSessionSecret = clientSessionSecret
         self.totalAmount = totalAmount
+        self.id = id
     }
     
+    @objc public init(id: String, totalAmount: DojoPaymentIntentAmount) {
+        self.id = id
+        self.clientSessionSecret = nil
+        self.totalAmount = totalAmount
+    }
+    
+    public let id: String
     /// Payment secret obtained from a paymentIIntent object
-    public let clientSessionSecret: String
+    public let clientSessionSecret: String?
     /// Total payment amount obtained from a paymentIIntent object
     public let totalAmount: DojoPaymentIntentAmount
 }

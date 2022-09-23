@@ -58,10 +58,9 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
-        let token = getToken()
-//        let token = ""
-        let paymentIntent = DojoPaymentIntent(clientSessionSecret: token,
-                                              totalAmount: DojoPaymentIntentAmount(value: 10, currencyCode: "GBP"))
+        let paymentIntentId = getPaymentIntentId() ?? ""
+        let paymentIntent = DojoPaymentIntent(id: paymentIntentId,
+                                              totalAmount: DojoPaymentIntentAmount(value: 1129, currencyCode: "GBP"))
         guard DojoSDK.isApplePayAvailable(paymentIntent: paymentIntent) else {
             let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
@@ -174,6 +173,10 @@ extension ViewController: UITableViewDataSource {
     
     func getEmailAddressSelectionForApplePay() -> Bool {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectEmailForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
+    }
+    
+    func getPaymentIntentId() -> String? {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .refreshPaymentIntent}) as? InputTableViewCell)?.getValue()
     }
     
     func autofill(_ type: AutofillType) {
