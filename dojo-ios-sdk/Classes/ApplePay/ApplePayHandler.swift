@@ -98,27 +98,61 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
     func presentationWindow(for controller: PKPaymentAuthorizationController) -> UIWindow? {
         return nil
     }
-
+    
+    // Try to refresh token right away before payment?
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-        //TODO perform payment on the server
-        guard let token = paymentIntent?.clientSessionSecret, let payload = payload,
+        
+        // Verify that required payment information exists
+        guard let paymentIntentId = paymentIntent?.id, let payload = payload,
               let applePayDataRequest = try? convertApplePayPaymentObjectToServerFormat(payment) else {
             // return that can't perform payment because token or payload is nil
             self.paymentStatus = .failure
             completion(self.paymentStatus)
             return
         }
-
-        networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
-            switch result {
-            case .result(let status):
-                if status == SDKResponseCode.successful.rawValue {
-                    self.paymentStatus = .success
-                }
-            default:
-                break
+        
+        // Starting from iOS 16 the Apple Pay screen is not closed if paymnet failed
+        // Because of that we need to refresh the token for every transaction to guarantee that it's valid
+        DojoSDK.refreshPaymentIntent(intentId: paymentIntentId) { refreshedIntent, error in
+            // Error refreshing token
+            if let _ = error {
+                completion(self.paymentStatus)
+                return
             }
-            completion(self.paymentStatus)
+            
+            if let data = refreshedIntent?.data(using: .utf8) {
+                let decoder = JSONDecoder()
+                if let decodedResponse = try? decoder.decode(DojoPaymentIntent.self, from: data) {
+                    // Decoded token sucessfully
+                    
+                    // Check if token exists
+                    guard let token = decodedResponse.clientSessionSecret else {
+                        // Payment token doesn't exist
+                        completion(self.paymentStatus)
+                        return
+                    }
+                    // Now try to do the actual payment
+                    self.networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
+                        switch result {
+                            // payment successded
+                        case .result(let status):
+                            if status == SDKResponseCode.successful.rawValue {
+                                self.paymentStatus = .success
+                            }
+                        default:
+                            break
+                        }
+                        // notify with the final result of the payment
+                        completion(self.paymentStatus)
+                    }
+                } else {
+                    // can't decode new payment intent
+                    completion(self.paymentStatus)
+                }
+            } else {
+                // there is no data coming from the server for the new payment intent
+                completion(self.paymentStatus)
+            }
         }
     }
 }
