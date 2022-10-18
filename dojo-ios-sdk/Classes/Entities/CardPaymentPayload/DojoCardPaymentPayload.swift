@@ -21,13 +21,15 @@ import Foundation
                       userPhoneNumber: String? = nil,
                       billingAddress: DojoAddressDetails? = nil,
                       shippingDetails: DojoShippingDetails? = nil,
-                      metaData: [String : String]? = nil) {
+                      metaData: [String : String]? = nil,
+                      savePaymentMethod: Bool = false) {
         self.cardDetails = cardDetails
         self.userEmailAddress = userEmailAddress
         self.userPhoneNumber = userPhoneNumber
         self.billingAddress = billingAddress
         self.shippingDetails = shippingDetails
         self.metaData = metaData
+        self.savePaymentMethod = savePaymentMethod
     }
     
     /// Card details of a card that is used for chek out
@@ -42,6 +44,7 @@ import Foundation
     public let shippingDetails: DojoShippingDetails?
     /// A set of key-value pairs that you can use for storing additional information.
     public let metaData: [String: String]?
+    public let savePaymentMethod: Bool
 }
 
 extension DojoCardPaymentPayload {
