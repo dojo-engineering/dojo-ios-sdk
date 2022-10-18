@@ -13,7 +13,6 @@ import PassKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var mainTableView: UITableView!
-    @IBOutlet weak var switchIsSandbox: UISwitch!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
     private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
@@ -29,7 +28,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
-        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(), isSandbox: switchIsSandbox.isOn)
+        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails())
         showLoadingIndicator()
         DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
@@ -43,7 +42,7 @@ class ViewController: UIViewController {
         let token = getToken()
         let savedCardToken = getSavedCardToken()
         let cvv = getCVV()
-        let payload = DojoSavedCardPaymentPayload(cvv: cvv, paymentMethodId: savedCardToken, isSandbox: switchIsSandbox.isOn)
+        let payload = DojoSavedCardPaymentPayload(cvv: cvv, paymentMethodId: savedCardToken)
         showLoadingIndicator()
         DojoSDK.executeSavedCardPayment(token: token, payload: payload, fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
@@ -72,7 +71,7 @@ class ViewController: UIViewController {
                                                 collectBillingAddress: getBillingAddressSelectionForApplePay(),
                                                 collectShippingAddress: getShippingAddressSelectionForApplePay(),
                                                 collectEmail: getEmailAddressSelectionForApplePay())
-        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig, isSandbox: switchIsSandbox.isOn)
+        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
         
         DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")

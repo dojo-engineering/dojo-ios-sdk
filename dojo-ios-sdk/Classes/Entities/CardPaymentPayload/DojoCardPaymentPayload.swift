@@ -16,21 +16,18 @@ import Foundation
     ///   - billingAddress: The address where to send the invoice.
     ///   - shippingDetails: The address where to send the order.
     ///   - metaData: A set of key-value pairs that you can use for storing additional information.
-    ///   - isSandbox: Flag that determines environment (Sandbox or Production).
     @objc public init(cardDetails: DojoCardDetails,
                       userEmailAddress: String? = nil,
                       userPhoneNumber: String? = nil,
                       billingAddress: DojoAddressDetails? = nil,
                       shippingDetails: DojoShippingDetails? = nil,
-                      metaData: [String : String]? = nil,
-                      isSandbox: Bool = false) {
+                      metaData: [String : String]? = nil) {
         self.cardDetails = cardDetails
         self.userEmailAddress = userEmailAddress
         self.userPhoneNumber = userPhoneNumber
         self.billingAddress = billingAddress
         self.shippingDetails = shippingDetails
         self.metaData = metaData
-        self.isSandbox = isSandbox
     }
     
     /// Card details of a card that is used for chek out
@@ -45,8 +42,6 @@ import Foundation
     public let shippingDetails: DojoShippingDetails?
     /// A set of key-value pairs that you can use for storing additional information.
     public let metaData: [String: String]?
-    /// Flag that determines environment (Sandbox or Production).
-    public var isSandbox: Bool
 }
 
 extension DojoCardPaymentPayload {

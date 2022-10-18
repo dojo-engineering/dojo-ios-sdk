@@ -20,21 +20,18 @@ enum APIEndpointDojo {
 }
 
 protocol APIBuilderProtocol {
-    static func buildURLForConnectE(_ isSandbox: Bool, token: String, endpoint: APIEndpointConnectE) throws -> URL
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL
     static func buildURLForDojo(paymentId: String, endpoint: APIEndpointDojo) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
     
     static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
-    static let hostConnectSandbox = "https://web.e.test.connect.paymentsense.cloud/"
-    static let hostConnectDev = "https://web-dot-connect-e-build.appspot.com/"
-    
     static let hostDojo = "https://pay.dojo.tech/"
     
-    static func buildURLForConnectE(_ isSandbox: Bool, token: String, endpoint: APIEndpointConnectE) throws -> URL {
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL {
         // Requests to Connect-E
-        var stringURL = isSandbox ? hostConnectSandbox : hostConnect
+        var stringURL = hostConnect
         switch endpoint {
         case .cardPayment:
             stringURL += "api/payments/"
