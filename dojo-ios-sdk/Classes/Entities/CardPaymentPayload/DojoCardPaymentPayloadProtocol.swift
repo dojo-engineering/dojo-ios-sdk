@@ -8,6 +8,5 @@
 import Foundation
 
 protocol DojoCardPaymentPayloadProtocol: Codable {
-    var isSandbox: Bool { get set }
     func getRequestBody() -> Data?
 }

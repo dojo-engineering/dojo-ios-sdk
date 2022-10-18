@@ -20,7 +20,7 @@ class NetworkService: NetworkServiceProtocol {
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(payload.isSandbox, token: token, endpoint: .deviceData) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -53,7 +53,7 @@ class NetworkService: NetworkServiceProtocol {
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(payload.isSandbox, token: token, endpoint: .cardPayment) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .cardPayment) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -90,8 +90,7 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(payloads.0.isSandbox,
-                                                            token: token,
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                             endpoint: .applePay) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
