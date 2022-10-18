@@ -100,16 +100,29 @@
                                     <action selector="onStartCardPaymentPress:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hk3-dO-OEc"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="7tI-Mm-Lds">
+                                <rect key="frame" x="8" y="485" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="save card" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n4F-yq-Ka8">
+                                <rect key="frame" x="71" y="490.5" width="73" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="2he-WW-Z6b" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="4Lu-Yz-iAr"/>
                             <constraint firstAttribute="trailingMargin" secondItem="0NP-bE-VUi" secondAttribute="trailing" constant="15" id="Agk-jc-Goi"/>
                             <constraint firstItem="i6e-Zf-DfI" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="12" id="Gma-s6-8Xn"/>
+                            <constraint firstItem="7tI-Mm-Lds" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="9" id="Kga-vo-zW8"/>
                             <constraint firstItem="i6e-Zf-DfI" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="LdY-Lz-1Aj"/>
+                            <constraint firstItem="7tI-Mm-Lds" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="8" id="UEs-wj-51e"/>
                             <constraint firstItem="p8b-Nw-nTi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="XaI-tS-EmU"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="vE4-qq-HA1" secondAttribute="bottom" constant="20" id="ZfR-5D-1q0"/>
+                            <constraint firstItem="n4F-yq-Ka8" firstAttribute="centerY" secondItem="7tI-Mm-Lds" secondAttribute="centerY" id="ZjQ-cG-tWg"/>
                             <constraint firstItem="p8b-Nw-nTi" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="e9z-KG-mX8"/>
+                            <constraint firstItem="n4F-yq-Ka8" firstAttribute="leading" secondItem="7tI-Mm-Lds" secondAttribute="trailing" constant="14" id="eXA-ea-Ofu"/>
                             <constraint firstItem="vE4-qq-HA1" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="15" id="gsX-19-f3F"/>
                             <constraint firstAttribute="trailing" secondItem="2he-WW-Z6b" secondAttribute="trailing" constant="8" id="niK-uK-Wgz"/>
                             <constraint firstItem="vE4-qq-HA1" firstAttribute="top" secondItem="p8b-Nw-nTi" secondAttribute="bottom" constant="140" id="pmT-pk-LSI"/>
@@ -123,6 +136,7 @@
                     <connections>
                         <outlet property="buttonApplePay" destination="i6e-Zf-DfI" id="D5J-eW-7WS"/>
                         <outlet property="mainTableView" destination="p8b-Nw-nTi" id="XgI-pv-YZd"/>
+                        <outlet property="switchSaveCard" destination="7tI-Mm-Lds" id="xdN-6f-7xK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

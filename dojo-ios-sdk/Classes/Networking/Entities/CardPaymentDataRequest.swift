@@ -19,6 +19,7 @@ struct CardPaymentDataRequest: Encodable {
     let billingAddress: DojoAddressDetails?
     let shippingDetails: DojoShippingDetails?
     let metaData: [String : String]?
+    let savePaymentMethod: Bool?
     
     init(payload: DojoCardPaymentPayload) {
         self.cV2 = payload.cardDetails.cv2
@@ -30,6 +31,7 @@ struct CardPaymentDataRequest: Encodable {
         self.billingAddress = payload.billingAddress
         self.shippingDetails = payload.shippingDetails
         self.metaData = payload.metaData
+        self.savePaymentMethod = payload.savePaymentMethod
         
         self.paymentMethodId = nil
     }
@@ -46,5 +48,6 @@ struct CardPaymentDataRequest: Encodable {
         self.cardNumber = nil
         self.expiryDate = nil
         self.billingAddress = nil
+        self.savePaymentMethod = nil
     }
 }

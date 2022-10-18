@@ -12,6 +12,7 @@ import PassKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var switchSaveCard: UISwitch!
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
     private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
@@ -28,7 +29,8 @@ class ViewController: UIViewController {
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
-        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails())
+        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
+                                                        savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
         DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
