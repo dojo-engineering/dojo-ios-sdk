@@ -13,7 +13,7 @@ protocol ApplePayHandlerProtocol {
                         payload: DojoApplePayPayload,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?)
-    func canMakeApplePayPayment() -> Bool
+    func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool
 }
 
 class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
@@ -47,7 +47,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
         let paymentRequest = PKPaymentRequest()
         paymentRequest.paymentSummaryItems = [getApplePayAmount(paymentIntent.totalAmount.value)]
         paymentRequest.merchantIdentifier = payload.applePayConfig.merchantIdentifier
-        paymentRequest.supportedNetworks = getSupportedApplePayNetworks()
+        paymentRequest.supportedNetworks = getSupportedApplePayNetworks(payload.applePayConfig.supportedCards)
         paymentRequest.merchantCapabilities = getMerchantCapability()
         paymentRequest.countryCode = getCountryCode()
         paymentRequest.currencyCode = paymentIntent.totalAmount.currencyCode
@@ -75,9 +75,9 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
          })
       }
     
-    func canMakeApplePayPayment() -> Bool {
+    func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool {
         // TODO receive from the payment intent
-        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: getSupportedApplePayNetworks())
+        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: getSupportedApplePayNetworks(config.supportedCards))
     }
 }
 
@@ -168,11 +168,23 @@ extension ApplePayHandler {
         .capability3DS
     }
     
-    func getSupportedApplePayNetworks() -> [PKPaymentNetwork] {
-        var schemas: [PKPaymentNetwork] = [.amex, .masterCard, .visa]
-        if #available(iOS 12.0, *) {
-            schemas.append(.maestro)
-        }
+    func getSupportedApplePayNetworks(_ supportedCards: [ApplePaySupportedCards]) -> [PKPaymentNetwork] {
+        let schemas: [PKPaymentNetwork] = supportedCards.compactMap({
+            switch $0 {
+            case .amex:
+                return .amex
+            case .maestro:
+                if #available(iOS 12.0, *) {
+                    return .maestro
+                } else {
+                    return nil
+                }
+            case .mastercard:
+                return .masterCard
+            case .visa:
+                return .visa
+            }
+        })
         return schemas
     }
     

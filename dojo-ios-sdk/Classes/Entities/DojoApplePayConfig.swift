@@ -15,6 +15,7 @@ import Foundation
     ///   - collectShippingAddress: Flag that determines collection of shipping address from the ApplePay
     ///   - collectEmail: Flag that determines collection of email from the ApplePay
     @objc public init(merchantIdentifier: String,
+                      supportedCards: [String] = [],
                       collectBillingAddress: Bool = false,
                       collectShippingAddress: Bool = false,
                       collectEmail: Bool = false) {
@@ -22,6 +23,7 @@ import Foundation
         self.collectBillingAddress = collectBillingAddress
         self.collectShippingAddress = collectShippingAddress
         self.collectEmail = collectEmail
+        self.supportedCards = supportedCards.compactMap({ApplePaySupportedCards.init(rawValue: $0)})
     }
     
     /// Merchant identifier that is registered in developer portal
@@ -33,4 +35,12 @@ import Foundation
     /// Flag that determines collection of email from the ApplePay
     public let collectEmail: Bool
     
+    public let supportedCards: [ApplePaySupportedCards]
+}
+
+public enum ApplePaySupportedCards: String {
+    case amex
+    case mastercard
+    case maestro
+    case visa
 }

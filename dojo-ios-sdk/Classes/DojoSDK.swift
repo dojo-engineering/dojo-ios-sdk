@@ -20,7 +20,7 @@ protocol DojoSDKProtocol {
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
-    static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool
+    static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool
     static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
     static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
 }
@@ -79,10 +79,9 @@ protocol DojoSDKProtocol {
     }
     
     /// Check if apple pay is available for this device
-    /// - Parameter paymentIntent: Payment intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
     /// - Returns: Availability of ApplePay for a particular device
-    public static func isApplePayAvailable(paymentIntent: DojoPaymentIntent) -> Bool {
-        ApplePayHandler.shared.canMakeApplePayPayment()
+    public static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool {
+        ApplePayHandler.shared.canMakeApplePayPayment(config: config)
     }
     
     public static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {

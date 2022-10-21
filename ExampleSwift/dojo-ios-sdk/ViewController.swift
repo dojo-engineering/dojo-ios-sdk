@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
                                                         savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: getToken(),
+        DojoSDK.executeCardPayment(token: "l373REX1W_ZEZHn9W-rgDs3liloTDd6k-6mns9YAf8XoDHCxn_c93nymCxZ7K4EumAV2eXWpQ0D1UPAujzapT50lmDAr9WoG2D2tETxk8nP-6BxlgKr2Kk8gI2e48B2xe_FU03ayb_d4WATYBppmE2PnZEIp8A==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
@@ -59,21 +59,22 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
-        let paymentIntentId = getPaymentIntentId() ?? ""
-        let paymentIntent = DojoPaymentIntent(id: paymentIntentId,
-                                              totalAmount: DojoPaymentIntentAmount(value: 1129, currencyCode: "GBP"))
-        guard DojoSDK.isApplePayAvailable(paymentIntent: paymentIntent) else {
+        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",
+                                                supportedCards: ["visa","mastercard", "amex", "maestro"],
+                                                collectBillingAddress: getBillingAddressSelectionForApplePay(),
+                                                collectShippingAddress: getShippingAddressSelectionForApplePay(),
+                                                collectEmail: getEmailAddressSelectionForApplePay())
+        guard DojoSDK.isApplePayAvailable(config: applePayConfig) else {
             let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return
         }
         
-        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",
-                                                collectBillingAddress: getBillingAddressSelectionForApplePay(),
-                                                collectShippingAddress: getShippingAddressSelectionForApplePay(),
-                                                collectEmail: getEmailAddressSelectionForApplePay())
         let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
+        let paymentIntentId = getPaymentIntentId() ?? ""
+        let paymentIntent = DojoPaymentIntent(id: paymentIntentId,
+                                              totalAmount: DojoPaymentIntentAmount(value: 1129, currencyCode: "GBP"))
         
         DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
