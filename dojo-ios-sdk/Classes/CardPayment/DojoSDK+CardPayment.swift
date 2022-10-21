@@ -45,7 +45,11 @@ extension DojoSDK {
             }
             
             navigationController = UINavigationController(rootViewController: threeDSController)
-            navigationController?.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                navigationController?.isModalInPresentation = true
+            } else {
+                navigationController?.modalPresentationStyle = .fullScreen
+            }
             if let navigationController = navigationController {
                 fromViewController.present(navigationController, animated: false, completion: nil)
             } else {
