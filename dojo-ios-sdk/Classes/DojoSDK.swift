@@ -23,6 +23,9 @@ protocol DojoSDKProtocol {
     static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool
     static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
     static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
+    
+    static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
+    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
 }
 
 /// DojoSDK interface
@@ -90,6 +93,14 @@ protocol DojoSDKProtocol {
     
     public static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
         handlePaymentIntentRefresh(intentId: intentId, completion: completion)
+    }
+    
+    static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        
+    }
+    
+    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        
     }
 }
 

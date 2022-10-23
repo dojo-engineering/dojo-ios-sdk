@@ -17,11 +17,13 @@ enum APIEndpointConnectE {
 enum APIEndpointDojo {
     case paymentIntent
     case paymentIntentRefresh
+    case fetchCustomerPaymentMethods
+    case deleteCustomerPaymentMethod
 }
 
 protocol APIBuilderProtocol {
     static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL
-    static func buildURLForDojo(paymentId: String, endpoint: APIEndpointDojo) throws -> URL
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
@@ -46,19 +48,27 @@ struct APIBuilder: APIBuilderProtocol {
         if endpoint != .applePay {
             stringURL += token
         }
-        
+
         return try buildURL(stringURL)
     }
     
-    static func buildURLForDojo(paymentId: String, endpoint: APIEndpointDojo) throws -> URL {
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL {
         var stringURL = hostDojo
         switch endpoint {
         case .paymentIntent:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "api/payment/\(paymentId)"
         case .paymentIntentRefresh:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "api/payment/\(paymentId)/refresh-client-session-secret"
+        case .fetchCustomerPaymentMethods:
+            guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "api/customers/\(customerId)/payment-methods"
+        case .deleteCustomerPaymentMethod:
+            guard let customerId = pathComponents.first,
+                  let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "api/customers/\(customerId)/payment-methods/\(paymentMethodId)"
         }
-        
         return try buildURL(stringURL)
     }
     

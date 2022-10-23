@@ -28,4 +28,11 @@ protocol NetworkServiceProtocol {
                             completion: ((String?, Error?) -> Void)?)
     func refreshPaymentIntent(intentId: String,
                               completion: ((String?, Error?) -> Void)?)
+    func fetchCustomerPaymentMethods(customerId: String,
+                                     customerSecret: String,
+                                     completion: ((String?, Error?) -> Void)?)
+    func deleteCustomerPaymentMethod(customerId: String,
+                                     paymentMethodId: String,
+                                     customerSecret: String,
+                                     completion: ((String?, Error?) -> Void)?)
 }

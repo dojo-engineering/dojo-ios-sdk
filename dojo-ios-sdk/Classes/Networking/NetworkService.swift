@@ -121,7 +121,7 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForDojo(paymentId: intentId,
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
                                                         endpoint: .paymentIntent) else {
             completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             return
@@ -144,7 +144,7 @@ class NetworkService: NetworkServiceProtocol {
     
     func refreshPaymentIntent(intentId: String,
                               completion: ((String?, Error?) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForDojo(paymentId: intentId,
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
                                                         endpoint: .paymentIntentRefresh) else {
             completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             return
@@ -163,6 +163,24 @@ class NetworkService: NetworkServiceProtocol {
             }
         }
         task.resume()
+    }
+    
+    func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId],
+                                                        endpoint: .fetchCustomerPaymentMethods) else {
+            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        let request = getDefaultGETRequest(url: url, timeout: timeout)
+    }
+    
+    func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId, paymentMethodId],
+                                                        endpoint: .deleteCustomerPaymentMethod) else {
+            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
     }
 }
 
