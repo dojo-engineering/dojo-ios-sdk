@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var switchSaveCard: UISwitch!
     @IBOutlet weak var mainTableView: UITableView!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
+    private let tableViewItems: [InputTableViewCellType] = [.token, .customerSecret, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .fetchCustomerPaymentMethods, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,6 +94,19 @@ class ViewController: UIViewController {
         }
     }
     
+    func fetchCustomerPaymentMethods(customerId: String) {
+        showLoadingIndicator()
+        DojoSDK.fetchCustomerPaymentMethods(customerId: customerId,
+                                            customerSecret: getCustomerSecret()) { result, error in
+            self.hideLoadingIndicator()
+            if let result = result {
+                self.showAlert(0, body: result) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
     
     func refreshPaymentIntent(intentId: String) {
         showLoadingIndicator()
@@ -155,6 +168,10 @@ extension ViewController: UITableViewDataSource {
     
     func getToken() -> String {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .token}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getCustomerSecret() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .customerSecret}) as? InputTableViewCell)?.getValue() ?? ""
     }
     
     func getSavedCardToken() -> String {
@@ -221,6 +238,8 @@ extension ViewController: InputTableViewCellDelegate {
             fetchPaymentIntent(intentId: cell.getValue())
         case .refreshPaymentIntent:
             refreshPaymentIntent(intentId: cell.getValue())
+        case .fetchCustomerPaymentMethods:
+            fetchCustomerPaymentMethods(customerId: cell.getValue())
         default:
             break
         }

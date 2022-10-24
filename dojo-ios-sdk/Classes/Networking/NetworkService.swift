@@ -171,8 +171,20 @@ class NetworkService: NetworkServiceProtocol {
             completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
-        
-        let request = getDefaultGETRequest(url: url, timeout: timeout)
+        let request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
+        let task = session.dataTask(with: request) { data, response, error in
+            if let error = error { // Error from request
+                completion?(nil, error)
+            } else if let data = data, // Data is available
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 { // Request has a success code
+                let responseString = String(decoding: data, as: UTF8.self)
+                completion?(responseString, nil)
+            } else { // No error and no data
+                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            }
+        }
+        task.resume()
     }
     
     func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
@@ -200,11 +212,15 @@ extension NetworkService {
         return request
     }
     
-    func getDefaultGETRequest(url: URL, timeout: TimeInterval) -> URLRequest {
+    func getDefaultGETRequest(url: URL, timeout: TimeInterval, auth: String? = nil) -> URLRequest {
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.httpMethod = HTTPMethod.GET
         request.timeoutInterval = timeout
+        if let auth = auth {
+            request.addValue("2022-04-07", forHTTPHeaderField: "Version")
+            request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
+        }
         return request
     }
     

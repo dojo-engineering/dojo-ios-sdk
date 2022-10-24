@@ -63,11 +63,11 @@ struct APIBuilder: APIBuilderProtocol {
             stringURL += "api/payment/\(paymentId)/refresh-client-session-secret"
         case .fetchCustomerPaymentMethods:
             guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/customers/\(customerId)/payment-methods"
+            stringURL += "api/customers/public\(customerId)/payment-methods"
         case .deleteCustomerPaymentMethod:
             guard let customerId = pathComponents.first,
                   let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/customers/\(customerId)/payment-methods/\(paymentMethodId)"
+            stringURL += "api/customers/public\(customerId)/payment-methods/\(paymentMethodId)"
         }
         return try buildURL(stringURL)
     }

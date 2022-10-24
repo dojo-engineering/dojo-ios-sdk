@@ -22,6 +22,8 @@ enum InputTableViewCellType {
     case collectEmailForApplePay
     case fetchPaymentIntent
     case refreshPaymentIntent
+    case fetchCustomerPaymentMethods
+    case customerSecret
 }
 
 protocol InputTableViewCellDelegate {
@@ -91,6 +93,10 @@ class InputTableViewCell: UITableViewCell {
             labelTitle.text = "Token"
             textFieldInput.keyboardType = .default
             textFieldInput.isHidden = false
+        case .customerSecret:
+            labelTitle.text = "Customer Secret"
+            textFieldInput.keyboardType = .default
+            textFieldInput.isHidden = false
         case .collectBillingForApplePay:
             labelTitle.text = "Collect Billing Address for ApplePay"
             selectionSwitch.isHidden = false
@@ -118,6 +124,13 @@ class InputTableViewCell: UITableViewCell {
             textFieldInput.isHidden = false
             textFieldInput.placeholder = "Payment Intent ID"
             buttonAction.setTitle("Refresh", for: .normal)
+        case .fetchCustomerPaymentMethods:
+            labelTitle.text = "Fetch Customer Payment Methods"
+            constraintLabelTrailing.constant = 90
+            buttonAction.isHidden = false
+            textFieldInput.isHidden = false
+            textFieldInput.placeholder = "Customer ID"
+            buttonAction.setTitle("Fetch", for: .normal)
         }
     }
     

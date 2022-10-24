@@ -95,12 +95,12 @@ protocol DojoSDKProtocol {
         handlePaymentIntentRefresh(intentId: intentId, completion: completion)
     }
     
-    static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
-        
+    public static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        handleFetchCustomerPaymentMethods(customerId: customerId, customerSecret: customerSecret, completion: completion)
     }
     
-    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
-        
+    public static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+        handleDeleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret, completion: completion)
     }
 }
 
