@@ -193,6 +193,20 @@ class NetworkService: NetworkServiceProtocol {
             completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
+        let request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
+        let task = session.dataTask(with: request) { data, response, error in
+            if let error = error { // Error from request
+                completion?(nil, error)
+            } else if let data = data, // Data is available
+                      let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 200 { // Request has a success code
+                let responseString = String(decoding: data, as: UTF8.self)
+                completion?(responseString, nil)
+            } else { // No error and no data
+                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            }
+        }
+        task.resume()
     }
 }
 
