@@ -8,6 +8,7 @@
 import UIKit
 
 protocol DojoSDKProtocol {
+    // Card Payments
     static func executeCardPayment(token: String,
                                    payload: DojoCardPaymentPayload,
                                    fromViewController: UIViewController,
@@ -16,14 +17,16 @@ protocol DojoSDKProtocol {
                                         payload: DojoSavedCardPaymentPayload,
                                         fromViewController: UIViewController,
                                         completion: ((Int) -> Void)?)
+    // Wallet Payments
     static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
     static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool
+    // Payment Intent
     static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
     static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
-    
+    // Customer Management
     static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
     static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
 }
@@ -82,24 +85,51 @@ protocol DojoSDKProtocol {
     }
     
     /// Check if apple pay is available for this device
+    /// - Parameter config: Apple Pay configuration
     /// - Returns: Availability of ApplePay for a particular device
     public static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool {
         ApplePayHandler.shared.canMakeApplePayPayment(config: config)
     }
     
-    public static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+    /// Fetch a payment intent
+    /// - Parameters:
+    ///   - intentId: ID of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
+    ///   - completion: Payment Intent in String (JSON) format or error
+    public static func fetchPaymentIntent(intentId: String,
+                                          completion: ((String?, Error?) -> Void)?) {
         handlePaymentIntentFetching(intentId: intentId, completion: completion)
     }
     
-    public static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+    /// Refresh a payment intent
+    /// - Parameters:
+    ///   - intentId: Id of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
+    ///   - completion: Payment Intent in String (JSON) format or error
+    public static func refreshPaymentIntent(intentId: String,
+                                            completion: ((String?, Error?) -> Void)?) {
         handlePaymentIntentRefresh(intentId: intentId, completion: completion)
     }
     
-    public static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+    /// Fetch customer's saved payment methods
+    /// - Parameters:
+    ///   - customerId: Id of the customer
+    ///   - customerSecret: Access key for the customer
+    ///   - completion: Customer's saved payment methods in String (JSON) format or error
+    public static func fetchCustomerPaymentMethods(customerId: String,
+                                                   customerSecret: String,
+                                                   completion: ((String?, Error?) -> Void)?) {
         handleFetchCustomerPaymentMethods(customerId: customerId, customerSecret: customerSecret, completion: completion)
     }
     
-    public static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+    /// Delete a customer's saved payment method
+    /// - Parameters:
+    ///   - customerId: Id of the customer
+    ///   - paymentMethodId: Id of the payment method to delete
+    ///   - customerSecret: Access key for the customer
+    ///   - completion:
+    public static func deleteCustomerPaymentMethod(customerId: String,
+                                                   paymentMethodId: String,
+                                                   customerSecret: String,
+                                                   completion: ((String?, Error?) -> Void)?) {
         handleDeleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret, completion: completion)
     }
 }

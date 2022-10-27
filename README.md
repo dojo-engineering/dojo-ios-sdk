@@ -14,7 +14,7 @@ dojo-ios-sdk is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '0.2.0'
+pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '0.7.0'
 ```
 ## How to use
 SDK functionality can be accessed via DojoSdk object.
@@ -22,7 +22,7 @@ SDK functionality can be accessed via DojoSdk object.
 ## Swift
 
 ### Card payment
-```
+```swift
 import dojo_ios_sdk
 
 let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card Holder Name", expiryDate: "12 / 24", cv2: "020"), isSandbox: true)
@@ -36,7 +36,7 @@ DojoSDK.executeCardPayment(token: token,
 This example includes only required fields, you can find additional fields that can be passed in the API reference. // TODO URL
 
 ### ApplePay Payment
-```
+```swift
 import dojo_ios_sdk
 
 let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app")
@@ -109,9 +109,6 @@ internalServerError = 500
             
 sdkInternalError = 7770
 ```
-## Author
-
-Deniss Kaibagarovs, deniss.kaibagarovs@paymentsense.com
 
 ## License
 
