@@ -53,7 +53,9 @@ class NetworkService: NetworkServiceProtocol {
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .cardPayment) else {
+        let endpoint: APIEndpointConnectE = (payload as? DojoSavedCardPaymentPayload) != nil ? .savedCardPayment : .cardPayment
+        
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint) else {
             completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
