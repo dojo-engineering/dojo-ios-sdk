@@ -21,11 +21,11 @@ extension DojoSDK {
     static func handleDeleteCustomerPaymentMethod(customerId: String,
                                                   paymentMethodId: String,
                                                   customerSecret: String,
-                                                  completion: ((String?, Error?) -> Void)?) {
+                                                  completion: ((Error?) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
-        networkService.deleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret) { result , error in
+        networkService.deleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret) { error in
             DispatchQueue.main.asyncAfter(deadline: .now()) {
-                completion?(result, error)
+                completion?(error)
             }
         }
     }

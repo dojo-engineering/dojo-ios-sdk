@@ -28,7 +28,7 @@ protocol DojoSDKProtocol {
     static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
     // Customer Management
     static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
-    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
+    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((Error?) -> Void)?)
 }
 
 /// DojoSDK interface
@@ -129,7 +129,7 @@ protocol DojoSDKProtocol {
     public static func deleteCustomerPaymentMethod(customerId: String,
                                                    paymentMethodId: String,
                                                    customerSecret: String,
-                                                   completion: ((String?, Error?) -> Void)?) {
+                                                   completion: ((Error?) -> Void)?) {
         handleDeleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret, completion: completion)
     }
 }

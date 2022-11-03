@@ -34,5 +34,5 @@ protocol NetworkServiceProtocol {
     func deleteCustomerPaymentMethod(customerId: String,
                                      paymentMethodId: String,
                                      customerSecret: String,
-                                     completion: ((String?, Error?) -> Void)?)
+                                     completion: ((Error?) -> Void)?)
 }

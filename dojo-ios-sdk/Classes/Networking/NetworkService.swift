@@ -187,23 +187,22 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+    func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId, paymentMethodId],
                                                         endpoint: .deleteCustomerPaymentMethod) else {
-            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             return
         }
-        let request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
+        var request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
+        request.httpMethod = HTTPMethod.DELETE
         let task = session.dataTask(with: request) { data, response, error in
             if let error = error { // Error from request
-                completion?(nil, error)
-            } else if let data = data, // Data is available
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200 { // Request has a success code
-                let responseString = String(decoding: data, as: UTF8.self)
-                completion?(responseString, nil)
+                completion?(error)
+            } else if let httpResponse = response as? HTTPURLResponse,
+                      httpResponse.statusCode == 204 { // Request has a success code
+                completion?(nil)
             } else { // No error and no data
-                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
             }
         }
         task.resume()
@@ -215,6 +214,7 @@ extension NetworkService {
     enum HTTPMethod {
         static let POST = "POST"
         static let GET = "GET"
+        static let DELETE = "DELETE"
     }
     
     func getDefaultPOSTRequest(url: URL, body: Data?, timeout: TimeInterval) -> URLRequest {
@@ -231,8 +231,8 @@ extension NetworkService {
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         request.httpMethod = HTTPMethod.GET
         request.timeoutInterval = timeout
+        request.addValue("2022-04-07", forHTTPHeaderField: "Version")
         if let auth = auth {
-            request.addValue("2022-04-07", forHTTPHeaderField: "Version")
             request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
         }
         return request
