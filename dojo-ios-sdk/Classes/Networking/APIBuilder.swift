@@ -29,7 +29,7 @@ protocol APIBuilderProtocol {
 struct APIBuilder: APIBuilderProtocol {
     
     static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
-    static let hostDojo = "https://pay.dojo.tech/"
+    static let hostDojo = "https://api.dojo.tech/"
     
     static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL {
         // Requests to Connect-E
