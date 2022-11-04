@@ -57,17 +57,17 @@ struct APIBuilder: APIBuilderProtocol {
         switch endpoint {
         case .paymentIntent:
             guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/payment/\(paymentId)"
+            stringURL += "payment-intents/public/\(paymentId)"
         case .paymentIntentRefresh:
             guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/payment/\(paymentId)/refresh-client-session-secret"
+            stringURL += "payment-intents/public/\(paymentId)/refresh-client-session-secret"
         case .fetchCustomerPaymentMethods:
             guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/customers/public/\(customerId)/payment-methods"
+            stringURL += "customers/public/\(customerId)/payment-methods"
         case .deleteCustomerPaymentMethod:
             guard let customerId = pathComponents.first,
                   let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
-            stringURL += "api/customers/public/\(customerId)/payment-methods/\(paymentMethodId)"
+            stringURL += "customers/public/\(customerId)/payment-methods/\(paymentMethodId)"
         }
         return try buildURL(stringURL)
     }

@@ -225,6 +225,7 @@ extension NetworkService {
         request.httpMethod = HTTPMethod.POST
         request.httpBody = body
         request.timeoutInterval = timeout
+        request.addValue("2022-04-07", forHTTPHeaderField: "Version")
         return request
     }
     
