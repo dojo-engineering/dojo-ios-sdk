@@ -76,8 +76,12 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
       }
     
     func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool {
-        // TODO receive from the payment intent
-        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: getSupportedApplePayNetworks(config.supportedCards))
+        let supportedCardNetworks = getSupportedApplePayNetworks(config.supportedCards)
+        guard !supportedCardNetworks.isEmpty else {
+            // supported card network is empty, can't present apple pay
+            return false
+        }
+        return PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: supportedCardNetworks)
     }
 }
 
