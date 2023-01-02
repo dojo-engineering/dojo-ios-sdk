@@ -70,7 +70,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
                 NSLog("Presented payment controller")
             } else {
                 NSLog("Failed to present payment controller")
-                completion?(SDKResponseCode.declined.rawValue)
+                completion?(DojoSDKResponseCode.declined.rawValue)
              }
          })
       }
@@ -91,9 +91,9 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         controller.dismiss {
             DispatchQueue.main.async {
                 if self.paymentStatus == .success {
-                    self.completion?(SDKResponseCode.successful.rawValue)
+                    self.completion?(DojoSDKResponseCode.successful.rawValue)
                 } else {
-                    self.completion?(SDKResponseCode.declined.rawValue)
+                    self.completion?(DojoSDKResponseCode.declined.rawValue)
                 }
             }
         }
@@ -140,7 +140,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
                         switch result {
                             // payment successded
                         case .result(let status):
-                            if status == SDKResponseCode.successful.rawValue {
+                            if status == DojoSDKResponseCode.successful.rawValue {
                                 self.paymentStatus = .success
                             }
                         default:

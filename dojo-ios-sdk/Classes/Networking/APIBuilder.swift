@@ -56,17 +56,17 @@ struct APIBuilder: APIBuilderProtocol {
         var stringURL = hostDojo
         switch endpoint {
         case .paymentIntent:
-            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "payment-intents/public/\(paymentId)"
         case .paymentIntentRefresh:
-            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "payment-intents/public/\(paymentId)/refresh-client-session-secret"
         case .fetchCustomerPaymentMethods:
-            guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+            guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "customers/public/\(customerId)/payment-methods"
         case .deleteCustomerPaymentMethod:
             guard let customerId = pathComponents.first,
-                  let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)}
+                  let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "customers/public/\(customerId)/payment-methods/\(paymentMethodId)"
         }
         return try buildURL(stringURL)
@@ -74,7 +74,7 @@ struct APIBuilder: APIBuilderProtocol {
     
     private static func buildURL(_ stringURL: String) throws -> URL {
         guard let url = URL(string: stringURL) else {
-            throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)
+            throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)
         }
         return url
     }

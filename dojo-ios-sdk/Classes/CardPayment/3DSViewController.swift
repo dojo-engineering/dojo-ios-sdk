@@ -15,7 +15,7 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
                 if let statusCode = messageData["statusCode"] as? Int {
                     completion?(statusCode)
                 } else {
-                    completion?(SDKResponseCode.sdkInternalError.rawValue)
+                    completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
                 }
             }
         }
@@ -59,7 +59,7 @@ class ThreeDSViewController: UIViewController, WKScriptMessageHandler {
     }
     
     @objc func cancelTapped() {
-        completion?(SDKResponseCode.declined.rawValue)
+        completion?(DojoSDKResponseCode.declined.rawValue)
     }
     
     func getHTMLContent(stepUpUrl: String, jwt: String, md: String) -> String {

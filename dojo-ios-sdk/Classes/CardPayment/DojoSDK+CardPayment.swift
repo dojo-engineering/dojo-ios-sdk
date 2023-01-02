@@ -12,7 +12,7 @@ extension DojoSDK {
                                            formAction: String?,
                                            completion: ((Int?) -> Void)?) {
         guard let token = token, let formAction = formAction else {
-            completion?(SDKResponseCode.sdkInternalError.rawValue)
+            completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             return
         }
         DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -32,7 +32,7 @@ extension DojoSDK {
         guard let stepUpUrl = stepUpUrl,
             let jwt = jwt,
             let md = md else {
-            completion?(SDKResponseCode.sdkInternalError.rawValue)
+            completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             return
         }
         
@@ -53,7 +53,7 @@ extension DojoSDK {
             if let navigationController = navigationController {
                 fromViewController.present(navigationController, animated: false, completion: nil)
             } else {
-                completion?(SDKResponseCode.sdkInternalError.rawValue)
+                completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             }
         }
     }

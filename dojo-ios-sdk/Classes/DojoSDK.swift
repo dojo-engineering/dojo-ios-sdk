@@ -165,14 +165,14 @@ private extension DojoSDK {
                         case .result(let resultCode):
                             sendCompletionOnMainThread(result: resultCode, completion: completion)
                         default:
-                            sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
+                            sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
                         }
                     }
                 }
             case .result(let resultCode):
                 sendCompletionOnMainThread(result: resultCode, completion: completion)
             default:
-                sendCompletionOnMainThread(result: SDKResponseCode.sdkInternalError.rawValue, completion: completion)
+                sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
             }
         }
     }

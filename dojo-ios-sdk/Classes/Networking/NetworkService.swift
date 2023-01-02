@@ -21,12 +21,12 @@ class NetworkService: NetworkServiceProtocol {
                            payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData) else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         guard let bodyData = payload.getRequestBody() else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
@@ -35,7 +35,7 @@ class NetworkService: NetworkServiceProtocol {
         let task = session.dataTask(with: request) { (data, response, error) in
             //TODO check for status code
             if let _ = error {
-                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
@@ -43,7 +43,7 @@ class NetworkService: NetworkServiceProtocol {
                     completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
                                                     token: decodedResponse.token))
                 } else {
-                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                    completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 }
             }
         }
@@ -56,12 +56,12 @@ class NetworkService: NetworkServiceProtocol {
         let endpoint: APIEndpointConnectE = (payload as? DojoSavedCardPaymentPayload) != nil ? .savedCardPayment : .cardPayment
         
         guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint) else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         guard let bodyData = payload.getRequestBody() else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
@@ -69,11 +69,11 @@ class NetworkService: NetworkServiceProtocol {
         
         let task = session.dataTask(with: request) { (data, response, error) in
             if let _ = error { // error
-                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             } else if let data = data {
                 let decoder = JSONDecoder()
                 if let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data) {
-                    if decodedResponse.statusCode != SDKResponseCode.authorizing.rawValue { //TODO, 3DS has a code 3
+                    if decodedResponse.statusCode != DojoSDKResponseCode.authorizing.rawValue { //TODO, 3DS has a code 3
                         completion?(.result(decodedResponse.statusCode))
                            return
                        }
@@ -81,10 +81,10 @@ class NetworkService: NetworkServiceProtocol {
                                                  jwt: decodedResponse.jwt,
                                                  md: decodedResponse.md))
                 } else { // can't decode
-                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                    completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 }
             } else { // no error and data is nil
-                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             }
         }
         // perform request
@@ -94,12 +94,12 @@ class NetworkService: NetworkServiceProtocol {
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                             endpoint: .applePay) else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
         guard let bodyData = getApplePayRequestBody(payload: payloads.1) else {
-            completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
@@ -108,14 +108,14 @@ class NetworkService: NetworkServiceProtocol {
         let task = session.dataTask(with: request) { (data, response, error) in
             //TODO check for status code
             if let _ = error {
-                completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
                    let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data){
                     completion?(.result(decodedResponse.statusCode))
                 } else {
-                    completion?(.result(SDKResponseCode.sdkInternalError.rawValue))
+                    completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 }
             }
         }
@@ -125,7 +125,7 @@ class NetworkService: NetworkServiceProtocol {
     func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
                                                         endpoint: .paymentIntent) else {
-            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         let request = getDefaultGETRequest(url: url, timeout: timeout)
@@ -138,7 +138,7 @@ class NetworkService: NetworkServiceProtocol {
                 let responseString = String(decoding: data, as: UTF8.self)
                 completion?(responseString, nil)
             } else { // No error and no data
-                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             }
         }
         task.resume()
@@ -148,7 +148,7 @@ class NetworkService: NetworkServiceProtocol {
                               completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
                                                         endpoint: .paymentIntentRefresh) else {
-            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         let request = getDefaultPOSTRequest(url: url, body: nil, timeout: timeout)
@@ -161,7 +161,7 @@ class NetworkService: NetworkServiceProtocol {
                 let responseString = String(decoding: data, as: UTF8.self)
                 completion?(responseString, nil)
             } else { // No error and no data
-                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             }
         }
         task.resume()
@@ -170,7 +170,7 @@ class NetworkService: NetworkServiceProtocol {
     func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId],
                                                         endpoint: .fetchCustomerPaymentMethods) else {
-            completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         let request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
@@ -183,7 +183,7 @@ class NetworkService: NetworkServiceProtocol {
                 let responseString = String(decoding: data, as: UTF8.self)
                 completion?(responseString, nil)
             } else { // No error and no data
-                completion?(nil, ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             }
         }
         task.resume()
@@ -192,7 +192,7 @@ class NetworkService: NetworkServiceProtocol {
     func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId, paymentMethodId],
                                                         endpoint: .deleteCustomerPaymentMethod) else {
-            completion?(ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+            completion?(ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         var request = getDefaultGETRequest(url: url, timeout: timeout, auth: customerSecret)
@@ -204,7 +204,7 @@ class NetworkService: NetworkServiceProtocol {
                       httpResponse.statusCode == 204 { // Request has a success code
                 completion?(nil)
             } else { // No error and no data
-                completion?(ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue))
+                completion?(ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             }
         }
         task.resume()
