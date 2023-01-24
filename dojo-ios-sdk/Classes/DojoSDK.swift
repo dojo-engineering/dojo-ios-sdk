@@ -146,21 +146,27 @@ private extension DojoSDK {
                                                    fromViewController: UIViewController,
                                                    completion: ((Int) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
+        let threeDSCheck = CardinaMobile()
         networkService.collectDeviceData(token: token, payload: payload) { result in
             switch result {
-            case .deviceDataRequired(let formAction, let formToken):
-                // Collect details
-                handleDeviceDataCollection(token: formToken, formAction: formAction ) { res in
-                    if let err = res { // error from token
-                        sendCompletionOnMainThread(result: err, completion: completion)
-                        return // don't need to continue
+            case .deviceDataRequired(let formToken):
+                threeDSCheck.startSession(jwt: formToken, completion: { error in
+                    if let _ = error {
+                        sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
+                        return
                     }
-                    // Perform card payment
                     networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
                         switch cardPaymentResult {
-                        case .threeDSRequired(let stepUpUrl, let jwt, let md):
-                            handle3DSFlow(stepUpUrl: stepUpUrl, jwt: jwt, md: md, fromViewController: fromViewController) { threeDSResult in
-                                sendCompletionOnMainThread(result: threeDSResult, completion: completion)
+                        case .threeDSRequired(let jwt, let md):
+                            threeDSCheck.performThreeDScheck(transactionId: md, payload: jwt) { threeDSResultPayload in
+                                networkService.submitThreeDSecurePayload(token: token, payload: threeDSResultPayload) { paymentResult in
+                                    switch paymentResult {
+                                    case .result(let resultCode):
+                                        sendCompletionOnMainThread(result: resultCode, completion: completion)
+                                    default:
+                                        sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
+                                    }
+                                }
                             }
                         case .result(let resultCode):
                             sendCompletionOnMainThread(result: resultCode, completion: completion)
@@ -168,7 +174,7 @@ private extension DojoSDK {
                             sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
                         }
                     }
-                }
+                })
             case .result(let resultCode):
                 sendCompletionOnMainThread(result: resultCode, completion: completion)
             default:

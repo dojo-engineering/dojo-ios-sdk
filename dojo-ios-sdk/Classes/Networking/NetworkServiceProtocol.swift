@@ -8,8 +8,8 @@
 import Foundation
 
 enum CardPaymentNetworkResponse {
-    case threeDSRequired(stepUpUrl: String?, jwt: String?, md: String?)
-    case deviceDataRequired(formAction: String?, token: String?)
+    case threeDSRequired(jwt: String, md: String)
+    case deviceDataRequired(token: String)
     case result(Int)
 }
 
@@ -18,6 +18,9 @@ protocol NetworkServiceProtocol {
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?)
+    func submitThreeDSecurePayload(token: String,
+                                   payload: String,
+                                   completion: ((CardPaymentNetworkResponse) -> Void)?)
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,
                             completion: ((CardPaymentNetworkResponse) -> Void)?)

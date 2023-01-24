@@ -8,6 +8,5 @@
 import Foundation
 
 struct DeviceDataResponse: Decodable {
-    let formAction: String?
     let token: String?
 }

@@ -12,6 +12,7 @@ enum APIEndpointConnectE {
     case savedCardPayment
     case deviceData
     case applePay
+    case threeDSecureComplete
 }
 
 enum APIEndpointDojo {
@@ -43,9 +44,11 @@ struct APIBuilder: APIBuilderProtocol {
             stringURL += "api/device-data/"
         case .applePay:
             stringURL += "cors/api/payments/\(token)/apple-pay"
+        case .threeDSecureComplete:
+            stringURL += "cors/api/payments/\(token)/ThreeDSecureComplete"
         }
-        // append token, for apple pay it differs
-        if endpoint != .applePay {
+        // for some endpoints token needs to be added differently
+        if endpoint != .applePay, endpoint != .threeDSecureComplete {
             stringURL += token
         }
 

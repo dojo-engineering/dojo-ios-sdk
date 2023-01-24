@@ -39,9 +39,9 @@ class NetworkService: NetworkServiceProtocol {
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
-                   let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data){
-                    completion?(.deviceDataRequired(formAction: decodedResponse.formAction,
-                                                    token: decodedResponse.token))
+                   let decodedResponse = try? decoder.decode(DeviceDataResponse.self, from: data),
+                   let token = decodedResponse.token {
+                    completion?(.deviceDataRequired(token: token))
                 } else {
                     completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 }
@@ -77,9 +77,12 @@ class NetworkService: NetworkServiceProtocol {
                         completion?(.result(decodedResponse.statusCode))
                            return
                        }
-                    completion?(.threeDSRequired(stepUpUrl: decodedResponse.stepUpUrl,
-                                                 jwt: decodedResponse.jwt,
-                                                 md: decodedResponse.md))
+                    if let jwt = decodedResponse.jwt, let md = decodedResponse.md {
+                        completion?(.threeDSRequired(jwt: jwt,
+                                                     md: md))
+                    } else {
+                        completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+                    }
                 } else { // can't decode
                     completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 }
@@ -88,6 +91,39 @@ class NetworkService: NetworkServiceProtocol {
             }
         }
         // perform request
+        task.resume()
+    }
+    
+    func submitThreeDSecurePayload(token: String, payload: String, completion: ((CardPaymentNetworkResponse) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token,
+                                                            endpoint: .threeDSecureComplete) else {
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        guard !payload.isEmpty, let payload = payload.data(using: .utf8) else {
+            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        
+        var request = getDefaultPOSTRequest(url: url, body: payload, timeout: timeout)
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request) { (data, response, error) in
+            //TODO check for status code
+            if let _ = error {
+                completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+            } else {
+                let decoder = JSONDecoder()
+                if let data = data,
+                   let decodedResponse = try? decoder.decode(ThreeDSResponse.self, from: data){
+                    completion?(.result(decodedResponse.statusCode))
+                } else {
+                    completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+                }
+            }
+        }
         task.resume()
     }
     
@@ -226,6 +262,7 @@ extension NetworkService {
         request.httpBody = body
         request.timeoutInterval = timeout
         request.addValue("2022-04-07", forHTTPHeaderField: "Version")
+        request.addValue("true", forHTTPHeaderField: "IS-MOBILE")
         return request
     }
     
@@ -235,6 +272,7 @@ extension NetworkService {
         request.httpMethod = HTTPMethod.GET
         request.timeoutInterval = timeout
         request.addValue("2022-04-07", forHTTPHeaderField: "Version")
+        request.addValue("true", forHTTPHeaderField: "IS-MOBILE")
         if let auth = auth {
             request.addValue("Basic \(auth)", forHTTPHeaderField: "Authorization")
         }
