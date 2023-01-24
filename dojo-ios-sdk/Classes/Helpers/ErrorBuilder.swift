@@ -11,7 +11,7 @@ enum ErrorBuilderDomain: String {
     case internalError
 }
 
-enum SDKResponseCode: Int {
+public enum DojoSDKResponseCode: Int {
     case successful = 0
     case authorizing = 3
     case referred = 4

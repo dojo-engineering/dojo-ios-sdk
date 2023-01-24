@@ -6,30 +6,48 @@
 //
 
 import Foundation
-
-
-// https://docs.dojo.tech/api#operation/PaymentIntents_Get
-@objc
-public class DojoPaymentIntent: NSObject, Codable {
-    @objc public init(connecteToken: String,
+/// Payment intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
+@objc public class DojoPaymentIntent: NSObject, Codable {
+    /// Creates an instance of DojoPaymentIntent
+    /// - Parameters:
+    ///   - clientSessionSecret:Payment secret obtained from a paymentIIntent object.
+    ///   - totalAmount: Total payment amount obtained from a paymentIIntent object.
+    @objc public init(id: String,
+                      clientSessionSecret: String,
                       totalAmount: DojoPaymentIntentAmount) {
-        self.connecteToken = connecteToken
+        self.clientSessionSecret = clientSessionSecret
+        self.totalAmount = totalAmount
+        self.id = id
+    }
+    
+    @objc public init(id: String, totalAmount: DojoPaymentIntentAmount) {
+        self.id = id
+        self.clientSessionSecret = nil
         self.totalAmount = totalAmount
     }
     
-    let connecteToken: String
-    let totalAmount: DojoPaymentIntentAmount
+    public let id: String
+    /// Payment secret obtained from a paymentIIntent object
+    public let clientSessionSecret: String?
+    /// Total payment amount obtained from a paymentIIntent object
+    public let totalAmount: DojoPaymentIntentAmount
 }
 
-@objc
-public class DojoPaymentIntentAmount: NSObject, Codable {
+/// Amount of payment intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
+@objc public class DojoPaymentIntentAmount: NSObject, Codable {
     
+    /// Creates an instance of DojoPaymentIntentAmount
+    /// - Parameters:
+    ///   - value: The amount in the minor unit, for example "100" for 1.00 GBP.
+    ///   - currencyCode: Three-letter currency code in [ISO 4217 alpha-3](https://en.wikipedia.org/wiki/ISO_4217) format.
     @objc public init(value: UInt64,
                       currencyCode: String) {
         self.value = value
         self.currencyCode = currencyCode
     }
     
-    let value: UInt64
-    let currencyCode: String
+    /// The amount in the minor unit, for example "100" for 1.00 GBP.
+    public let value: UInt64
+    /// Three-letter currency code in [ISO 4217 alpha-3](https://en.wikipedia.org/wiki/ISO_4217) format.
+    public let currencyCode: String
 }

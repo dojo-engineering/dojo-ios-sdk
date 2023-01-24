@@ -13,7 +13,7 @@ protocol ApplePayHandlerProtocol {
                         payload: DojoApplePayPayload,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?)
-    func canMakeApplePayPayment() -> Bool
+    func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool
 }
 
 class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
@@ -47,7 +47,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
         let paymentRequest = PKPaymentRequest()
         paymentRequest.paymentSummaryItems = [getApplePayAmount(paymentIntent.totalAmount.value)]
         paymentRequest.merchantIdentifier = payload.applePayConfig.merchantIdentifier
-        paymentRequest.supportedNetworks = getSupportedApplePayNetworks()
+        paymentRequest.supportedNetworks = getSupportedApplePayNetworks(payload.applePayConfig.supportedCards)
         paymentRequest.merchantCapabilities = getMerchantCapability()
         paymentRequest.countryCode = getCountryCode()
         paymentRequest.currencyCode = paymentIntent.totalAmount.currencyCode
@@ -70,14 +70,18 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
                 NSLog("Presented payment controller")
             } else {
                 NSLog("Failed to present payment controller")
-                completion?(SDKResponseCode.declined.rawValue)
+                completion?(DojoSDKResponseCode.declined.rawValue)
              }
          })
       }
     
-    func canMakeApplePayPayment() -> Bool {
-        // TODO receive from the payment intent
-        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: getSupportedApplePayNetworks())
+    func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool {
+        let supportedCardNetworks = getSupportedApplePayNetworks(config.supportedCards)
+        guard !supportedCardNetworks.isEmpty else {
+            // supported card network is empty, can't present apple pay
+            return false
+        }
+        return PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: supportedCardNetworks)
     }
 }
 
@@ -87,34 +91,72 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         controller.dismiss {
             DispatchQueue.main.async {
                 if self.paymentStatus == .success {
-                    self.completion?(SDKResponseCode.successful.rawValue)
+                    self.completion?(DojoSDKResponseCode.successful.rawValue)
                 } else {
-                    self.completion?(SDKResponseCode.declined.rawValue)
+                    self.completion?(DojoSDKResponseCode.declined.rawValue)
                 }
             }
         }
     }
-
+    
+    func presentationWindow(for controller: PKPaymentAuthorizationController) -> UIWindow? {
+        return nil
+    }
+    
+    // Try to refresh token right away before payment?
     func paymentAuthorizationController(_ controller: PKPaymentAuthorizationController, didAuthorizePayment payment: PKPayment, completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
-        //TODO perform payment on the server
-        guard let token = paymentIntent?.connecteToken, let payload = payload,
+        
+        // Verify that required payment information exists
+        guard let paymentIntentId = paymentIntent?.id, let payload = payload,
               let applePayDataRequest = try? convertApplePayPaymentObjectToServerFormat(payment) else {
             // return that can't perform payment because token or payload is nil
             self.paymentStatus = .failure
             completion(self.paymentStatus)
             return
         }
-
-        networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
-            switch result {
-            case .result(let status):
-                if status == SDKResponseCode.successful.rawValue {
-                    self.paymentStatus = .success
-                }
-            default:
-                break
+        
+        // Starting from iOS 16 the Apple Pay screen is not closed if paymnet failed
+        // Because of that we need to refresh the token for every transaction to guarantee that it's valid
+        DojoSDK.refreshPaymentIntent(intentId: paymentIntentId) { refreshedIntent, error in
+            // Error refreshing token
+            if let _ = error {
+                completion(self.paymentStatus)
+                return
             }
-            completion(self.paymentStatus)
+            
+            if let data = refreshedIntent?.data(using: .utf8) {
+                let decoder = JSONDecoder()
+                if let decodedResponse = try? decoder.decode(DojoPaymentIntent.self, from: data) {
+                    // Decoded token sucessfully
+                    
+                    // Check if token exists
+                    guard let token = decodedResponse.clientSessionSecret else {
+                        // Payment token doesn't exist
+                        completion(self.paymentStatus)
+                        return
+                    }
+                    // Now try to do the actual payment
+                    self.networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
+                        switch result {
+                            // payment successded
+                        case .result(let status):
+                            if status == DojoSDKResponseCode.successful.rawValue {
+                                self.paymentStatus = .success
+                            }
+                        default:
+                            break
+                        }
+                        // notify with the final result of the payment
+                        completion(self.paymentStatus)
+                    }
+                } else {
+                    // can't decode new payment intent
+                    completion(self.paymentStatus)
+                }
+            } else {
+                // there is no data coming from the server for the new payment intent
+                completion(self.paymentStatus)
+            }
         }
     }
 }
@@ -130,11 +172,23 @@ extension ApplePayHandler {
         .capability3DS
     }
     
-    func getSupportedApplePayNetworks() -> [PKPaymentNetwork] {
-        var schemas: [PKPaymentNetwork] = [.amex, .masterCard, .visa]
-        if #available(iOS 12.0, *) {
-            schemas.append(.maestro)
-        }
+    func getSupportedApplePayNetworks(_ supportedCards: [ApplePaySupportedCards]) -> [PKPaymentNetwork] {
+        let schemas: [PKPaymentNetwork] = supportedCards.compactMap({
+            switch $0 {
+            case .amex:
+                return .amex
+            case .maestro:
+                if #available(iOS 12.0, *) {
+                    return .maestro
+                } else {
+                    return nil
+                }
+            case .mastercard:
+                return .masterCard
+            case .visa:
+                return .visa
+            }
+        })
         return schemas
     }
     

@@ -7,28 +7,38 @@
 
 import Foundation
 
-enum APIEndpoint {
+enum APIEndpointConnectE {
     case cardPayment
+    case savedCardPayment
     case deviceData
     case applePay
 }
 
+enum APIEndpointDojo {
+    case paymentIntent
+    case paymentIntentRefresh
+    case fetchCustomerPaymentMethods
+    case deleteCustomerPaymentMethod
+}
+
 protocol APIBuilderProtocol {
-    static func buildURL(_ isSandbox: Bool, token: String , endpoint: APIEndpoint) throws -> URL
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
     
-    static let host = "https://web.e.connect.paymentsense.cloud/"
-    static let hostSandbox = "https://web.e.test.connect.paymentsense.cloud/"
-    static let hostDev = "https://web-dot-connect-e-build.appspot.com/"
+    static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
+    static let hostDojo = "https://api.dojo.tech/"
     
-    static func buildURL(_ isSandbox: Bool, token: String, endpoint: APIEndpoint) throws -> URL {
-        // construct endpoint url
-        var stringURL = isSandbox ? hostSandbox : host
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL {
+        // Requests to Connect-E
+        var stringURL = hostConnect
         switch endpoint {
         case .cardPayment:
             stringURL += "api/payments/"
+        case .savedCardPayment:
+            stringURL += "api/payments/recurring/"
         case .deviceData:
             stringURL += "api/device-data/"
         case .applePay:
@@ -38,8 +48,33 @@ struct APIBuilder: APIBuilderProtocol {
         if endpoint != .applePay {
             stringURL += token
         }
+
+        return try buildURL(stringURL)
+    }
+    
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL {
+        var stringURL = hostDojo
+        switch endpoint {
+        case .paymentIntent:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "payment-intents/public/\(paymentId)"
+        case .paymentIntentRefresh:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "payment-intents/public/\(paymentId)/refresh-client-session-secret"
+        case .fetchCustomerPaymentMethods:
+            guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "customers/public/\(customerId)/payment-methods"
+        case .deleteCustomerPaymentMethod:
+            guard let customerId = pathComponents.first,
+                  let paymentMethodId = pathComponents.last else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "customers/public/\(customerId)/payment-methods/\(paymentMethodId)"
+        }
+        return try buildURL(stringURL)
+    }
+    
+    private static func buildURL(_ stringURL: String) throws -> URL {
         guard let url = URL(string: stringURL) else {
-            throw ErrorBuilder.internalError(SDKResponseCode.sdkInternalError.rawValue)
+            throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)
         }
         return url
     }

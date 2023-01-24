@@ -12,10 +12,10 @@ import PassKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var switchSaveCard: UISwitch!
     @IBOutlet weak var mainTableView: UITableView!
-    @IBOutlet weak var switchIsSandbox: UISwitch!
     @IBOutlet weak var buttonApplePay: PKPaymentButton!
-    private let tableViewItems: [InputTableViewCellType] = [.token, .cardholderName, .cardNumber, .expiry, .cvv, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
+    private let tableViewItems: [InputTableViewCellType] = [.token, .customerSecret, .cardholderName, .cardNumber, .expiry, .cvv, .savedCardToken, .fetchPaymentIntent, .refreshPaymentIntent, .fetchCustomerPaymentMethods, .collectBillingForApplePay, .collectShippingForApplePay, .collectEmailForApplePay]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,11 +29,24 @@ class ViewController: UIViewController {
     }
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
-        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(), isSandbox: switchIsSandbox.isOn)
+        let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
+                                                        savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: getToken(),
+        DojoSDK.executeCardPayment(token: "l373REX1W_ZEZHn9W-rgDs3liloTDd6k-6mns9YAf8XoDHCxn_c93nymCxZ7K4EumAV2eXWpQ0D1UPAujzapT50lmDAr9WoG2D2tETxk8nP-6BxlgKr2Kk8gI2e48B2xe_FU03ayb_d4WATYBppmE2PnZEIp8A==",
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
+            self?.hideLoadingIndicator()
+            self?.showAlert(result)
+        }
+    }
+    
+    @IBAction func onSavedCardPaymentPress(_ sender: Any) {
+        let token = getToken()
+        let savedCardToken = getSavedCardToken()
+        let cvv = getCVV()
+        let payload = DojoSavedCardPaymentPayload(cvv: cvv, paymentMethodId: savedCardToken)
+        showLoadingIndicator()
+        DojoSDK.executeSavedCardPayment(token: token, payload: payload, fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
             self?.showAlert(result)
         }
@@ -46,22 +59,22 @@ class ViewController: UIViewController {
     @IBAction func onApplePayPaymentPress(_ sender: Any) {
         print("startApplePay")
         
-        let token = getToken()
-//        let token = ""
-        let paymentIntent = DojoPaymentIntent(connecteToken: token,
-                                              totalAmount: DojoPaymentIntentAmount(value: 10, currencyCode: "GBP"))
-        guard DojoSDK.isApplePayAvailable(paymentIntent: paymentIntent) else {
+        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",
+                                                supportedCards: ["visa","mastercard", "amex", "maestro"],
+                                                collectBillingAddress: getBillingAddressSelectionForApplePay(),
+                                                collectShippingAddress: getShippingAddressSelectionForApplePay(),
+                                                collectEmail: getEmailAddressSelectionForApplePay())
+        guard DojoSDK.isApplePayAvailable(config: applePayConfig) else {
             let alert = UIAlertController(title: "", message: "ApplePay is not available for this device or supported card schemes are not present", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
             return
         }
         
-        let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",
-                                                collectBillingAddress: getBillingAddressSelectionForApplePay(),
-                                                collectShippingAddress: getShippingAddressSelectionForApplePay(),
-                                                collectEmail: getEmailAddressSelectionForApplePay())
-        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig, isSandbox: switchIsSandbox.isOn)
+        let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
+        let paymentIntentId = getPaymentIntentId() ?? ""
+        let paymentIntent = DojoPaymentIntent(id: paymentIntentId,
+                                              totalAmount: DojoPaymentIntentAmount(value: 1129, currencyCode: "GBP"))
         
         DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
@@ -69,7 +82,45 @@ class ViewController: UIViewController {
         }
     }
     
-    private func showAlert(_ resultCode: Int) {
+    func fetchPaymentIntent(intentId: String) {
+        showLoadingIndicator()
+        DojoSDK.fetchPaymentIntent(intentId: intentId) { paymentIntent, error in
+            self.hideLoadingIndicator()
+            if let paymentIntent = paymentIntent {
+                self.showAlert(0, body: paymentIntent) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
+    func fetchCustomerPaymentMethods(customerId: String) {
+        showLoadingIndicator()
+        DojoSDK.fetchCustomerPaymentMethods(customerId: customerId,
+                                            customerSecret: getCustomerSecret()) { result, error in
+            self.hideLoadingIndicator()
+            if let result = result {
+                self.showAlert(0, body: result) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
+    
+    func refreshPaymentIntent(intentId: String) {
+        showLoadingIndicator()
+        DojoSDK.refreshPaymentIntent(intentId: intentId) { paymentIntent, error in
+            self.hideLoadingIndicator()
+            if let paymentIntent = paymentIntent {
+                self.showAlert(0, body: paymentIntent) // success
+            } else {
+                self.showAlert(5, body: error?.localizedDescription) // error
+            }
+        }
+    }
+    
+    private func showAlert(_ resultCode: Int, body: String? = nil) {
         var title = ""
         switch resultCode {
         case 0:
@@ -77,7 +128,8 @@ class ViewController: UIViewController {
         default:
             title = "Other Error"
         }
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let message = body
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alert.addAction(UIAlertAction(title: "Close", style: UIAlertActionStyle.cancel, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -118,6 +170,18 @@ extension ViewController: UITableViewDataSource {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .token}) as? InputTableViewCell)?.getValue() ?? ""
     }
     
+    func getCustomerSecret() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .customerSecret}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getSavedCardToken() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .savedCardToken}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
+    func getCVV() -> String {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .cvv}) as? InputTableViewCell)?.getValue() ?? ""
+    }
+    
     func getShippingAddressSelectionForApplePay() -> Bool {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectShippingForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
     }
@@ -128,6 +192,10 @@ extension ViewController: UITableViewDataSource {
     
     func getEmailAddressSelectionForApplePay() -> Bool {
         (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .collectEmailForApplePay}) as? InputTableViewCell)?.getSwitchValue() ?? false
+    }
+    
+    func getPaymentIntentId() -> String? {
+        (mainTableView.visibleCells.first(where: { ($0 as? InputTableViewCell)?.inputType == .refreshPaymentIntent}) as? InputTableViewCell)?.getValue()
     }
     
     func autofill(_ type: AutofillType) {
@@ -155,10 +223,25 @@ extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: InputTableViewCell.identifier, for: indexPath) as? InputTableViewCell {
-            cell.setup(tableViewItems[indexPath.row])
+            cell.setup(tableViewItems[indexPath.row], delegate: self)
             return cell
         } else {
             return UITableViewCell.init(style: .default, reuseIdentifier: "") // Shouldn't happen
+        }
+    }
+}
+
+extension ViewController: InputTableViewCellDelegate {
+    func onActionButtonPress(cell: InputTableViewCell) {
+        switch cell.inputType {
+        case .fetchPaymentIntent:
+            fetchPaymentIntent(intentId: cell.getValue())
+        case .refreshPaymentIntent:
+            refreshPaymentIntent(intentId: cell.getValue())
+        case .fetchCustomerPaymentMethods:
+            fetchCustomerPaymentMethods(customerId: cell.getValue())
+        default:
+            break
         }
     }
 }

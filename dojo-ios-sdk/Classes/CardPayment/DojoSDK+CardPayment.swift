@@ -12,7 +12,7 @@ extension DojoSDK {
                                            formAction: String?,
                                            completion: ((Int?) -> Void)?) {
         guard let token = token, let formAction = formAction else {
-            completion?(SDKResponseCode.sdkInternalError.rawValue)
+            completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             return
         }
         DispatchQueue.main.asyncAfter(deadline: .now()) {
@@ -32,7 +32,7 @@ extension DojoSDK {
         guard let stepUpUrl = stepUpUrl,
             let jwt = jwt,
             let md = md else {
-            completion?(SDKResponseCode.sdkInternalError.rawValue)
+            completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             return
         }
         
@@ -45,11 +45,15 @@ extension DojoSDK {
             }
             
             navigationController = UINavigationController(rootViewController: threeDSController)
-            navigationController?.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                navigationController?.isModalInPresentation = true
+            } else {
+                navigationController?.modalPresentationStyle = .fullScreen
+            }
             if let navigationController = navigationController {
                 fromViewController.present(navigationController, animated: false, completion: nil)
             } else {
-                completion?(SDKResponseCode.sdkInternalError.rawValue)
+                completion?(DojoSDKResponseCode.sdkInternalError.rawValue)
             }
         }
     }
