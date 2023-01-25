@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
-  dojo-ios-sdk: 15ca5579608aafb0cefe63aa1ddf0cd0cfd6b868
+  dojo-ios-sdk: ec18688b9c1c7ab94770af6361282699e6dbcb15
 
 PODFILE CHECKSUM: fd55929dd74c36fd391ef76fff6e17d7cda306de
 

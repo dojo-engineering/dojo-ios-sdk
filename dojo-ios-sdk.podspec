@@ -151,5 +151,5 @@ sdkInternalError = 7770
   # }
 
    
-  s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/CardinalMobile.framework'
+  s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/CardinalMobile.xcframework'
 end
