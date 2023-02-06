@@ -7,9 +7,16 @@
 
 import Foundation
 
-struct ThreeDSResponse: Decodable {
-    let stepUpUrl: String?
-    let jwt: String?
-    let md: String?
-    let statusCode: Int
+struct ThreeDSCompleteRequest: Codable {
+    let paRes: String?
+    let transactionId: String?
+    let cardinalValidateResponse: ThreeDSCardinalValidateResponse
+    
+}
+
+struct ThreeDSCardinalValidateResponse: Codable {
+    let isValidated: Bool?
+    let errorNumber: Int?
+    let errorDescription: String?
+    let actionCode: String?
 }

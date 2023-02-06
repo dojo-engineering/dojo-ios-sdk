@@ -29,6 +29,7 @@ protocol APIBuilderProtocol {
 
 struct APIBuilder: APIBuilderProtocol {
     
+//    static let hostConnect = "https://web.e.test.connect.paymentsense.cloud/"
     static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
     static let hostDojo = "https://api.dojo.tech/"
     
@@ -45,7 +46,7 @@ struct APIBuilder: APIBuilderProtocol {
         case .applePay:
             stringURL += "cors/api/payments/\(token)/apple-pay"
         case .threeDSecureComplete:
-            stringURL += "cors/api/payments/\(token)/ThreeDSecureComplete"
+            stringURL += "mobile/payments/\(token)/three-ds-complete"
         }
         // for some endpoints token needs to be added differently
         if endpoint != .applePay, endpoint != .threeDSecureComplete {

@@ -77,8 +77,8 @@ class NetworkService: NetworkServiceProtocol {
                         completion?(.result(decodedResponse.statusCode))
                            return
                        }
-                    if let jwt = decodedResponse.jwt, let md = decodedResponse.md {
-                        completion?(.threeDSRequired(jwt: jwt,
+                    if let paReq = decodedResponse.paReq, let md = decodedResponse.md {
+                        completion?(.threeDSRequired(paReq: paReq,
                                                      md: md))
                     } else {
                         completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
@@ -94,21 +94,31 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func submitThreeDSecurePayload(token: String, payload: String, completion: ((CardPaymentNetworkResponse) -> Void)?) {
+    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                             endpoint: .threeDSecureComplete) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
         
-        guard !payload.isEmpty, let payload = payload.data(using: .utf8) else {
-            completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
+        let encoder = JSONEncoder()
+        guard let bodyData = try? encoder.encode(
+            ThreeDSCompleteRequest(paRes: paRes, transactionId: transactionId,
+                                   cardinalValidateResponse:
+                                    ThreeDSCardinalValidateResponse(isValidated: true,
+                                                                    errorNumber: 0,
+                                                                    errorDescription: "",
+                                                                    actionCode: "SUCCESS"))) else {
             return
         }
         
-        var request = getDefaultPOSTRequest(url: url, body: payload, timeout: timeout)
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Accept")
+        let json = String(data: bodyData, encoding: String.Encoding.utf8)
+        
+        print(json)
+        
+        var request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         
         let task = session.dataTask(with: request) { (data, response, error) in
             //TODO check for status code
