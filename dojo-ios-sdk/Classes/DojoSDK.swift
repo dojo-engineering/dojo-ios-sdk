@@ -158,8 +158,8 @@ private extension DojoSDK {
                     networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
                         switch cardPaymentResult {
                         case .threeDSRequired(let paReq, let md):
-                            threeDSCheck.performThreeDScheck(transactionId: md, payload: paReq) { threeDSResultPayload in
-                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md) { paymentResult in
+                            threeDSCheck.performThreeDScheck(transactionId: md, payload: paReq) { threeDSResultPayload, validatedResponse in
+                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md, cardinalValidateResponse: validatedResponse) { paymentResult in
                                     switch paymentResult {
                                     case .result(let resultCode):
                                         sendCompletionOnMainThread(result: resultCode, completion: completion)

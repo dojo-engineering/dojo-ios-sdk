@@ -94,7 +94,7 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, completion: ((CardPaymentNetworkResponse) -> Void)?) {
+    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                             endpoint: .threeDSecureComplete) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
@@ -104,22 +104,11 @@ class NetworkService: NetworkServiceProtocol {
         let encoder = JSONEncoder()
         guard let bodyData = try? encoder.encode(
             ThreeDSCompleteRequest(paRes: paRes, transactionId: transactionId,
-                                   cardinalValidateResponse:
-                                    ThreeDSCardinalValidateResponse(isValidated: true,
-                                                                    errorNumber: 0,
-                                                                    errorDescription: "",
-                                                                    actionCode: "SUCCESS"))) else {
+                                   cardinalValidateResponse: cardinalValidateResponse)) else {
             return
         }
-        
-        let json = String(data: bodyData, encoding: String.Encoding.utf8)
-        
-        print(json)
-        
-        var request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        
+
+        let request = getDefaultPOSTRequest(url: url, body: bodyData, timeout: timeout)
         let task = session.dataTask(with: request) { (data, response, error) in
             //TODO check for status code
             if let _ = error {
@@ -273,6 +262,7 @@ extension NetworkService {
         request.timeoutInterval = timeout
         request.addValue("2022-04-07", forHTTPHeaderField: "Version")
         request.addValue("true", forHTTPHeaderField: "IS-MOBILE")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         return request
     }
     

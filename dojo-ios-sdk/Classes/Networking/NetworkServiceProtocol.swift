@@ -21,6 +21,7 @@ protocol NetworkServiceProtocol {
     func submitThreeDSecurePayload(token: String,
                                    paRes: String,
                                    transactionId: String,
+                                   cardinalValidateResponse: ThreeDSCardinalValidateResponse,
                                    completion: ((CardPaymentNetworkResponse) -> Void)?)
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,

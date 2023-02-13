@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
                                                         savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
-        DojoSDK.executeCardPayment(token: "l373REX1W_ZEZHn9W-rgDs3liloTDd6k-6mns9YAf8XoDHCxn_c93nymCxZ7K4EumAV2eXWpQ0D1UPAujzapT50lmDAr9WoG2D2tETxk8nP-6BxlgKr2Kk8gI2e48B2xe_FU03ayb_d4WATYBppmE2PnZEIp8A==",
+        DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
                                  fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()

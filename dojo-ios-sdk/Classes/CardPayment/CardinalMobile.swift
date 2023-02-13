@@ -11,7 +11,7 @@ import CardinalMobile
 class CardinaMobile {
     
     var session : CardinalSession!
-    var validationCompletion: ((String) -> Void)?
+    var validationCompletion: ((String, ThreeDSCardinalValidateResponse) -> Void)?
     
     init() {
         setUp()
@@ -45,7 +45,7 @@ class CardinaMobile {
         }
     }
     
-    func performThreeDScheck(transactionId: String, payload: String, completion: ((String) -> Void)?) {
+    func performThreeDScheck(transactionId: String, payload: String, completion: ((String, ThreeDSCardinalValidateResponse) -> Void)?) {
         self.validationCompletion = completion
         self.session.continueWith(transactionId: transactionId, payload: payload, validationDelegate: self)
     }
@@ -54,6 +54,10 @@ class CardinaMobile {
 
 extension CardinaMobile: CardinalValidationDelegate {
     func cardinalSession(cardinalSession session: CardinalSession!, stepUpValidated validateResponse: CardinalResponse!, serverJWT: String!) {
-        self.validationCompletion?(serverJWT)
+        let validatedResponse = ThreeDSCardinalValidateResponse(isValidated: validateResponse.isValidated,
+                                                                errorNumber: validateResponse.errorNumber,
+                                                                errorDescription: "",
+                                                                actionCode: validateResponse.errorDescription.uppercased())
+        self.validationCompletion?(serverJWT, validatedResponse)
     }
 }

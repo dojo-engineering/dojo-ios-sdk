@@ -29,7 +29,6 @@ protocol APIBuilderProtocol {
 
 struct APIBuilder: APIBuilderProtocol {
     
-//    static let hostConnect = "https://web.e.test.connect.paymentsense.cloud/"
     static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
     static let hostDojo = "https://api.dojo.tech/"
     
