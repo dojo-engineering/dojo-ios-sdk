@@ -146,7 +146,7 @@ private extension DojoSDK {
                                                    fromViewController: UIViewController,
                                                    completion: ((Int) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
-        let threeDSCheck = CardinaMobile()
+        let threeDSCheck = CardinaMobile(isSandbox: payload.isSandbox)
         networkService.collectDeviceData(token: token, payload: payload) { result in
             switch result {
             case .deviceDataRequired(let formToken):
@@ -159,7 +159,7 @@ private extension DojoSDK {
                         switch cardPaymentResult {
                         case .threeDSRequired(let paReq, let md):
                             threeDSCheck.performThreeDScheck(transactionId: md, payload: paReq) { threeDSResultPayload, validatedResponse in
-                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md, cardinalValidateResponse: validatedResponse) { paymentResult in
+                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md, cardinalValidateResponse: validatedResponse, isSandbox: payload.isSandbox) { paymentResult in
                                     switch paymentResult {
                                     case .result(let resultCode):
                                         sendCompletionOnMainThread(result: resultCode, completion: completion)

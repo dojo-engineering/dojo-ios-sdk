@@ -20,13 +20,15 @@ import Foundation
                       userEmailAddress: String? = nil,
                       userPhoneNumber: String? = nil,
                       shippingDetails: DojoShippingDetails? = nil,
-                      metaData: [String : String]? = nil) {
+                      metaData: [String : String]? = nil,
+                      isSandbox: Bool = false) {
         self.cV2 = cvv
         self.paymentMethodId = paymentMethodId
         self.userPhoneNumber = userPhoneNumber
         self.userEmailAddress = userEmailAddress
         self.shippingDetails = shippingDetails
         self.metaData = metaData
+        self.isSandbox = isSandbox
     }
     
     /// CVV, CVC or CVC2 of a card.
@@ -41,6 +43,8 @@ import Foundation
     public let shippingDetails: DojoShippingDetails?
     /// A set of key-value pairs that you can use for storing additional information.
     public let metaData: [String: String]?
+    /// Set if you want to run your payment over Staging
+    public let isSandbox: Bool
     
     func getRequestBody() -> Data? {
         let encoder = JSONEncoder()

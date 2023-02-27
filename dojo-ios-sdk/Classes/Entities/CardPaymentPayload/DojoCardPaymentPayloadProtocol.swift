@@ -9,4 +9,5 @@ import Foundation
 
 protocol DojoCardPaymentPayloadProtocol: Codable {
     func getRequestBody() -> Data?
+    var isSandbox: Bool {get}
 }

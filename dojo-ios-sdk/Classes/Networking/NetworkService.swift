@@ -20,7 +20,7 @@ class NetworkService: NetworkServiceProtocol {
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayloadProtocol,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData, isSandbox: payload.isSandbox) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -55,7 +55,7 @@ class NetworkService: NetworkServiceProtocol {
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
         let endpoint: APIEndpointConnectE = (payload as? DojoSavedCardPaymentPayload) != nil ? .savedCardPayment : .cardPayment
         
-        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint, isSandbox: payload.isSandbox) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -94,9 +94,9 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, completion: ((CardPaymentNetworkResponse) -> Void)?) {
+    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, isSandbox: Bool, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
-                                                            endpoint: .threeDSecureComplete) else {
+                                                            endpoint: .threeDSecureComplete, isSandbox: isSandbox) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -128,7 +128,8 @@ class NetworkService: NetworkServiceProtocol {
     
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
-                                                            endpoint: .applePay) else {
+                                                            endpoint: .applePay,
+                                                            isSandbox: false) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }

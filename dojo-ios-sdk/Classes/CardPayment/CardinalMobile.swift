@@ -13,15 +13,15 @@ class CardinaMobile {
     var session : CardinalSession!
     var validationCompletion: ((String, ThreeDSCardinalValidateResponse) -> Void)?
     
-    init() {
-        setUp()
+    init(isSandbox: Bool = false) {
+        setUp(isSandbox: isSandbox)
     }
 
     //Setup can be called in viewDidLoad
-    func setUp() {
+    func setUp(isSandbox: Bool) {
         session = CardinalSession()
         let config = CardinalSessionConfiguration()
-        config.deploymentEnvironment = .production
+        config.deploymentEnvironment = isSandbox ? .staging : .production
         config.requestTimeout = 8000
         config.challengeTimeout = 360
         config.uiType = .both
