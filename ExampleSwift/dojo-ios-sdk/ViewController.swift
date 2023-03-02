@@ -30,8 +30,7 @@ class ViewController: UIViewController {
     
     @IBAction func onStartCardPaymentPress(_ sender: Any) {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
-                                                        savePaymentMethod: switchSaveCard.isOn,
-                                                        isSandbox: true)
+                                                        savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
         DojoSDK.executeCardPayment(token: getToken(),
                                  payload: cardPaymentPayload,
