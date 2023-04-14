@@ -23,8 +23,8 @@ enum APIEndpointDojo {
 }
 
 protocol APIBuilderProtocol {
-    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL
-    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE, host: String?) throws -> URL
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo, host: String?) throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
@@ -32,9 +32,9 @@ struct APIBuilder: APIBuilderProtocol {
     static let hostConnect = "https://web.e.connect.paymentsense.cloud/"
     static let hostDojo = "https://api.dojo.tech/"
     
-    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE) throws -> URL {
+    static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE, host: String?) throws -> URL {
         // Requests to Connect-E
-        var stringURL = hostConnect
+        var stringURL = host ?? hostConnect
         switch endpoint {
         case .cardPayment:
             stringURL += "api/payments/"
@@ -55,8 +55,8 @@ struct APIBuilder: APIBuilderProtocol {
         return try buildURL(stringURL)
     }
     
-    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo) throws -> URL {
-        var stringURL = hostDojo
+    static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo, host: String?) throws -> URL {
+        var stringURL = host ?? hostDojo
         switch endpoint {
         case .paymentIntent:
             guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}

@@ -4,7 +4,7 @@ platform :ios, '11.0'
 
 target 'dojo-ios-sdk_Example' do
   pod 'dojo-ios-sdk', :path => '../', :testspecs => ['dojo-ios-sdk-tests']
-  pod 'CocoaDebug', :configurations => ['Debug'] #network trafic tool
+#  pod 'CocoaDebug', :configurations => ['Debug'] #network trafic tool
 
   target 'dojo-ios-sdk_Tests' do
     inherit! :search_paths

@@ -19,8 +19,9 @@ class NetworkService: NetworkServiceProtocol {
     
     func collectDeviceData(token: String,
                            payload: DojoCardPaymentPayloadProtocol,
+                           debugConfig: DojoSDKDebugConfig?,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData, host: debugConfig?.urlConfig?.connecte) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -52,10 +53,11 @@ class NetworkService: NetworkServiceProtocol {
     
     func performCardPayment(token: String,
                             payload: DojoCardPaymentPayloadProtocol,
+                            debugConfig: DojoSDKDebugConfig?,
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
         let endpoint: APIEndpointConnectE = (payload as? DojoSavedCardPaymentPayload) != nil ? .savedCardPayment : .cardPayment
         
-        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint) else {
+        guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: endpoint, host: debugConfig?.urlConfig?.connecte) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -94,9 +96,10 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, isSandbox: Bool, completion: ((CardPaymentNetworkResponse) -> Void)?) {
+    func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, debugConfig: DojoSDKDebugConfig?, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
-                                                            endpoint: .threeDSecureComplete) else {
+                                                            endpoint: .threeDSecureComplete,
+                                                            host: debugConfig?.urlConfig?.connecte) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -126,9 +129,10 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), completion: ((CardPaymentNetworkResponse) -> Void)?) {
+    func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), debugConfig: DojoSDKDebugConfig?, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForConnectE(token: token,
-                                                            endpoint: .applePay) else {
+                                                            endpoint: .applePay,
+                                                            host: debugConfig?.urlConfig?.connecte) else {
             completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -157,9 +161,10 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?) {
+    func fetchPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
-                                                        endpoint: .paymentIntent) else {
+                                                        endpoint: .paymentIntent,
+                                                        host: debugConfig?.urlConfig?.remote) else {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -180,9 +185,11 @@ class NetworkService: NetworkServiceProtocol {
     }
     
     func refreshPaymentIntent(intentId: String,
+                              debugConfig: DojoSDKDebugConfig?,
                               completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
-                                                        endpoint: .paymentIntentRefresh) else {
+                                                        endpoint: .paymentIntentRefresh,
+                                                        host: debugConfig?.urlConfig?.remote) else {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -202,9 +209,10 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?) {
+    func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId],
-                                                        endpoint: .fetchCustomerPaymentMethods) else {
+                                                        endpoint: .fetchCustomerPaymentMethods,
+                                                        host: debugConfig?.urlConfig?.remote) else {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
@@ -224,9 +232,10 @@ class NetworkService: NetworkServiceProtocol {
         task.resume()
     }
     
-    func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((Error?) -> Void)?) {
+    func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((Error?) -> Void)?) {
         guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [customerId, paymentMethodId],
-                                                        endpoint: .deleteCustomerPaymentMethod) else {
+                                                        endpoint: .deleteCustomerPaymentMethod,
+                                                        host: debugConfig?.urlConfig?.remote) else {
             completion?(ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
