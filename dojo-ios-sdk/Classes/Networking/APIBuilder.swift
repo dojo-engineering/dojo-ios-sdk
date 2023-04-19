@@ -25,6 +25,7 @@ enum APIEndpointDojo {
 protocol APIBuilderProtocol {
     static func buildURLForConnectE(token: String, endpoint: APIEndpointConnectE, host: String?) throws -> URL
     static func buildURLForDojo(pathComponents: [String], endpoint: APIEndpointDojo, host: String?) throws -> URL
+    static func buildURLForExternalConfig() throws -> URL
 }
 
 struct APIBuilder: APIBuilderProtocol {
@@ -75,11 +76,17 @@ struct APIBuilder: APIBuilderProtocol {
         return try buildURL(stringURL)
     }
     
+    static func buildURLForExternalConfig() throws -> URL {
+        try buildURL("https://storage.googleapis.com/remote-ag-prod-manifest/rag-manifest.json")
+    }
+    
     private static func buildURL(_ stringURL: String) throws -> URL {
         guard let url = URL(string: stringURL) else {
             throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)
         }
         return url
     }
+    
+    
 }
 
