@@ -11,24 +11,27 @@ protocol DojoSDKProtocol {
     // Card Payments
     static func executeCardPayment(token: String,
                                    payload: DojoCardPaymentPayload,
+                                   debugConfig: DojoSDKDebugConfig?,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
     static func executeSavedCardPayment(token: String,
                                         payload: DojoSavedCardPaymentPayload,
+                                        debugConfig: DojoSDKDebugConfig?,
                                         fromViewController: UIViewController,
                                         completion: ((Int) -> Void)?)
     // Wallet Payments
     static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                        payload: DojoApplePayPayload,
+                                       debugConfig: DojoSDKDebugConfig?,
                                        fromViewController: UIViewController,
                                        completion: ((Int) -> Void)?)
     static func isApplePayAvailable(config: DojoApplePayConfig) -> Bool
     // Payment Intent
-    static func fetchPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
-    static func refreshPaymentIntent(intentId: String, completion: ((String?, Error?) -> Void)?)
+    static func fetchPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
+    static func refreshPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     // Customer Management
-    static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, completion: ((String?, Error?) -> Void)?)
-    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, completion: ((Error?) -> Void)?)
+    static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
+    static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((Error?) -> Void)?)
 }
 
 /// DojoSDK interface
@@ -41,10 +44,12 @@ protocol DojoSDKProtocol {
     ///   - completion: Result of the payment.
     @objc public static func executeCardPayment(token: String,
                                           payload: DojoCardPaymentPayload,
+                                          debugConfig: DojoSDKDebugConfig? = nil,
                                           fromViewController: UIViewController,
                                           completion: ((Int) -> Void)?) {
         internalExecuteCardPayment(token: token,
                                    payload: payload,
+                                   debugConfig: debugConfig,
                                    fromViewController: fromViewController,
                                    completion: completion)
     }
@@ -57,11 +62,13 @@ protocol DojoSDKProtocol {
     ///   - completion: Result of the payment.
     @objc public static func executeSavedCardPayment(token: String,
                                                payload: DojoSavedCardPaymentPayload,
+                                               debugConfig: DojoSDKDebugConfig? = nil,
                                                fromViewController: UIViewController,
                                                completion: ((Int) -> Void)?) {
         // Payment with a saved card has the same flow as the regular (full) card payment
         internalExecuteCardPayment(token: token,
                                    payload: payload,
+                                   debugConfig: debugConfig,
                                    fromViewController: fromViewController,
                                    completion: completion)
     }
@@ -74,10 +81,12 @@ protocol DojoSDKProtocol {
     ///   - completion: Result of the payment.
     @objc public static func executeApplePayPayment(paymentIntent: DojoPaymentIntent,
                                               payload: DojoApplePayPayload,
+                                              debugConfig: DojoSDKDebugConfig? = nil,
                                               fromViewController: UIViewController,
                                               completion: ((Int) -> Void)?) {
         ApplePayHandler.shared.handleApplePay(paymentIntent: paymentIntent,
                                               payload: payload,
+                                              debugConfig: debugConfig,
                                               fromViewController: fromViewController,
                                               completion: { result in
             completion?(result)
@@ -96,8 +105,9 @@ protocol DojoSDKProtocol {
     ///   - intentId: ID of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
     ///   - completion: Payment Intent in String (JSON) format or error
     @objc public static func fetchPaymentIntent(intentId: String,
-                                          completion: ((String?, Error?) -> Void)?) {
-        handlePaymentIntentFetching(intentId: intentId, completion: completion)
+                                                debugConfig: DojoSDKDebugConfig? = nil,
+                                                completion: ((String?, Error?) -> Void)?) {
+        handlePaymentIntentFetching(intentId: intentId, debugConfig: debugConfig, completion: completion)
     }
     
     /// Refresh a payment intent
@@ -105,8 +115,9 @@ protocol DojoSDKProtocol {
     ///   - intentId: Id of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
     ///   - completion: Payment Intent in String (JSON) format or error
     @objc public static func refreshPaymentIntent(intentId: String,
-                                            completion: ((String?, Error?) -> Void)?) {
-        handlePaymentIntentRefresh(intentId: intentId, completion: completion)
+                                                  debugConfig: DojoSDKDebugConfig? = nil,
+                                                  completion: ((String?, Error?) -> Void)?) {
+        handlePaymentIntentRefresh(intentId: intentId, debugConfig: debugConfig, completion: completion)
     }
     
     /// Fetch customer's saved payment methods
@@ -115,9 +126,10 @@ protocol DojoSDKProtocol {
     ///   - customerSecret: Access key for the customer
     ///   - completion: Customer's saved payment methods in String (JSON) format or error
     @objc public static func fetchCustomerPaymentMethods(customerId: String,
-                                                   customerSecret: String,
-                                                   completion: ((String?, Error?) -> Void)?) {
-        handleFetchCustomerPaymentMethods(customerId: customerId, customerSecret: customerSecret, completion: completion)
+                                                         customerSecret: String,
+                                                         debugConfig: DojoSDKDebugConfig? = nil,
+                                                         completion: ((String?, Error?) -> Void)?) {
+        handleFetchCustomerPaymentMethods(customerId: customerId, customerSecret: customerSecret, debugConfig: debugConfig, completion: completion)
     }
     
     /// Delete a customer's saved payment method
@@ -127,10 +139,11 @@ protocol DojoSDKProtocol {
     ///   - customerSecret: Access key for the customer
     ///   - completion:
     @objc public static func deleteCustomerPaymentMethod(customerId: String,
-                                                   paymentMethodId: String,
-                                                   customerSecret: String,
-                                                   completion: ((Error?) -> Void)?) {
-        handleDeleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret, completion: completion)
+                                                         paymentMethodId: String,
+                                                         customerSecret: String,
+                                                         debugConfig: DojoSDKDebugConfig? = nil,
+                                                         completion: ((Error?) -> Void)?) {
+        handleDeleteCustomerPaymentMethod(customerId: customerId, paymentMethodId: paymentMethodId, customerSecret: customerSecret, debugConfig: debugConfig, completion: completion)
     }
 }
 
@@ -143,11 +156,12 @@ private extension DojoSDK {
     
     private static func internalExecuteCardPayment(token: String,
                                                    payload: DojoCardPaymentPayloadProtocol,
+                                                   debugConfig: DojoSDKDebugConfig? = nil,
                                                    fromViewController: UIViewController,
                                                    completion: ((Int) -> Void)?) {
         let networkService = NetworkService(timeout: 25)
-        let threeDSCheck = CardinaMobile(isSandbox: payload.isSandbox)
-        networkService.collectDeviceData(token: token, payload: payload) { result in
+        let threeDSCheck = CardinaMobile(isSandbox: debugConfig?.isSandboxIntent ?? false)
+        networkService.collectDeviceData(token: token, payload: payload, debugConfig: debugConfig) { result in
             switch result {
             case .deviceDataRequired(let formToken):
                 threeDSCheck.startSession(jwt: formToken, completion: { error in
@@ -155,11 +169,11 @@ private extension DojoSDK {
                         sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
                         return
                     }
-                    networkService.performCardPayment(token: token, payload: payload) { cardPaymentResult in
+                    networkService.performCardPayment(token: token, payload: payload, debugConfig: debugConfig) { cardPaymentResult in
                         switch cardPaymentResult {
                         case .threeDSRequired(let paReq, let md):
                             threeDSCheck.performThreeDScheck(transactionId: md, payload: paReq) { threeDSResultPayload, validatedResponse in
-                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md, cardinalValidateResponse: validatedResponse, isSandbox: payload.isSandbox) { paymentResult in
+                                networkService.submitThreeDSecurePayload(token: token, paRes: threeDSResultPayload, transactionId: md, cardinalValidateResponse: validatedResponse, debugConfig: debugConfig) { paymentResult in
                                     switch paymentResult {
                                     case .result(let resultCode):
                                         sendCompletionOnMainThread(result: resultCode, completion: completion)

@@ -11,6 +11,7 @@ import PassKit
 protocol ApplePayHandlerProtocol {
     func handleApplePay(paymentIntent: DojoPaymentIntent,
                         payload: DojoApplePayPayload,
+                        debugConfig: DojoSDKDebugConfig?,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?)
     func canMakeApplePayPayment(config: DojoApplePayConfig) -> Bool
@@ -22,6 +23,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     private var paymentStatus: PKPaymentAuthorizationStatus = .failure
     private var paymentIntent: DojoPaymentIntent?
     private var payload: DojoApplePayPayload?
+    private var debugConfig: DojoSDKDebugConfig?
     private var completion: ((Int) -> Void)?
     
     // needs to be shared so apple pay can receive delegate notifications
@@ -34,12 +36,14 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     
     func handleApplePay(paymentIntent: DojoPaymentIntent,
                         payload: DojoApplePayPayload,
+                        debugConfig: DojoSDKDebugConfig?,
                         fromViewController: UIViewController,
                         completion: ((Int) -> Void)?) {
         
         self.paymentIntent = paymentIntent
         self.completion = completion
         self.payload = payload
+        self.debugConfig = debugConfig
         
         //TODO check if ApplePay is avaialbe
 
@@ -117,7 +121,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
         
         // Starting from iOS 16 the Apple Pay screen is not closed if paymnet failed
         // Because of that we need to refresh the token for every transaction to guarantee that it's valid
-        DojoSDK.refreshPaymentIntent(intentId: paymentIntentId) { refreshedIntent, error in
+        DojoSDK.refreshPaymentIntent(intentId: paymentIntentId, debugConfig: debugConfig) { refreshedIntent, error in
             // Error refreshing token
             if let _ = error {
                 completion(self.paymentStatus)
@@ -136,7 +140,7 @@ extension ApplePayHandler: PKPaymentAuthorizationControllerDelegate {
                         return
                     }
                     // Now try to do the actual payment
-                    self.networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest)) { result in
+                    self.networkService.performApplePayPayment(token: token, payloads: (payload, applePayDataRequest), debugConfig: self.debugConfig) { result in
                         switch result {
                             // payment successded
                         case .result(let status):
