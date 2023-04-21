@@ -8,9 +8,9 @@ import Foundation
     
 @objc public class DojoSDKDebugConfig: NSObject {
     
-    public let urlConfig: DojoSDKURLConfig?
-    public let isSandboxIntent: Bool
-    public let isSandboxWallet: Bool
+    @objc public let urlConfig: DojoSDKURLConfig?
+    @objc public let isSandboxIntent: Bool
+    @objc public let isSandboxWallet: Bool
     
  
     @objc public init(urlConfig: DojoSDKURLConfig? = nil,
@@ -24,12 +24,12 @@ import Foundation
 }
 
 @objc public class  DojoSDKURLConfig: NSObject {
-    public let connecte: String?
-    public let remote: String?
+    @objc public let connectE: String?
+    @objc public let remote: String?
     
-    @objc public init(connecte: String? = nil,
+    @objc public init(connectE: String? = nil,
                       remote: String? = nil) {
-        self.connecte = connecte
+        self.connectE = connectE
         self.remote = remote
     }
 }

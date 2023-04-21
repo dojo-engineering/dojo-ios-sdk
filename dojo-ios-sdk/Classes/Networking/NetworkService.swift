@@ -22,7 +22,7 @@ class NetworkService: NetworkServiceProtocol {
                            debugConfig: DojoSDKDebugConfig?,
                            completion: ((CardPaymentNetworkResponse) -> Void)?) {
         fetchRegionalURL { regionalURL in
-            let hostURL = debugConfig?.urlConfig?.connecte ?? regionalURL
+            let hostURL = debugConfig?.urlConfig?.connectE ?? regionalURL
             
             guard let url = try? APIBuilder.buildURLForConnectE(token: token, endpoint: .deviceData, host: hostURL) else {
                 completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
@@ -61,7 +61,7 @@ class NetworkService: NetworkServiceProtocol {
                             completion: ((CardPaymentNetworkResponse) -> Void)?) {
         
         fetchRegionalURL { regionalURL in
-            let hostURL = debugConfig?.urlConfig?.connecte ?? regionalURL
+            let hostURL = debugConfig?.urlConfig?.connectE ?? regionalURL
             
             let endpoint: APIEndpointConnectE = (payload as? DojoSavedCardPaymentPayload) != nil ? .savedCardPayment : .cardPayment
             
@@ -109,7 +109,7 @@ class NetworkService: NetworkServiceProtocol {
     
     func submitThreeDSecurePayload(token: String, paRes: String, transactionId: String, cardinalValidateResponse: ThreeDSCardinalValidateResponse, debugConfig: DojoSDKDebugConfig?, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         fetchRegionalURL { regionalURL in
-            let hostURL = debugConfig?.urlConfig?.connecte ?? regionalURL
+            let hostURL = debugConfig?.urlConfig?.connectE ?? regionalURL
             guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                                 endpoint: .threeDSecureComplete,
                                                                 host: hostURL) else {
@@ -145,10 +145,10 @@ class NetworkService: NetworkServiceProtocol {
     
     func performApplePayPayment(token: String, payloads: (DojoApplePayPayload, ApplePayDataRequest), debugConfig: DojoSDKDebugConfig?, completion: ((CardPaymentNetworkResponse) -> Void)?) {
         fetchRegionalURL { regionalURL in
-            let hostURL = debugConfig?.urlConfig?.connecte ?? regionalURL
+            let hostURL = debugConfig?.urlConfig?.connectE ?? regionalURL
             guard let url = try? APIBuilder.buildURLForConnectE(token: token,
                                                                 endpoint: .applePay,
-                                                                host: regionalURL) else {
+                                                                host: hostURL) else {
                 completion?(.result(DojoSDKResponseCode.sdkInternalError.rawValue))
                 return
             }
@@ -323,22 +323,48 @@ extension NetworkService {
 
 extension NetworkService {
     private func fetchRegionalURL(completion: ((String?) -> Void)?) {
-        guard let url = try? APIBuilder.buildURLForExternalConfig() else {
-            completion?(nil)
+        internalFetchRegionalURL(endpoint: .gcp, completion: { urlGCP, dateGCP in
+            self.internalFetchRegionalURL(endpoint: .aws, completion: { urlAWS, dateAWS in
+                // if GCP URL is nil, return AWS url
+                guard let urlCGP = urlGCP, let dateGCP = dateGCP else {
+                    completion?(urlAWS)
+                    return
+                }
+                // if AWS URL is nil, return GCP url
+                guard let urlAWS = urlAWS, let dateAWS = dateAWS else {
+                    completion?(urlCGP)
+                    return
+                }
+                // if both exist, compare the last modify
+                let returnURL = dateGCP > dateAWS ? urlCGP : urlAWS
+                completion?(returnURL)
+            })
+        })
+    }
+    
+    private func internalFetchRegionalURL(endpoint: APIEndpointRegional, completion: ((String?, Date?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForExternalConfig(endpoint: endpoint) else {
+            completion?(nil, nil)
             return
         }
         
         let request = getDefaultGETRequest(url: url, timeout: timeout)
         let task = session.dataTask(with: request) { (data, response, error) in
             if let _ = error {
-                completion?(nil)
+                completion?(nil, nil)
             } else {
                 let decoder = JSONDecoder()
                 if let data = data,
-                   let decodedResponse = try? decoder.decode(RegionalManifestEntity.self, from: data) {
-                    completion?(decodedResponse.baseUrl)
+                   let decodedResponse = try? decoder.decode(RegionalManifestEntity.self, from: data),
+                   let responseConverted = response as? HTTPURLResponse,
+                   let lastModify = responseConverted.allHeaderFields["Last-Modified"] as? String {
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
+                        dateFormatter.locale = Locale(identifier: "en")
+                        let serverDate = dateFormatter.date(from: lastModify)
+                        completion?(decodedResponse.baseUrl, serverDate)
                 } else {
-                    completion?(nil)
+                    completion?(nil, nil)
                 }
             }
         }
