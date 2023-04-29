@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "dojo-ios-sdk",
+    platforms: [.iOS(.v11)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -20,9 +21,14 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "dojo-ios-sdk",
-            dependencies: []),
+            dependencies: [.target(name: "CardinalMobile", condition: .when(platforms: [.iOS]))],
+            path: "Sources/dojo-ios-sdk/Classes"),
+        .binaryTarget(
+            name: "CardinalMobile",
+            path: "Sources/dojo-ios-sdk/Libs/CardinalMobile.xcframework"),
         .testTarget(
             name: "dojo-ios-sdkTests",
-            dependencies: ["dojo-ios-sdk"]),
+            dependencies: ["dojo-ios-sdk"],
+            path: "Sources/dojo-ios-sdk/Tests"),
     ]
 )
