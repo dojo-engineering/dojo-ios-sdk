@@ -14,6 +14,10 @@ protocol DojoSDKProtocol {
                                    debugConfig: DojoSDKDebugConfig?,
                                    fromViewController: UIViewController,
                                    completion: ((Int) -> Void)?)
+    static func executeVirtualTerminalPayment(token: String,
+                                              payload: DojoCardPaymentPayload,
+                                              debugConfig: DojoSDKDebugConfig?,
+                                              completion: ((Int) -> Void)?)
     static func executeSavedCardPayment(token: String,
                                         payload: DojoSavedCardPaymentPayload,
                                         debugConfig: DojoSDKDebugConfig?,
@@ -71,6 +75,22 @@ protocol DojoSDKProtocol {
                                    debugConfig: debugConfig,
                                    fromViewController: fromViewController,
                                    completion: completion)
+    }
+    
+    /// Execute virtual terminal payment
+    /// - Parameters:
+    ///   - token: Payment secret obtained from a paymentIIntent object.
+    ///   - payload: Payment configuration and data.
+    ///   - debugConfig: optional debug config
+    ///   - completion: Result of the payment.
+    @objc public static func executeVirtualTerminalPayment(token: String,
+                                                           payload: DojoCardPaymentPayload,
+                                                           debugConfig: DojoSDKDebugConfig?,
+                                                           completion: ((Int) -> Void)?) {
+        internalExecuteVirtualTerminalPayment(token: token,
+                                              payload: payload,
+                                              debugConfig: debugConfig,
+                                              completion: completion)
     }
     
     /// Execute ApplePay payment
@@ -189,6 +209,23 @@ private extension DojoSDK {
                         }
                     }
                 })
+            case .result(let resultCode):
+                sendCompletionOnMainThread(result: resultCode, completion: completion)
+            default:
+                sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
+            }
+        }
+    }
+    
+    private static func internalExecuteVirtualTerminalPayment(token: String,
+                                                              payload: DojoCardPaymentPayloadProtocol,
+                                                              debugConfig: DojoSDKDebugConfig? = nil,
+                                                              completion: ((Int) -> Void)?) {
+        let networkService = NetworkService(timeout: 25)
+        networkService.performCardPayment(token: token, payload: payload, debugConfig: debugConfig) { cardPaymentResult in
+            switch cardPaymentResult {
+            case .threeDSRequired(_, _):
+                sendCompletionOnMainThread(result: DojoSDKResponseCode.sdkInternalError.rawValue, completion: completion)
             case .result(let resultCode):
                 sendCompletionOnMainThread(result: resultCode, completion: completion)
             default:
