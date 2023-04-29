@@ -33,8 +33,8 @@ class ViewController: UIViewController {
                                                         savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
         DojoSDK.executeCardPayment(token: getToken(),
-                                 payload: cardPaymentPayload,
-                                 fromViewController: self) { [weak self] result in
+                                   payload: cardPaymentPayload,
+                                   fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
             self?.showAlert(result)
         }
@@ -75,7 +75,6 @@ class ViewController: UIViewController {
         let paymentIntentId = getPaymentIntentId() ?? ""
         let paymentIntent = DojoPaymentIntent(id: paymentIntentId,
                                               totalAmount: DojoPaymentIntentAmount(value: 1129, currencyCode: "GBP"))
-        
         DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
             print("finished with result:")
             self?.showAlert(result)

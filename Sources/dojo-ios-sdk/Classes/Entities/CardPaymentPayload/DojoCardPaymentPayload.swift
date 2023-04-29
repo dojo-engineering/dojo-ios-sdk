@@ -22,8 +22,7 @@ import Foundation
                       billingAddress: DojoAddressDetails? = nil,
                       shippingDetails: DojoShippingDetails? = nil,
                       metaData: [String : String]? = nil,
-                      savePaymentMethod: Bool = false,
-                      isSandbox: Bool = false) {
+                      savePaymentMethod: Bool = false) {
         self.cardDetails = cardDetails
         self.userEmailAddress = userEmailAddress
         self.userPhoneNumber = userPhoneNumber
@@ -31,7 +30,6 @@ import Foundation
         self.shippingDetails = shippingDetails
         self.metaData = metaData
         self.savePaymentMethod = savePaymentMethod
-        self.isSandbox = isSandbox
     }
     
     /// Card details of a card that is used for chek out
@@ -48,8 +46,6 @@ import Foundation
     public let metaData: [String: String]?
     /// Set if you want to save this payment method on user's account
     public let savePaymentMethod: Bool
-    /// Set if you want to run your payment over Staging
-    public let isSandbox: Bool
 }
 
 extension DojoCardPaymentPayload {
