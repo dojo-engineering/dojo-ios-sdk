@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'dojo-ios-sdk'
-  s.version          = '1.2.0'
+  s.version          = '1.2.1'
   s.summary          = 'Dojo Payment SDK'
 
 # This description is used to generate tags and improve search results.
@@ -144,11 +144,11 @@ dojo-ios-sdk is available under the MIT license. See the LICENSE file for more i
 
   s.ios.deployment_target = '11.0'
 
-  s.source_files = 'dojo-ios-sdk/Classes/**/*'
-  s.public_header_files = 'dojo-ios-sdk/Classes/**/*.h'
+  s.source_files = 'Sources/dojo-ios-sdk/Classes/**/*'
+  s.public_header_files = 'Sources/dojo-ios-sdk/Classes/**/*.h'
   
   s.test_spec 'dojo-ios-sdk-tests' do |test_spec|
-      test_spec.source_files = 'dojo-ios-sdk/Tests/**/*'
+      test_spec.source_files = 'Sources/dojo-ios-sdk/Tests/**/*'
   end
   # s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/**/*'
   
@@ -157,5 +157,5 @@ dojo-ios-sdk is available under the MIT license. See the LICENSE file for more i
   # }
 
    
-  s.ios.vendored_frameworks = 'dojo-ios-sdk/Libs/CardinalMobile.xcframework'
+  s.ios.vendored_frameworks = 'Sources/dojo-ios-sdk/Libs/CardinalMobile.xcframework'
 end
