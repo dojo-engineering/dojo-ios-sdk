@@ -210,7 +210,21 @@ class NetworkService: NetworkServiceProtocol {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
-        let request = getDefaultPOSTRequest(url: url, body: nil, timeout: timeout)
+        fetchIntent(url: url, completion: completion)
+    }
+    
+    func fetchSetupIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
+                                                        endpoint: .setupIntent,
+                                                        host: debugConfig?.urlConfig?.remote) else {
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        fetchIntent(url: url, completion: completion)
+    }
+    
+    func fetchIntent(url: URL,  completion: ((String?, Error?) -> Void)?) {
+        let request = getDefaultGETRequest(url: url, timeout: timeout)
         let task = session.dataTask(with: request) { data, response, error in
             if let error = error { // Error from request
                 completion?(nil, error)
