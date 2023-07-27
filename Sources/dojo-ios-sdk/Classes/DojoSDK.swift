@@ -192,7 +192,7 @@ private extension DojoSDK {
                                                    debugConfig: DojoSDKDebugConfig? = nil,
                                                    fromViewController: UIViewController,
                                                    completion: ((Int) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         let threeDSCheck = CardinaMobile(isSandbox: debugConfig?.isSandboxIntent ?? false)
         networkService.collectDeviceData(token: token, payload: payload, debugConfig: debugConfig) { result in
             switch result {
@@ -234,7 +234,7 @@ private extension DojoSDK {
                                                               payload: DojoCardPaymentPayloadProtocol,
                                                               debugConfig: DojoSDKDebugConfig? = nil,
                                                               completion: ((Int) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         networkService.performCardPayment(token: token, payload: payload, debugConfig: debugConfig) { cardPaymentResult in
             switch cardPaymentResult {
             case .threeDSRequired(_, _):

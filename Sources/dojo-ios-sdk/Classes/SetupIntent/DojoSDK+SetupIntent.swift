@@ -8,7 +8,7 @@ import Foundation
 
 extension DojoSDK {
     static func handleSetupIntentFetching(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         networkService.fetchSetupIntent(intentId: intentId, debugConfig: debugConfig) { paymentIntent, error in
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 completion?(paymentIntent, error)

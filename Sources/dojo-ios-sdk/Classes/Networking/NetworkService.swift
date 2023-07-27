@@ -12,7 +12,7 @@ class NetworkService: NetworkServiceProtocol {
     let session: URLSession
     let timeout: TimeInterval
     
-    required init(timeout: TimeInterval) {
+    required init(timeout: TimeInterval = 25) {
         self.session = NetworkService.getSesstion()
         self.timeout = timeout
     }

@@ -9,7 +9,7 @@ import Foundation
 
 extension DojoSDK {
     static func handlePaymentIntentFetching(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         networkService.fetchPaymentIntent(intentId: intentId, debugConfig: debugConfig) { paymentIntent, error in
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 completion?(paymentIntent, error)
@@ -18,7 +18,7 @@ extension DojoSDK {
     }
     
     static func handlePaymentIntentRefresh(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         networkService.refreshPaymentIntent(intentId: intentId, debugConfig: debugConfig) { paymentIntent, error in
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 completion?(paymentIntent, error)
