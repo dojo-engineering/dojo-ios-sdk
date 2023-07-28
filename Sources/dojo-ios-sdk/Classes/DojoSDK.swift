@@ -33,6 +33,8 @@ protocol DojoSDKProtocol {
     // Payment Intent
     static func fetchPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     static func refreshPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
+    // Setup Intent
+    static func fetchSetupIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     // Customer Management
     static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((Error?) -> Void)?)
@@ -140,6 +142,17 @@ protocol DojoSDKProtocol {
         handlePaymentIntentRefresh(intentId: intentId, debugConfig: debugConfig, completion: completion)
     }
     
+    /// Fetch a setup intent
+    /// - Parameters:
+    ///   - intentId: ID of Setup Intent
+    ///   - debugConfig: Config for environments
+    ///   - completion: Setup Intent in String (JSON) format or error
+    @objc public static func fetchSetupIntent(intentId: String,
+                                              debugConfig: DojoSDKDebugConfig? = nil,
+                                              completion: ((String?, Error?) -> Void)?) {
+        handleSetupIntentFetching(intentId: intentId, debugConfig: debugConfig, completion: completion)
+    }
+    
     /// Fetch customer's saved payment methods
     /// - Parameters:
     ///   - customerId: Id of the customer
@@ -179,7 +192,7 @@ private extension DojoSDK {
                                                    debugConfig: DojoSDKDebugConfig? = nil,
                                                    fromViewController: UIViewController,
                                                    completion: ((Int) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         let threeDSCheck = CardinaMobile(isSandbox: debugConfig?.isSandboxIntent ?? false)
         networkService.collectDeviceData(token: token, payload: payload, debugConfig: debugConfig) { result in
             switch result {
@@ -221,7 +234,7 @@ private extension DojoSDK {
                                                               payload: DojoCardPaymentPayloadProtocol,
                                                               debugConfig: DojoSDKDebugConfig? = nil,
                                                               completion: ((Int) -> Void)?) {
-        let networkService = NetworkService(timeout: 25)
+        let networkService = NetworkService()
         networkService.performCardPayment(token: token, payload: payload, debugConfig: debugConfig) { cardPaymentResult in
             switch cardPaymentResult {
             case .threeDSRequired(_, _):

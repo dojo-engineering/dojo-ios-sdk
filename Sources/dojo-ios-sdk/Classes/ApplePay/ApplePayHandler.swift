@@ -31,7 +31,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
     static let shared = ApplePayHandler()
     
     override init() {
-        self.networkService = NetworkService(timeout: 25)
+        self.networkService = NetworkService()
     }
     
     func handleApplePay(paymentIntent: DojoPaymentIntent,
