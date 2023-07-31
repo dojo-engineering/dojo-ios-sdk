@@ -35,6 +35,7 @@ protocol DojoSDKProtocol {
     static func refreshPaymentIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     // Setup Intent
     static func fetchSetupIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
+    static func refreshSetupIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     // Customer Management
     static func fetchCustomerPaymentMethods(customerId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?)
     static func deleteCustomerPaymentMethod(customerId: String, paymentMethodId: String, customerSecret: String, debugConfig: DojoSDKDebugConfig?, completion: ((Error?) -> Void)?)
@@ -140,6 +141,16 @@ protocol DojoSDKProtocol {
                                                   debugConfig: DojoSDKDebugConfig? = nil,
                                                   completion: ((String?, Error?) -> Void)?) {
         handlePaymentIntentRefresh(intentId: intentId, debugConfig: debugConfig, completion: completion)
+    }
+    
+    /// Refresh a setup intent
+    /// - Parameters:
+    ///   - intentId: Id of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
+    ///   - completion: Payment Intent in String (JSON) format or error
+    @objc public static func refreshSetupIntent(intentId: String,
+                                                debugConfig: DojoSDKDebugConfig? = nil,
+                                                completion: ((String?, Error?) -> Void)?) {
+        handleSetupIntentRefresh(intentId: intentId, debugConfig: debugConfig, completion: completion)
     }
     
     /// Fetch a setup intent

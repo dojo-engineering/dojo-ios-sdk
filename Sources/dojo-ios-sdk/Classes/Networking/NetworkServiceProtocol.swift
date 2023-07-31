@@ -42,6 +42,9 @@ protocol NetworkServiceProtocol {
     func refreshPaymentIntent(intentId: String,
                               debugConfig: DojoSDKDebugConfig?,
                               completion: ((String?, Error?) -> Void)?)
+    func refreshSetupIntent(intentId: String,
+                            debugConfig: DojoSDKDebugConfig?,
+                            completion: ((String?, Error?) -> Void)?)
     func fetchCustomerPaymentMethods(customerId: String,
                                      customerSecret: String,
                                      debugConfig: DojoSDKDebugConfig?,
