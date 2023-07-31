@@ -145,8 +145,8 @@ protocol DojoSDKProtocol {
     
     /// Refresh a setup intent
     /// - Parameters:
-    ///   - intentId: Id of payment Intent [reference](https://docs.dojo.tech/api#tag/Payment-intents)
-    ///   - completion: Payment Intent in String (JSON) format or error
+    ///   - intentId: Id of setup Intent
+    ///   - completion: setup Intent in String (JSON) format or error
     @objc public static func refreshSetupIntent(intentId: String,
                                                 debugConfig: DojoSDKDebugConfig? = nil,
                                                 completion: ((String?, Error?) -> Void)?) {
