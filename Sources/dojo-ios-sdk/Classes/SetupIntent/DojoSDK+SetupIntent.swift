@@ -15,4 +15,13 @@ extension DojoSDK {
             }
         }
     }
+    
+    static func handleSetupIntentRefresh(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
+        let networkService = NetworkService()
+        networkService.refreshSetupIntent(intentId: intentId, debugConfig: debugConfig) { paymentIntent, error in
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                completion?(paymentIntent, error)
+            }
+        }
+    }
 }
