@@ -13,6 +13,7 @@ struct CardPaymentDataRequest: Encodable {
     let cardName: String?
     let cardNumber: String?
     let expiryDate: String?
+    let mitConsentGiven: Bool?
     
     let userEmailAddress: String?
     let userPhoneNumber: String?
@@ -26,6 +27,7 @@ struct CardPaymentDataRequest: Encodable {
         self.cardName = payload.cardDetails.cardName
         self.cardNumber = payload.cardDetails.cardNumber
         self.expiryDate = payload.cardDetails.expiryDate
+        self.mitConsentGiven = payload.cardDetails.mitConsentGiven
         self.userEmailAddress = payload.userEmailAddress
         self.userPhoneNumber = payload.userPhoneNumber
         self.billingAddress = payload.billingAddress
@@ -49,5 +51,6 @@ struct CardPaymentDataRequest: Encodable {
         self.expiryDate = nil
         self.billingAddress = nil
         self.savePaymentMethod = nil
+        self.mitConsentGiven = nil
     }
 }
