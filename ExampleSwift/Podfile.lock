@@ -1,7 +1,7 @@
 PODS:
   - CocoaDebug (1.7.2)
-  - dojo-ios-sdk (1.3.0)
-  - dojo-ios-sdk/dojo-ios-sdk-tests (1.3.0)
+  - dojo-ios-sdk (1.4.0)
+  - dojo-ios-sdk/dojo-ios-sdk-tests (1.4.0)
 
 DEPENDENCIES:
   - CocoaDebug
@@ -18,7 +18,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
-  dojo-ios-sdk: abbcf8f3d0720b2a25fb3196491890c6fd495fcb
+  dojo-ios-sdk: 4e3b4220d6c4616f39c00d3f6cf97eacceb4c366
 
 PODFILE CHECKSUM: b2b5d1609b738e12e581a6bfa0dea4faab63e9f4
 
