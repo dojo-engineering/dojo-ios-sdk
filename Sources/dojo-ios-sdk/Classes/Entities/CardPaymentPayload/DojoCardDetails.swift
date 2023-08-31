@@ -14,14 +14,17 @@ import Foundation
     ///   - cardName: Card holder name from a card
     ///   - expiryDate: Expiry date of a card in format "MM / YY"
     ///   - cv2: CVV, CVC or CVC2 of a card
+    ///   - mitConsentGiven: COF
     @objc public init(cardNumber: String,
                       cardName: String? = nil,
                       expiryDate: String? = nil,
-                      cv2: String? = nil) {
+                      cv2: String? = nil,
+                      mitConsentGiven: NSNumber? = nil) {
         self.cardNumber = cardNumber
         self.cardName = cardName
         self.expiryDate = expiryDate
         self.cv2 = cv2
+        self.mitConsentGiven = mitConsentGiven?.boolValue
     }
     
     /// PAN (Primary Account Number) of a card
@@ -32,4 +35,6 @@ import Foundation
     public let expiryDate: String?
     /// CVV, CVC or CVC2 of a card
     public let cv2: String?
+    /// COF
+    public let mitConsentGiven: Bool?
 }

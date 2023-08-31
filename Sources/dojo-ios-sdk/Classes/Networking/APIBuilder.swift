@@ -18,6 +18,8 @@ enum APIEndpointConnectE {
 enum APIEndpointDojo {
     case paymentIntent
     case paymentIntentRefresh
+    case setupIntent
+    case setupIntentRefresh
     case fetchCustomerPaymentMethods
     case deleteCustomerPaymentMethod
 }
@@ -70,6 +72,12 @@ struct APIBuilder: APIBuilderProtocol {
         case .paymentIntentRefresh:
             guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "/payment-intents/public/\(paymentId)/refresh-client-session-secret"
+        case .setupIntentRefresh:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "/setup-intents/public/\(paymentId)/refresh-client-session-secret"
+        case .setupIntent:
+            guard let paymentId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
+            stringURL += "/setup-intents/public/\(paymentId)"
         case .fetchCustomerPaymentMethods:
             guard let customerId = pathComponents.first else { throw ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue)}
             stringURL += "/customers/public/\(customerId)/payment-methods"

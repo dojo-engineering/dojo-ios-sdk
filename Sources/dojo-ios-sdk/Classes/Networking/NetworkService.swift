@@ -12,7 +12,7 @@ class NetworkService: NetworkServiceProtocol {
     let session: URLSession
     let timeout: TimeInterval
     
-    required init(timeout: TimeInterval) {
+    required init(timeout: TimeInterval = 25) {
         self.session = NetworkService.getSesstion()
         self.timeout = timeout
     }
@@ -185,20 +185,8 @@ class NetworkService: NetworkServiceProtocol {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
-        let request = getDefaultGETRequest(url: url, timeout: timeout)
-        let task = session.dataTask(with: request) { data, response, error in
-            if let error = error { // Error from request
-                completion?(nil, error)
-            } else if let data = data, // Data is available
-                      let httpResponse = response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200 { // Request has a success code
-                let responseString = String(decoding: data, as: UTF8.self)
-                completion?(responseString, nil)
-            } else { // No error and no data
-                completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
-            }
-        }
-        task.resume()
+        fetchIntent(request: getDefaultGETRequest(url: url, timeout: timeout),
+                    completion: completion)
     }
     
     func refreshPaymentIntent(intentId: String,
@@ -210,7 +198,35 @@ class NetworkService: NetworkServiceProtocol {
             completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
             return
         }
-        let request = getDefaultPOSTRequest(url: url, body: nil, timeout: timeout)
+        fetchIntent(request: getDefaultPOSTRequest(url: url, body: nil, timeout: timeout),
+                    completion: completion)
+    }
+    
+    func fetchSetupIntent(intentId: String, debugConfig: DojoSDKDebugConfig?, completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
+                                                        endpoint: .setupIntent,
+                                                        host: debugConfig?.urlConfig?.remote) else {
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        fetchIntent(request: getDefaultGETRequest(url: url, timeout: timeout),
+                    completion: completion)
+    }
+    
+    func refreshSetupIntent(intentId: String,
+                            debugConfig: DojoSDKDebugConfig?,
+                            completion: ((String?, Error?) -> Void)?) {
+        guard let url = try? APIBuilder.buildURLForDojo(pathComponents: [intentId],
+                                                        endpoint: .setupIntentRefresh,
+                                                        host: debugConfig?.urlConfig?.remote) else {
+            completion?(nil, ErrorBuilder.internalError(DojoSDKResponseCode.sdkInternalError.rawValue))
+            return
+        }
+        fetchIntent(request: getDefaultPOSTRequest(url: url, body: nil, timeout: timeout),
+                    completion: completion)
+    }
+    
+    func fetchIntent(request: URLRequest,  completion: ((String?, Error?) -> Void)?) {
         let task = session.dataTask(with: request) { data, response, error in
             if let error = error { // Error from request
                 completion?(nil, error)
