@@ -1,117 +1,37 @@
-# dojo-ios-sdk
+# Dojo iOS SDK
 
-## Example
+![GitHub release](https://img.shields.io/github/v/release/dojo-engineering/dojo-ios-sdk)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/dojo-engineering/dojo-ios-sdk/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/platform-iOS-blue)](https://github.com/dojo-engineering/dojo-ios-sdk/tree/master)
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+[📚 Integration guide](https://docs.dojo.tech/payments/mobile-integration/ios/accept-payments/ios-step-by-step-guide) | [🧑‍💻 Setup Apple Pay](https://docs.dojo.tech/payments/mobile-integration/ios/accept-payments/ios-setup-apple-pay) | [📱 Demo](https://docs.dojo.tech/payments/mobile-integration/ios/ios-demo) | [🛠️ Releases](https://github.com/dojo-engineering/dojo-ios-sdk/releases)
+
+The Dojo iOS SDK lets you build a simple and intuitive payment experience in your iOS mobile app.
+Our default theme comes in both light and dark modes, right out of the box, which your users will love! What's more, you can customize the UI screens and add more elements to collect payment details.
 
 ## Requirements
 
-Minimum iOS version: 11.0
+iOS version **11.0** and later.
 
 ## Installation
 
-dojo-ios-sdk is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+The Dojo iOS SDK is available on [CocoaPods](https://cocoapods.org) and [Swift Package Manager](https://www.swift.org/package-manager/). Check out our [setup guide 🔧](https://docs.dojo.tech/payments/mobile-integration/ios/ios-setup) to get started.
 
-```ruby
-pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '1.0.0'
-```
-## How to use
-SDK functionality can be accessed via DojoSdk object.
+## Accept payments
 
-## Swift
+Once you've installed and setup the Dojo iOS SDK, you can configure your app to start [accepting payments 💳](https://docs.dojo.tech/payments/mobile-integration/ios/ios-accept-payments).
 
-### Card payment
-```swift
-import dojo_ios_sdk
+## Save card
 
-let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: DojoCardDetails(cardNumber: "4456530000001096", cardName: "Card Holder Name", expiryDate: "12 / 24", cv2: "020"))
-let token = "Token from Payment Intent (connecteToken)"
-DojoSDK.executeCardPayment(token: token,
-                            payload: cardPaymentPayload,
-                            fromViewController: self) { [weak self] result in
-    print(result)
-}
-```
-This example includes only required fields, you can find additional fields that can be passed in the API reference.
+You can provide your mobile app users with the ability to [save their card information](https://docs.dojo.tech/payments/mobile-integration/ios/accept-payments/ios-save-card) securely for future use.
+The following is an example of this feature.
 
-### ApplePay Payment
-```swift
-import dojo_ios_sdk
+<img src="https://docs.dojo.tech/images/save-card-pay.gif" width="200">
 
-let applePayConfig = DojoApplePayConfig(merchantIdentifier:"merchant.uk.co.paymentsense.sdk.demo.app",  supportedCards: ["visa","mastercard", "amex", "maestro"])
-let applePayPayload = DojoApplePayPayload(applePayConfig: applePayConfig)
-let paymentIntent = DojoPaymentIntent(id: "Payment intent ID", totalAmount: DojoPaymentIntentAmount(value: 120, currencyCode: "GBP"))
-DojoSDK.executeApplePayPayment(paymentIntent: paymentIntent, payload: applePayPayload, fromViewController: self) { [weak self] result in
-    print(result)
-}
-```
-This example includes only required fields, you can find additional fields that can be passed in the API reference.
+## Contributing
 
-## Objective-C
+We welcome contributions for features, bug fixes, enhancements, or any documentation feedback. Feel free to [open an issue](https://github.com/dojo-engineering/dojo-ios-sdk/issues) describing your contribution in detail and we will get back to you soon to take it forward.
 
-### Card payment
+## Let's connect 🤝!
 
-```
-#import <dojo_ios_sdk/dojo_ios_sdk-Swift.h>
-
-DojoCardPaymentPayload* cardPaymentPayload = [[DojoCardPaymentPayload alloc]
-                                                initWithCardDetails: [[DojoCardDetails alloc]
-                                                                    initWithCardNumber:@"4456530000001096"
-                                                                    cardName:@"Card Holder Name"
-                                                                    expiryDate:@"12 / 24"
-                                                                    cv2:@"020"]
-                                                userEmailAddress: NULL
-                                                userPhoneNumber: NULL
-                                                billingAddress: NULL
-                                                shippingDetails: NULL
-                                                metaData: NULL
-                                                savePaymentMethod: FALSE];
-NSString *token = @"Token from Payment Intent";
-[DojoSDK executeCardPaymentWithToken: token payload: cardPaymentPayload fromViewController: self completion:^(NSInteger result) {
-    NSLog(@"%ld", (long)result);
-}];
-```
-
-### ApplePay Payment
-
-```
-#import <dojo_ios_sdk/dojo_ios_sdk-Swift.h>
-
-DojoApplePayConfig *applePayConfig = [[DojoApplePayConfig alloc] initWithMerchantIdentifier: @"merchant.uk.co.paymentsense.sdk.demo.app"
-                                                                            supportedCards: [NSArray arrayWithObjects: @"visa", @"mastercard", nil]
-                                                                        collectBillingAddress: FALSE
-                                                                        collectShippingAddress: FALSE
-                                                                                collectEmail: FALSE];
-DojoApplePayPayload *applePayPayload = [[DojoApplePayPayload alloc] initWithApplePayConfig: applePayConfig userEmailAddress: NULL metaData: NULL];
-DojoPaymentIntent *paymentIntent = [[DojoPaymentIntent alloc]  initWithId: @"PaymentIntent ID" clientSessionSecret: @"Token from Payment Intent" totalAmount: [[DojoPaymentIntentAmount alloc] initWithValue: 120 currencyCode:@"GBP"]];
-    
-[DojoSDK executeApplePayPaymentWithPaymentIntent: paymentIntent payload: applePayPayload fromViewController:self completion: ^(NSInteger result) {
-    NSLog(@"%ld", (long)result);
-}];
-```
-
-This example includes only required fields, you can find additional fields that can be passed in the API reference.
-
-
-## Result codes
-
-```
-successful = 0
-authorizing = 3
-referred = 4
-declined = 5
-duplicateTransaction = 20
-failed = 30
-waitingPreExecute = 99
-invalidRequest = 400
-issueWithAccessToken = 401
-noAccessTokenSupplied = 404
-internalServerError = 500
-            
-sdkInternalError = 7770
-```
-
-## License
-
-dojo-ios-sdk is available under the MIT license. See the LICENSE file for more info.
+Show some love to our developers and connect with them on our [Discord server](https://discord.gg/9UzNq4Hz93).
