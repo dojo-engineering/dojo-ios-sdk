@@ -1,8 +1,8 @@
 # Dojo iOS SDK
 
-![GitHub release](https://img.shields.io/github/v/release/dojo-engineering/dojo-ios-sdk)
+[![GitHub release](https://img.shields.io/github/v/release/dojo-engineering/dojo-ios-sdk)](https://github.com/dojo-engineering/dojo-ios-sdk/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/dojo-engineering/dojo-ios-sdk/blob/master/LICENSE)
-[![License](https://img.shields.io/badge/platform-iOS-blue)](https://github.com/dojo-engineering/dojo-ios-sdk/tree/master)
+[![Platform](https://img.shields.io/badge/platform-iOS-blue)](https://github.com/dojo-engineering/dojo-ios-sdk/tree/master)
 
 [📚 Integration guide](https://docs.dojo.tech/payments/mobile-integration/ios/accept-payments/ios-step-by-step-guide) | [🧑‍💻 Setup Apple Pay](https://docs.dojo.tech/payments/mobile-integration/ios/accept-payments/ios-setup-apple-pay) | [📱 Demo](https://docs.dojo.tech/payments/mobile-integration/ios/ios-demo) | [🛠️ Releases](https://github.com/dojo-engineering/dojo-ios-sdk/releases)
 
