@@ -43,6 +43,11 @@ protocol DojoSDKProtocol {
 
 /// DojoSDK interface
 @objc public class DojoSDK: NSObject, DojoSDKProtocol {
+    
+    public static override func version() -> Int {
+        141
+    }
+    
     /// Execute card payment
     /// - Parameters:
     ///   - token: Payment secret obtained from a paymentIIntent object.
