@@ -26,7 +26,7 @@ import Foundation
         self.userPhoneNumber = userPhoneNumber
         self.userEmailAddress = userEmailAddress
         self.shippingDetails = shippingDetails
-        self.metaData = metaData
+        self.metaData = metaData == nil ? [:] : metaData
     }
     
     /// CVV, CVC or CVC2 of a card.
@@ -40,10 +40,11 @@ import Foundation
     /// The address where to send the order.
     public let shippingDetails: DojoShippingDetails?
     /// A set of key-value pairs that you can use for storing additional information.
-    public let metaData: [String: String]?
+    public var metaData: [String: String]?
     
     func getRequestBody() -> Data? {
         let encoder = JSONEncoder()
+        self.metaData?[getMetadataSDKVersionKey()] = getMetadataSDKVersion()
         guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: self)) else {
             return nil
         }
