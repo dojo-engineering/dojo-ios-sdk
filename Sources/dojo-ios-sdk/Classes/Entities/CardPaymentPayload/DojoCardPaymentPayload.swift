@@ -28,7 +28,7 @@ import Foundation
         self.userPhoneNumber = userPhoneNumber
         self.billingAddress = billingAddress
         self.shippingDetails = shippingDetails
-        self.metaData = metaData
+        self.metaData = metaData == nil ? [:] : metaData
         self.savePaymentMethod = savePaymentMethod
     }
     
@@ -43,7 +43,7 @@ import Foundation
     /// The address where to send the order.
     public let shippingDetails: DojoShippingDetails?
     /// A set of key-value pairs that you can use for storing additional information.
-    public let metaData: [String: String]?
+    public var metaData: [String: String]?
     /// Set if you want to save this payment method on user's account
     public let savePaymentMethod: Bool
 }
@@ -51,6 +51,7 @@ import Foundation
 extension DojoCardPaymentPayload {
     func getRequestBody() -> Data? {
         let encoder = JSONEncoder()
+        self.metaData?[getMetadataSDKVersionKey()] = getMetadataSDKVersion()
         guard let bodyData = try? encoder.encode(CardPaymentDataRequest(payload: self)) else {
             return nil
         }
