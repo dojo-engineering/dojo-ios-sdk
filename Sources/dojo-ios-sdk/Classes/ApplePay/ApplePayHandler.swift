@@ -49,7 +49,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
 
         // Create our payment request
         let paymentRequest = PKPaymentRequest()
-        paymentRequest.paymentSummaryItems = [getApplePayAmount(paymentIntent.totalAmount.value)]
+        paymentRequest.paymentSummaryItems = [getApplePayAmount(paymentIntent.totalAmount.value, merchantName: payload.merchantName)]
         paymentRequest.merchantIdentifier = payload.applePayConfig.merchantIdentifier
         paymentRequest.supportedNetworks = getSupportedApplePayNetworks(payload.applePayConfig.supportedCards)
         paymentRequest.merchantCapabilities = getMerchantCapability()
@@ -196,8 +196,8 @@ extension ApplePayHandler {
         return schemas
     }
     
-    func getApplePayAmount(_ amount: UInt64) -> PKPaymentSummaryItem {
-        PKPaymentSummaryItem(label: "Amount", amount: NSDecimalNumber(mantissa: amount, exponent: -2, isNegative: false), type: .final)
+    func getApplePayAmount(_ amount: UInt64, merchantName: String?) -> PKPaymentSummaryItem {
+        PKPaymentSummaryItem(label: merchantName ?? "Amount", amount: NSDecimalNumber(mantissa: amount, exponent: -2, isNegative: false), type: .final)
     }
     
     func convertPaymentMethodType(_ type: PKPaymentMethodType) -> String {

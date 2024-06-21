@@ -15,10 +15,12 @@ import Foundation
     ///   - metaData: A set of key-value pairs that you can use for storing additional information.
     @objc public init(applePayConfig: DojoApplePayConfig,
                       userEmailAddress: String? = nil,
-                      metaData: [String : String]? = nil) {
+                      metaData: [String : String]? = nil,
+                      merchantName: String? = nil) {
         self.applePayConfig = applePayConfig
         self.userEmailAddress = userEmailAddress
         self.metaData = metaData
+        self.merchantName = merchantName
     }
     
     /// ApplePay related settings.
@@ -27,5 +29,7 @@ import Foundation
     public let userEmailAddress: String?
     /// A set of key-value pairs that you can use for storing additional information.
     public let metaData: [String: String]?
+    
+    public var merchantName: String?
 }
 
