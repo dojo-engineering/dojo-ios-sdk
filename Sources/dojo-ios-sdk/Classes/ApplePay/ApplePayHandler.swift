@@ -44,6 +44,7 @@ class ApplePayHandler: NSObject, ApplePayHandlerProtocol {
         self.completion = completion
         self.payload = payload
         self.debugConfig = debugConfig
+        self.paymentStatus = .failure // set the default status for cases when a payment screen is closed without completing a payment
         
         //TODO check if ApplePay is avaialbe
 
