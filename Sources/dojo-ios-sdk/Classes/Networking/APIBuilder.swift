@@ -92,7 +92,7 @@ struct APIBuilder: APIBuilderProtocol {
     static func buildURLForExternalConfig(endpoint: APIEndpointRegional) throws -> URL {
         switch endpoint {
         case .aws:
-            return try buildURL("https://d1vkrwwafyvizg.cloudfront.net/rag-manifest.json")
+            return try buildURL("https://rag-prod-manifest.s3.eu-west-2.amazonaws.com/rag-manifest.json")
         case .gcp:
             return try buildURL("https://storage.googleapis.com/rag-prod-manifest/rag-manifest.json")
         }
