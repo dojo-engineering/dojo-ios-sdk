@@ -45,7 +45,7 @@ protocol DojoSDKProtocol {
 @objc public class DojoSDK: NSObject, DojoSDKProtocol {
     
     public static override func version() -> Int {
-        142
+        150
     }
     
     /// Execute card payment

@@ -11,7 +11,7 @@ Our default theme comes in both light and dark modes, right out of the box, whic
 
 ## Requirements
 
-iOS version **11.0** and later.
+iOS version **12.0** and later.
 
 ## Installation
 

@@ -24,7 +24,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements
 
-Minimum iOS version: 11.0
+Minimum iOS version: 12.0
 
 ## Installation
 
@@ -32,7 +32,7 @@ dojo-ios-sdk is available through [CocoaPods](https://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '1.0.0'
+pod 'dojo-ios-sdk', :git => 'git@github.com:Dojo-Engineering/dojo-ios-sdk.git', :tag => '1.4.4'
 ```
 ## How to use
 SDK functionality can be accessed via DojoSdk object.
@@ -142,7 +142,7 @@ dojo-ios-sdk is available under the MIT license. See the LICENSE file for more i
   s.source           = { :git => 'https://github.com/dojo-engineering/dojo-ios-sdk.git', :tag => s.version }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '12.0'
 
   s.source_files = 'Sources/dojo-ios-sdk/Classes/**/*'
   s.public_header_files = 'Sources/dojo-ios-sdk/Classes/**/*.h'
