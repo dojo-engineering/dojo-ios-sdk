@@ -27,9 +27,9 @@ class CardinaMobile {
         
         let isPreCutoverProduction = !isSandbox && Date() < Self.visaCutoverDate
         if isPreCutoverProduction {
-            config.cardinalDatacenter = .Cardinal
+            config.cardinalDatacenter = Cardinal
         } else {
-            config.cardinalDatacenter = .Visa
+            config.cardinalDatacenter = Visa
         }
 
         config.deploymentEnvironment = isSandbox ? .staging : .production
