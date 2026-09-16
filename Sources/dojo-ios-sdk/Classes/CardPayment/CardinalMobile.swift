@@ -18,7 +18,7 @@ class CardinaMobile {
     }
 
     // Switch to Visa Data Center on 29 Oct 2026 00:00:00 UTC (48h safety buffer after Phase 1 begins)
-    private static let visaCutoverDate = ISO8601DateFormatter().date(from: "2026-10-29T00:00:00Z")!
+    private static let visaCutoverDate = Date(timeIntervalSince1970: 1793232000)
 
     //Setup can be called in viewDidLoad
     func setUp(isSandbox: Bool) {
