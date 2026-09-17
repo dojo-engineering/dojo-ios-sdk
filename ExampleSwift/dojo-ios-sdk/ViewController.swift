@@ -32,8 +32,10 @@ class ViewController: UIViewController {
         let cardPaymentPayload = DojoCardPaymentPayload(cardDetails: getCardDetails(),
                                                         savePaymentMethod: switchSaveCard.isOn)
         showLoadingIndicator()
+        let debugConfig = DojoSDKDebugConfig(isSandboxIntent: true)
         DojoSDK.executeCardPayment(token: getToken(),
                                    payload: cardPaymentPayload,
+                                   debugConfig: debugConfig,
                                    fromViewController: self) { [weak self] result in
             self?.hideLoadingIndicator()
             self?.showAlert(result)
@@ -278,22 +280,22 @@ enum AutofillType: Int {
     func getCardNumber() -> String {
         switch self {
         case .threeDS2:
-            return "4456530000001096"
+            return "5200000000001096"
         case .threeDS1:
-            return "4456530000000007"
+            return "5200000000001070"
         case .noneThreeDS:
-            return "5200000000000056"
+            return "5200000000001005"
         case .decline:
             return "4456530000001013"
         }
     }
     
     func getCardHolderName() -> String {
-        "Card holder"
+        "Test Cardholder"
     }
     
     func getExpiry() -> String {
-        "12 / 24"
+        "12 / 29"
     }
     
     func getCVV() -> String {
@@ -303,7 +305,7 @@ enum AutofillType: Int {
         case .threeDS1:
             return "020"
         case .noneThreeDS:
-            return "341"
+            return "020"
         case .decline:
             return "341"
         }

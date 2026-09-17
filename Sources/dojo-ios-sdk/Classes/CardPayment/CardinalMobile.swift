@@ -17,10 +17,21 @@ class CardinaMobile {
         setUp(isSandbox: isSandbox)
     }
 
+    // Switch to Visa Data Center on 29 Oct 2026 00:00:00 UTC (48h safety buffer after Phase 1 begins)
+    private static let visaCutoverDate = Date(timeIntervalSince1970: 1793232000)
+
     //Setup can be called in viewDidLoad
     func setUp(isSandbox: Bool) {
         session = CardinalSession()
         let config = CardinalSessionConfiguration()
+        
+        let isPreCutoverProduction = !isSandbox && Date() < Self.visaCutoverDate
+        if isPreCutoverProduction {
+            config.cardinalDatacenter = Cardinal
+        } else {
+            config.cardinalDatacenter = Visa
+        }
+
         config.deploymentEnvironment = isSandbox ? .staging : .production
         config.requestTimeout = 8000
         config.challengeTimeout = 360
